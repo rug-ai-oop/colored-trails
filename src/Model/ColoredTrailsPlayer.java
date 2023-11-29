@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public abstract class ColoredTrailsPlayer {
     private boolean hasReceivedSignal;
     private Patch goal;
-    private ArrayList tokens;
+    private ArrayList<Token> tokens;
     private Patch currentPatch;
     public ColoredTrailsPlayer(Patch goal) {
         this.goal = goal;
@@ -21,7 +21,7 @@ public abstract class ColoredTrailsPlayer {
         this.hasReceivedSignal = hasReceivedSignal;
     }
 
-    public ArrayList<> getTokens() {
+    public ArrayList<Token> getTokens() {
         return ( (ArrayList) tokens.clone() );
     }
 }
