@@ -22,6 +22,7 @@ public class Patch {
         else
         {
             player.currentPatch = goal;
+
             //set tokens
         }
 
