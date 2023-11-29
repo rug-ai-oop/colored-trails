@@ -1,27 +1,51 @@
 package Model;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
-public abstract class ColoredTrailsPlayer {
-    private boolean hasReceivedSignal;
-    private Patch goal;
-    private ArrayList<Token> tokens;
-    private Patch currentPatch;
+public abstract class ColoredTrailsPlayer implements PropertyChangeListener {
+    protected Patch goal;
+    protected Patch goalPartner;
+    protected Patch goalToCommunicate;
+    protected ArrayList<Token> tokens;
+    protected Patch currentPatch;
+    private ColoredTrailsPlayer partner;  // Idea: expand to more partners: ArrayList<ColoredTrailsPlayer> partner
     public ColoredTrailsPlayer(Patch goal) {
         this.goal = goal;
-        hasReceivedSignal = false;
+        goalPartner = null;
+        goalToCommunicate = null;
     }
     public abstract void initiateOffer();
     public abstract void acceptOffer();
     public abstract void rejectOffer();
-    public abstract Patch communicateGoal(ColoredTrailsPlayer otherPlayer);
+    public abstract void communicateGoal(ColoredTrailsPlayer otherPlayer, Patch goalToCommunicate);
     public abstract void moveToPatch();
 
-    public void setHasReceivedSignal(boolean hasReceivedSignal) {
-        this.hasReceivedSignal = hasReceivedSignal;
+    public void setPartner(ColoredTrailsPlayer partner) {
+        this.partner = partner;
+    }
+
+    public void setGoalToCommunicate(Patch goalToCommunicate) {
+        this.goalToCommunicate = goalToCommunicate;
+    }
+
+    public ColoredTrailsPlayer getPartner() {
+        return partner;
+    }
+
+    public Patch getGoalToCommunicate() {
+        return goalToCommunicate;
     }
 
     public ArrayList<Token> getTokens() {
         return ( (ArrayList) tokens.clone() );
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("Communicate")) {
+            goalPartner = (Patch) evt.getNewValue();
+        }
     }
 }
