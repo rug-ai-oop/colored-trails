@@ -9,18 +9,21 @@ public class Patch {
     }
 
     public void moveToPatch(ArrayList<Token> tokens, Patch goal, Patch current, ColoredTrailsPlayer player) {
-        ArrayList<Token> tokensToSpend = new ArrayList<Token>; //no clue how to work with that, lets try
+        Token tokenToSpend = new Token; //no clue how to work with that, lets try
         ArrayList<Token> tokensLeft = tokens;
         //we have to make an assumption that the player moves only to its neighbour, otherwise this violates the rules
-
-
-
-
-        if(tokensLeft.equals(tokens)) {
-            //umm whats there reverse of equals
+        private int isFound = 0;
+        for(Token token : tokens) {
+            if(token.getColor() == goal.getColor()) {
+                isFound = 1;
+                tokenToSpend = token;
+                break;
+            }
         }
-        else
-        {
+
+        tokensLeft.remove(tokenToSpend); //does this work or no
+
+        if(isFound == 1) {
             player.currentPatch = goal;
             player.tokens = tokensLeft;
             //set tokens
