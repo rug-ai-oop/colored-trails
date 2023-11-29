@@ -21,12 +21,10 @@ public class Patch {
             }
         }
 
-        tokensLeft.remove(tokenToSpend); //does this work or no
-
+        tokensLeft.remove(tokenToSpend);
         if(isFound == 1) {
             player.currentPatch = goal;
             player.tokens = tokensLeft;
-            //set tokens
         }
 
 
