@@ -3,15 +3,32 @@ import java.util.ArrayList;
 
 public class Patch {
     private Color color;
+    private int x;
+    private int y;
+    public Patch(Color color, int x, int y) {
+        this.color = color;
+        this.x = x;
+        this.y = y;
+    }
+    public int getX() {
+        return x;
+    }
+    public int getY() {
+        return y;
+    }
 
     public Color getColor() {
         return color;
     }
 
     public void moveToPatch(ArrayList<Token> tokens, Patch goal, Patch current, ColoredTrailsPlayer player) {
-        Token tokenToSpend = new Token; //no clue how to work with that, lets try
+        int distance = Grid.distanceBetween(current, goal);
+        if (distance > 1) {
+            System.out.println("Too large of a step");
+            return;
+        }
+        Token tokenToSpend = new Token;
         ArrayList<Token> tokensLeft = tokens;
-        //we have to make an assumption that the player moves only to its neighbour, otherwise this violates the rules
         private int isFound = 0;
         for(Token token : tokens) {
             if(token.getColor() == goal.getColor()) {
@@ -21,14 +38,14 @@ public class Patch {
             }
         }
 
-        tokensLeft.remove(tokenToSpend);
-        if(isFound == 1) {
+        //tokensLeft.remove(tokenToSpend);
+
+        if(isFound == 1) {  //change to setters when implemented in coloredTrailsPlayer
             player.currentPatch = goal;
-            player.tokens = tokensLeft;
+            player.tokens.remove(tokenToSpend);
         }
-
-
+        else {
+            System.out.println("Impossible to travel to the selected tile");
+        }
     }
-
-
 }
