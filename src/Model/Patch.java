@@ -34,9 +34,8 @@ public class Patch {
             System.out.println("Too large of a step");
             return;
         }
-        Token tokenToSpend = new Token;
-        ArrayList<Token> tokensLeft = tokens;
-        private int isFound = 0;
+        Token tokenToSpend = null;
+        int isFound = 0;
         for(Token token : tokens) {
             if(token.getColor() == goal.getColor()) {
                 isFound = 1;

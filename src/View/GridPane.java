@@ -1,6 +1,7 @@
 package View;
 
 import Controller.GameController;
+import Model.Color;
 import Model.HumanPlayer;
 import Model.Patch;
 
@@ -30,7 +31,7 @@ public class GridPane extends JPanel {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        GridPane gridPane = new GridPane(new GameController(new HumanPlayer(new Patch())));
+        GridPane gridPane = new GridPane(new GameController(new HumanPlayer(new Patch(Color.COLOR1, 1, 1))));
         frame.add(gridPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 300);
