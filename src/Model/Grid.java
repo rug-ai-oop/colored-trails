@@ -11,11 +11,4 @@ public class Grid {
         return patches;
     }
 
-    public int distanceBetween(Patch x, Patch y)
-    {
-        int x_coord = x.getX();
-        int y_coord = y.getY();
-        int distance = Math.sqrt(x_coord*x_coord+y_coord*y_coord);
-        return distance;
-    }
 }
