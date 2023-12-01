@@ -1,5 +1,4 @@
 package Model;
-import Math;
 import java.util.ArrayList;
 
 public class Grid {

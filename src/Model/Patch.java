@@ -1,13 +1,58 @@
 package Model;
 import java.util.ArrayList;
+import Math;
 
 public class Patch {
     private Color color;
-    public Patch(Color color) {
+    private int x;
+    private int y;
+    public Patch(Color color, int x, int y) {
         this.color = color;
+        this.x = x;
+        this.y = y;
     }
-
+    public int getX() {
+        return x;
+    }
+    public int getY() {
+        return y;
+    }
+    public int distanceBetween(Patch x, Patch y)
+    {
+        int x_coord = x.getX();
+        int y_coord = y.getY();
+        int distance = Math.sqrt(x_coord*x_coord+y_coord*y_coord);
+        return distance;
+    }
     public Color getColor() {
         return color;
+    }
+
+    public void moveToPatch(ArrayList<Token> tokens, Patch goal, Patch current, ColoredTrailsPlayer player) {
+        int distance = Grid.distanceBetween(current, goal);
+        if (distance > 1) {
+            System.out.println("Too large of a step");
+            return;
+        }
+        Token tokenToSpend = new Token;
+        ArrayList<Token> tokensLeft = tokens;
+        private int isFound = 0;
+        for(Token token : tokens) {
+            if(token.getColor() == goal.getColor()) {
+                isFound = 1;
+                tokenToSpend = token;
+                break;
+            }
+        }
+
+        //tokensLeft.remove(tokenToSpend);
+
+        if(isFound == 1) {  //change to setters when implemented in coloredTrailsPlayer
+            player.currentPatch = goal;
+            player.tokens.remove(tokenToSpend);
+        }
+        else {
+            System.out.println("Impossible to travel to the selected tile");
+        }
     }
 }
