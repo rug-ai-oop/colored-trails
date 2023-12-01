@@ -20,7 +20,9 @@ public class GridPane extends JPanel {
         for(int i = 0; i < grid.getRows() * grid.getColumns(); i++) {
             JButton button = new JButton();
             button.addActionListener(controller);
+            button.setActionCommand("move");
             this.add(button);
+
             //To do: When clicked needs to reveal the options
         }
     }

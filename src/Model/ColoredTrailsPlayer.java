@@ -10,15 +10,15 @@ public abstract class ColoredTrailsPlayer implements PropertyChangeListener {
     protected Patch goalToCommunicate;
     protected ArrayList<Token> tokens;
     protected Patch currentPatch;
-    private ColoredTrailsPlayer partner;  // Idea: expand to more partners: ArrayList<ColoredTrailsPlayer> partner
+    private ColoredTrailsPlayer partner;
     public ColoredTrailsPlayer(Patch goal) {
         this.goal = goal;
         goalPartner = null;
         goalToCommunicate = null;
     }
-    public abstract void initiateOffer();
-    public abstract void acceptOffer();
-    public abstract void rejectOffer();
+    public abstract void initiateOffer(); //by the grid
+    public abstract void acceptOffer();//by the grid
+    public abstract void rejectOffer();//by the grid
     public abstract void communicateGoal(ColoredTrailsPlayer otherPlayer, Patch goalToCommunicate);
     public abstract void moveToPatch();
 

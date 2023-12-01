@@ -27,6 +27,9 @@ public class GameController implements ActionListener {
             case "communicateGoal" :
                 humanPlayer.communicateGoal(humanPlayer.getPartner(), ( (ColoredTrailsPlayer)(e.getSource()) ).getGoalToCommunicate());
                 break;
+            case "move":
+                System.out.println("moved");
+                break;
         }
     }
 }
