@@ -6,4 +6,7 @@ public class Token {
         this.color = color;
     }
 
+    public Color getColor() {
+        return color;
+    }
 }
