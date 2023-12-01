@@ -1,6 +1,6 @@
 package Model;
 import java.util.ArrayList;
-import Math;
+import java.lang.Math;
 
 public class Patch {
     private Color color;
@@ -17,11 +17,10 @@ public class Patch {
     public int getY() {
         return y;
     }
-    public int distanceBetween(Patch x, Patch y)
-    {
-        int x_coord = x.getX();
-        int y_coord = y.getY();
-        int distance = Math.sqrt(x_coord*x_coord+y_coord*y_coord);
+    public int distanceBetween(Patch a, Patch b) {
+        int x_coord = Math.abs(a.getX() - b.getX());
+        int y_coord = Math.abs(a.getY() - b.getY());
+        int distance = x_coord + y_coord;
         return distance;
     }
     public Color getColor() {
@@ -29,8 +28,8 @@ public class Patch {
     }
 
     public void moveToPatch(ArrayList<Token> tokens, Patch goal, Patch current, ColoredTrailsPlayer player) {
-        int distance = Grid.distanceBetween(current, goal);
-        if (distance > 1) {
+        int distance = distanceBetween(current, goal);
+        if (distance != 1) {
             System.out.println("Too large of a step");
             return;
         }
@@ -43,8 +42,6 @@ public class Patch {
                 break;
             }
         }
-
-        //tokensLeft.remove(tokenToSpend);
 
         if(isFound == 1) {  //change to setters when implemented in coloredTrailsPlayer
             player.currentPatch = goal;
