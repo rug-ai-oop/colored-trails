@@ -17,13 +17,32 @@ public class GridPane extends JPanel {
         addButtonsToGrid();
     }
     public void addButtonsToGrid() {
-        for(int i = 0; i < grid.getRows() * grid.getColumns(); i++) {
-            JButton button = new JButton();
-            button.addActionListener(controller);
-            button.setActionCommand("move");
-            this.add(button);
-
-            //To do: When clicked needs to reveal the options
+        for(int i = 0; i < grid.getRows() ; i++) {
+            for(int j = 0; j < grid.getColumns(); j++) {
+                JButton button = new JButton();
+                //generate random integer between 0 and 5
+                int random = (int)(Math.random() * 5);
+                switch (random) {
+                    case 0:
+                        button.setBackground(java.awt.Color.CYAN);
+                        break;
+                    case 1:
+                        button.setBackground(java.awt.Color.magenta);
+                        break;
+                    case 2:
+                        button.setBackground(java.awt.Color.RED);
+                        break;
+                    case 3:
+                        button.setBackground(java.awt.Color.orange);
+                        break;
+                    case 4:
+                        button.setBackground(java.awt.Color.BLUE);
+                        break;
+                }
+                button.addActionListener(controller);
+                button.setActionCommand("move");
+                this.add(button);
+            }
         }
     }
     public GridPane(GameController controller) {

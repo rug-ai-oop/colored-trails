@@ -3,11 +3,12 @@ package Controller;
 import Model.ColoredTrailsPlayer;
 import Model.HumanPlayer;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GameController implements ActionListener {
-    private HumanPlayer humanPlayer;
+    private HumanPlayer humanPlayer;  //remove it when game is implemented
 
     public GameController(HumanPlayer humanPlayer) {
         this.humanPlayer = humanPlayer;
@@ -39,7 +40,9 @@ public class GameController implements ActionListener {
                 break;
             case "move":
                 System.out.println("moved");
+                System.out.println( ((JButton) e.getSource()).getBackground());
                 break;
         }
+
     }
 }

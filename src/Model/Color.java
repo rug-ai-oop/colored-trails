@@ -1,9 +1,11 @@
 package Model;
 
-public enum Color {
-    COLOR1,
-    COLOR2,
-    COLOR3,
-    COLOR4,
-    COLOR5;
+
+public enum Color{
+    CYAN, //OOFFFF
+    COLOR1, //FF63C7
+    BURGUNDY, //800020
+    HONEY, //EBA937
+    ULTRAMARINE //0437F2
 }
+
