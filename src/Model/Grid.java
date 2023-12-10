@@ -11,6 +11,17 @@ public class Grid {
         this.players = players;
     }
 
+    public void initiateOffer() {
+        
+    }
+    public void acceptOffer() {
+
+    }
+
+    public void rejectOffer() {
+
+    }
+
     public ArrayList<Patch> getPatches() {
         return patches;
     }

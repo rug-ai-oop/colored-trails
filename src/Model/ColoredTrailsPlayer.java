@@ -16,9 +16,7 @@ public abstract class ColoredTrailsPlayer implements PropertyChangeListener {
         goalPartner = null;
         goalToCommunicate = null;
     }
-    public abstract void initiateOffer(); //by the grid
-    public abstract void acceptOffer();//by the grid
-    public abstract void rejectOffer();//by the grid
+
     public abstract void communicateGoal(ColoredTrailsPlayer otherPlayer, Patch goalToCommunicate);
     public abstract void moveToPatch();
 

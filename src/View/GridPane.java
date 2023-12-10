@@ -19,7 +19,9 @@ public class GridPane extends JPanel {
     public void addButtonsToGrid() {
         for(int i = 0; i < grid.getRows() ; i++) {
             for(int j = 0; j < grid.getColumns(); j++) {
-                JButton button = new JButton();
+                IndexButton button = new IndexButton();
+                button.setColumnOnGrid(j);
+                button.setRowOnGrid(i);
                 //generate random integer between 0 and 5
                 int random = (int)(Math.random() * 5);
                 switch (random) {

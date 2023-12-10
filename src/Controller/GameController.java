@@ -17,7 +17,7 @@ public class GameController implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "initiateOffer" :
-                humanPlayer.initiateOffer();
+                //change to grid
                 System.out.println("initiated");
                 //close panel after clicking a button, using dispose() ?
                 break;
@@ -26,12 +26,12 @@ public class GameController implements ActionListener {
                 break;
                 //close panel after clicking a button
             case "acceptOffer" :
-                humanPlayer.acceptOffer();
+                //change to grid;
                 System.out.println("accepted");
                 break;
                 //close panel after clicking a button
             case "rejectOffer" :
-                humanPlayer.rejectOffer();
+                //change
                 System.out.println("rejected");
                 break;
                 //close panel after clicking a button

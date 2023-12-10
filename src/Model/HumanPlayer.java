@@ -9,21 +9,6 @@ public class HumanPlayer extends ColoredTrailsPlayer{
     }
 
     @Override
-    public void initiateOffer() {
-
-    }
-
-    @Override
-    public void acceptOffer() {
-
-    }
-
-    @Override
-    public void rejectOffer() {
-
-    }
-
-    @Override
     public void communicateGoal(ColoredTrailsPlayer otherPlayer, Patch goalToCommunicate) {
         otherPlayer.propertyChange(new PropertyChangeEvent(this, "Communicate", null, goalToCommunicate));
     }
