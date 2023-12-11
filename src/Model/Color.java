@@ -6,6 +6,7 @@ public enum Color{
     COLOR1, //FF63C7
     BURGUNDY, //800020
     HONEY, //EBA937
-    ULTRAMARINE //0437F2
+    ULTRAMARINE //0437F2;
 }
+
 

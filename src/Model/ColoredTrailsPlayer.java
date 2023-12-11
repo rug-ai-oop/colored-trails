@@ -4,26 +4,30 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
-public abstract class ColoredTrailsPlayer implements PropertyChangeListener {
+public abstract class ColoredTrailsPlayer {
     protected Patch goal;
     protected Patch goalPartner;
     protected Patch goalToCommunicate;
-    protected Patch currentPatch;
-    public ColoredTrailsPlayer(Patch goal) {
-        this.goal = goal;
+    public ColoredTrailsPlayer() {
         goalPartner = null;
         goalToCommunicate = null;
     }
 
     public abstract void communicateGoal(ColoredTrailsPlayer otherPlayer, Patch goalToCommunicate);
-    public abstract void moveToPatch();
+
+    public abstract ArrayList<ArrayList<Token>> makeOffer(ArrayList<Token> ownTokens, ArrayList<Token> partnerTokens);
 
     public void setGoalToCommunicate(Patch goalToCommunicate) {
         this.goalToCommunicate = goalToCommunicate;
     }
 
+    public void setGoal(Patch goal) {
+        this.goal = goal;
+    }
+
     public Patch getGoalToCommunicate() {
         return goalToCommunicate;
     }
+
 
 }

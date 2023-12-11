@@ -36,7 +36,6 @@ public class GameController implements ActionListener {
                 break;
                 //close panel after clicking a button
             case "communicateGoal" :
-                humanPlayer.communicateGoal(humanPlayer.getPartner(), ( (ColoredTrailsPlayer)(e.getSource()) ).getGoalToCommunicate());
                 break;
             case "move":
                 System.out.println("moved");
