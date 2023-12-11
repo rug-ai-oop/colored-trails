@@ -43,7 +43,7 @@ public class InitOffer extends JPanel{
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Make an offer");
-        InitOffer initOffer = new InitOffer(new GameController(new HumanPlayer(new Patch(Color.COLOR1, 1, 1))));
+        InitOffer initOffer = new InitOffer(new GameController(new HumanPlayer()));
         frame.add(initOffer);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 100);

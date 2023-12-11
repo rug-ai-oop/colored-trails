@@ -39,7 +39,7 @@ public class HandleOfferPane extends JPanel{
 
     public static void main(String[] args) {
         JFrame myFrame = new JFrame("Handle Offer");
-        HandleOfferPane handleOfferPane = new HandleOfferPane(new GameController(new HumanPlayer(new Patch(Color.COLOR1, 1, 1))));
+        HandleOfferPane handleOfferPane = new HandleOfferPane(new GameController(new HumanPlayer()));
         myFrame.add(handleOfferPane);
         myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         myFrame.setSize(300, 100);
