@@ -4,6 +4,10 @@ import java.lang.Math;
 
 public class Patch {
     private Color color;
+    private State state;
+    public enum State {
+        ACTIVE, INACTIVE;
+    }
     public Patch(Color color) {
         this.color = color;
     }
@@ -11,7 +15,21 @@ public class Patch {
         return color;
     }
 
-//    public void moveToPatch(ArrayList<Token> tokens, Patch goal, Patch current, ColoredTrailsPlayer player) {
+    /**
+     * Sets the state of the patch to the given value
+     * @param state
+     */
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    /**
+     * @return state the state of the patch
+     */
+    public State getState() {
+        return state;
+    }
+    //    public void moveToPatch(ArrayList<Token> tokens, Patch goal, Patch current, ColoredTrailsPlayer player) {
 //        int distance = distanceBetween(current, goal);
 //        if (distance != 1) {
 //            System.out.println("Too large of a step");

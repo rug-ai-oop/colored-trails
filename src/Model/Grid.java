@@ -1,12 +1,13 @@
 package Model;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Grid implements PropertyChangeListener {
+    private int maximumNumberOfTurns;
     private ArrayList<Patch> patches;
     private ArrayList<ColoredTrailsPlayer> players;
+    private ArrayList<Token> allTokensInPlay;
     private HashMap<ColoredTrailsPlayer, ArrayList<Token>> tokens;
     private String wayOfAssigningGoals;
 
@@ -35,7 +36,7 @@ public class Grid implements PropertyChangeListener {
      * @return the player corresponding to the number of turns the negotiation had
      * modulo the size of the players list
      */
-    private ColoredTrailsPlayer getCurrentPlayer(int numberOfTurns) {
+    private ColoredTrailsPlayer getPlayer(int numberOfTurns) {
         return players.get(numberOfTurns % players.size());
     }
 
@@ -67,6 +68,7 @@ public class Grid implements PropertyChangeListener {
                 ColoredTrailsPlayer playerToReceiveToken = players.get(random.nextInt(players.size()));  //pick a random player
                 Token tokenToBeReceived = new Token(patchToBeReceived.getColor());
                 tokens.get(playerToReceiveToken).add(tokenToBeReceived);
+                allTokensInPlay.add(tokenToBeReceived);
             }
         }
     }
@@ -79,6 +81,7 @@ public class Grid implements PropertyChangeListener {
         ArrayList<Color> colors = generateRandomColorFiveByFive();
         for(int i = 0; i < 25; i++) {
             patches.add(new Patch(colors.get(i)));
+            patches.get(i).setState(Patch.State.ACTIVE);
         }
     }
 
@@ -106,6 +109,57 @@ public class Grid implements PropertyChangeListener {
         }
     }
 
+
+    /**
+     * The method assumes that tokens are not necessarily preserved within negotiations, i.e. the tokens in play
+     * do not necessarily remain the same. An offer is legal if all the players get a hand and the tokens offered
+     * were in play, i.e. the players does not introduce new tokens in the game.
+     * @param offer the offer
+     * @return true if the offer is legal, false otherwise
+     */
+    private boolean isOfferLegal(ArrayList<ArrayList<Token>> offer) {
+        if(offer.size() != players.size()) {    //check that the players offered something for all players
+            return false;
+        }
+        ArrayList<Token> allTokensInOffer = new ArrayList<>();
+        for(ArrayList<Token> hand : offer) {
+            for(int index = 0; index < hand.size(); index++) {
+                allTokensInOffer.add(hand.get(index));
+            }
+        }
+        if(!( allTokensInPlay.containsAll(allTokensInOffer) ) ) { //&& allTokensInPlay.size() == allTokensInOffer.size()
+            //do we want to allow offers that reduce the net number of tokens in play? Or do we preserve tokens within
+            //negotiations?
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * An offer is an ArrayList that contains two ArrayLists, each representing the collection
+     * of tokens of each player. The first one is the proposed collection of the player offering,
+     * second one is the one of the one being offered. First reverses the posterior offer
+     * to ensure that the collections checked belong to the same player. Checks if the offers are the same.
+     * @param priorOffer    The initial offer
+     * @param posteriorOffer    The counter-offer
+     * @return true if the offers are the same, false otherwise
+     */
+    private boolean acceptedOffer(ArrayList<ArrayList<Token>> priorOffer, ArrayList<ArrayList<Token>> posteriorOffer) {
+        ArrayList<ArrayList<Token>> posteriorOfferReversed = (ArrayList<ArrayList<Token>>) posteriorOffer.clone();
+        Collections.reverse(posteriorOfferReversed);
+        for(int index = 0; index < priorOffer.size(); index++) {
+            if( priorOffer.get(index).size() != posteriorOffer.get(index).size()) {
+                return false;
+            }
+            for(int indexInHands = 0; indexInHands < priorOffer.get(index).size(); indexInHands++){
+                if(priorOffer.get(index).get(indexInHands).getColor() != posteriorOffer.get(index).get(indexInHands).getColor()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     /* Public Methods */
 
 
@@ -116,11 +170,13 @@ public class Grid implements PropertyChangeListener {
     public Grid() {
         this.gameState = STATE.INACTIVE;
         this.wayOfAssigningGoals = "randDif";
+        this.maximumNumberOfTurns = 10;
     }
 
 
     /**
      * adds a player to the list of players
+     * @param player The player to be added
      */
     public void addPlayer(ColoredTrailsPlayer player) {
         players.add(player);
@@ -149,11 +205,38 @@ public class Grid implements PropertyChangeListener {
     }
 
 
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-
+    /**
+     * Starts the negotiations. Ends when both players sent the same offer or the number of turns has reached the
+     * maximumNumberOfTurns, initially set to 10
+     * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
+     */
+    public boolean start() {
+        gameState = STATE.ACTIVE;                   //Initialize the state of the game with ACTIVE
+        int numberOfTurns = 0;                      //Initialize the number of turns with 0
+        ArrayList<ArrayList<Token>> currentOffer = null;   //Initialize the initial offer with null
+        ArrayList<ArrayList<Token>> nextOffer = null;   //Initialize the initial offer with null
+        while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
+            ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
+            ColoredTrailsPlayer nextPlayer = getPlayer(numberOfTurns + 1);
+            currentOffer = currentPlayer.makeOffer(tokens.get(currentPlayer), tokens.get(nextPlayer));
+            //reverse the order of the hands in nextOffer, so that the order of the hands aligns with the one of players
+            nextOffer = nextPlayer.makeOffer(currentOffer.get(1), currentOffer.get(0));
+            if(!isOfferLegal(currentOffer)) {
+                currentOffer = null;
+            }
+            if(!isOfferLegal(nextOffer)) {
+                nextOffer = null;
+            }
+            if (currentOffer != null && nextOffer != null) {
+                if(acceptedOffer(currentOffer, nextOffer)) {
+                    gameState = STATE.INACTIVE;
+                }
+            }
+            numberOfTurns++;
+        }
+        return numberOfTurns < maximumNumberOfTurns;
     }
+
 
     /**
      * @return patches
@@ -170,6 +253,19 @@ public class Grid implements PropertyChangeListener {
         this.wayOfAssigningGoals = wayOfAssigningGoals;
     }
 
+    /**
+     * Sets maximumNumberOfTurns to the given value
+     * @param maximumNumberOfTurns
+     */
+    public void setMaximumNumberOfTurns(int maximumNumberOfTurns) {
+        this.maximumNumberOfTurns = maximumNumberOfTurns;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+
+    }
+
     public static void main(String[] args) {
         Grid grid = new Grid();
         grid.generatePatchesFiveByFive();
@@ -177,4 +273,6 @@ public class Grid implements PropertyChangeListener {
             System.out.println(patch.getColor());
         }
     }
+
+
 }
