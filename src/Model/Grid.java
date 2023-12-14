@@ -2,6 +2,7 @@ package Model;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
+import java.lang.Math;
 
 public class Grid implements PropertyChangeListener {
     private int maximumNumberOfTurns;
@@ -237,6 +238,15 @@ public class Grid implements PropertyChangeListener {
         return numberOfTurns < maximumNumberOfTurns;
     }
 
+    public int calculateFinalScore(ColoredTrailsPlayer player) {        //make this useful
+        int position = player.getPlayerPosition();
+        int playerY = position % 5;
+        int playerX = position / 5;
+        int goalPosition = player.getGoal().getPatchPosition();
+        int goalY = goalPosition % 5;
+        int goalX = goalPosition / 5;
+        return 4 - (Math.abs(playerX-goalX) + Math.abs(playerY-goalY));
+    }
 
     /**
      * @return patches

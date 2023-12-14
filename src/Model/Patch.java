@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.lang.Math;
 
 public class Patch {
+    public int position;    // make this actually useful and not just a ghost variable
+
     private Color color;
     private State state;
     public enum State {
@@ -15,6 +17,9 @@ public class Patch {
         return color;
     }
 
+    public int getPatchPosition() {
+        return position;
+    }
     /**
      * Sets the state of the patch to the given value
      * @param state
