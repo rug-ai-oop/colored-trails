@@ -13,6 +13,14 @@ public abstract class ColoredTrailsPlayer {
         goalToCommunicate = null;
     }
 
+    private int playerPosition;             //make this actually useful instead of a ghost variable
+    public int getPlayerPosition() {
+        return playerPosition;
+    }
+
+    public Patch getGoal() {
+        return goal;
+    }
     public abstract void communicateGoal(ColoredTrailsPlayer otherPlayer, Patch goalToCommunicate);
 
     public abstract ArrayList<ArrayList<Token>> makeOffer(ArrayList<Token> ownTokens, ArrayList<Token> partnerTokens);
