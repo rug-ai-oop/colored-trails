@@ -6,10 +6,14 @@ public class Patch {
     private Color color;
     private int x;
     private int y;
-    public Patch(Color color, int x, int y) {
+    //public Patch(Color color, int x, int y) {
+    //    this.color = color;
+    //    this.x = x;
+    //    this.y = y;
+    //}
+
+    public Patch(Color color) {
         this.color = color;
-        this.x = x;
-        this.y = y;
     }
     public int getX() {
         return x;
@@ -45,7 +49,7 @@ public class Patch {
 
         if(isFound == 1) {  //change to setters when implemented in coloredTrailsPlayer
             player.currentPatch = goal;
-            player.tokens.remove(tokenToSpend);
+            player.tokens.remove(tokenToSpend);  //
         }
         else {
             System.out.println("Impossible to travel to the selected tile");

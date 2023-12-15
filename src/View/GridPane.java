@@ -54,7 +54,7 @@ public class GridPane extends JPanel {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        GridPane gridPane = new GridPane(new GameController(new HumanPlayer(new Patch(Color.COLOR1, 1, 1))));
+        GridPane gridPane = new GridPane(new GameController(new HumanPlayer()));
         frame.add(gridPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 300);
