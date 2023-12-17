@@ -238,6 +238,11 @@ public class Grid implements PropertyChangeListener {
         return numberOfTurns < maximumNumberOfTurns;
     }
 
+    /**
+     * initial score calculation, should be improved to represent not only the distance.
+     * @param player
+     * @return utility
+     */
     public int calculateFinalScore(ColoredTrailsPlayer player) {        //make this useful
         int position = player.getPlayerPosition();
         int playerY = position % 5;
