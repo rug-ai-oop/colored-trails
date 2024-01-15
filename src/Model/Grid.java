@@ -114,6 +114,10 @@ public class Grid implements PropertyChangeListener {
         }
     }
 
+    private void makeOffer(ColoredTrailsPlayer player, ArrayList<Token> offer) {
+        player.receiveOffer(this, offer);
+    }
+
 
     /**
      * The method assumes that tokens must be preserved within negotiations, i.e. the tokens in play
@@ -174,6 +178,13 @@ public class Grid implements PropertyChangeListener {
         this.maximumNumberOfTurns = 10;
     }
 
+    /**
+     * @param player: The player which the tokens belong to
+     * @return The tokens of the player
+     */
+    public ArrayList<Token> getTokens(ColoredTrailsPlayer player) {
+        return tokens.get(player);
+    }
 
     /**
      * adds a player to the list of players
@@ -219,9 +230,9 @@ public class Grid implements PropertyChangeListener {
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
             ColoredTrailsPlayer nextPlayer = getPlayer(numberOfTurns + 1);
-            currentOffer = currentPlayer.makeOffer(tokens.get(currentPlayer), tokens.get(nextPlayer));
+            //currentOffer = currentPlayer.makeOffer(tokens.get(currentPlayer), tokens.get(nextPlayer));!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             //reverse the order of the hands in nextOffer, so that the order of the hands aligns with the one of players
-            nextOffer = nextPlayer.makeOffer(currentOffer.get(1), currentOffer.get(0));
+            //nextOffer = nextPlayer.makeOffer(currentOffer.get(1), currentOffer.get(0));!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             if(!isOfferLegal(currentOffer)) {
                 currentOffer = null;
             }

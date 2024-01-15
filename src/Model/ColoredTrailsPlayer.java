@@ -21,9 +21,10 @@ public abstract class ColoredTrailsPlayer {
     public Patch getGoal() {
         return goal;
     }
-    public abstract void communicateGoal(ColoredTrailsPlayer otherPlayer, Patch goalToCommunicate);
+    public abstract void communicateGoal(Grid grid, Patch goalToCommunicate);
+    public abstract ArrayList<Token> makeOffer(Grid grid);
 
-    public abstract ArrayList<ArrayList<Token>> makeOffer(ArrayList<Token> ownTokens, ArrayList<Token> partnerTokens);
+    public abstract void receiveOffer(Grid grid, ArrayList<Token> offer);
 
     public void setGoalToCommunicate(Patch goalToCommunicate) {
         this.goalToCommunicate = goalToCommunicate;

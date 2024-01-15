@@ -7,12 +7,17 @@ public class HumanPlayer extends ColoredTrailsPlayer{
 
 
     @Override
-    public void communicateGoal(ColoredTrailsPlayer otherPlayer, Patch goalToCommunicate) {
+    public void communicateGoal(Grid grid, Patch goalToCommunicate) {
 
     }
 
     @Override
-    public ArrayList<ArrayList<Token>> makeOffer(ArrayList<Token> ownTokens, ArrayList<Token> partnerTokens) {
+    public ArrayList<Token> makeOffer(Grid grid) {
         return null;
+    }
+
+    @Override
+    public void receiveOffer(Grid grid, ArrayList<Token> offer) {
+
     }
 }
