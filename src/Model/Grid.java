@@ -47,7 +47,7 @@ public class Grid implements PropertyChangeListener {
      */
     private Patch pickRandomGoalFiveByFive() {
         Random random = new Random();
-        ArrayList<Integer> allowedIndices = new ArrayList(Arrays.asList(0, 2, 3, 4, 5, 9, 15, 19, 20, 21, 23, 24));
+        ArrayList<Integer> allowedIndices = new ArrayList<>(Arrays.asList(0, 2, 3, 4, 5, 9, 15, 19, 20, 21, 23, 24));
         Integer randomIndex = (Integer) random.nextInt(25);
         while( ! allowedIndices.contains( randomIndex ) ) {
             randomIndex = (Integer) random.nextInt(25);
@@ -56,9 +56,7 @@ public class Grid implements PropertyChangeListener {
     }
 
     /**
-     * if the players and patches have been created, assigns tokens randomly to each player
-     * currently, it distributes as many tokens as patches
-     * should be changed to distribute only 4
+     * if the players and patches have been created, assigns 4 tokens randomly to each player
      */
     private void distributeTokensToPlayers() {
         if(players != null && patches != null) {
@@ -66,10 +64,16 @@ public class Grid implements PropertyChangeListener {
             ArrayList<Patch> patchesCopy = (ArrayList<Patch>) patches.clone();
             Collections.shuffle(patchesCopy);
             for(Patch patchToBeReceived : patchesCopy) {
-                ColoredTrailsPlayer playerToReceiveToken = players.get(random.nextInt(players.size()));  //pick a random player
-                Token tokenToBeReceived = new Token(patchToBeReceived.getColor());
-                tokens.get(playerToReceiveToken).add(tokenToBeReceived);
-                allTokensInPlay.add(tokenToBeReceived);
+                int numberOfDistributedTokens = patchesCopy.indexOf(patchToBeReceived);
+                if(numberOfDistributedTokens < 4 * players.size()) {
+                    ColoredTrailsPlayer playerToReceiveToken = players.get(numberOfDistributedTokens % players.size());
+                    Token tokenToBeReceived = new Token(patchToBeReceived.getColor());
+                    tokens.get(playerToReceiveToken).add(tokenToBeReceived);
+                    allTokensInPlay.add(tokenToBeReceived);
+                } else {
+                    return;
+                }
+
             }
         }
     }
@@ -112,10 +116,12 @@ public class Grid implements PropertyChangeListener {
 
 
     /**
-     * The method assumes that tokens are not necessarily preserved within negotiations, i.e. the tokens in play
-     * do not necessarily remain the same. An offer is legal if all the players get a hand and the tokens offered
-     * were in play, i.e. the players does not introduce new tokens in the game.
-     * @param offer the offer
+     * The method assumes that tokens must be preserved within negotiations, i.e. the tokens in play
+     * remain the same.
+     * An offer is legal if all the players get a hand and the tokens offered
+     * were in play, i.e. the players do not introduce new tokens in the game, and the tokens are preserved.
+     * @param offer the offer consisting of an ArrayList with an ArrayList with tokens for each player,
+     *              representing their offered hand
      * @return true if the offer is legal, false otherwise
      */
     private boolean isOfferLegal(ArrayList<ArrayList<Token>> offer) {
@@ -124,16 +130,9 @@ public class Grid implements PropertyChangeListener {
         }
         ArrayList<Token> allTokensInOffer = new ArrayList<>();
         for(ArrayList<Token> hand : offer) {
-            for(int index = 0; index < hand.size(); index++) {
-                allTokensInOffer.add(hand.get(index));
-            }
+            allTokensInOffer.addAll(hand);
         }
-        if(!( allTokensInPlay.containsAll(allTokensInOffer) ) ) { //&& allTokensInPlay.size() == allTokensInOffer.size()
-            //do we want to allow offers that reduce the net number of tokens in play? Or do we preserve tokens within
-            //negotiations?
-            return false;
-        }
-        return true;
+        return allTokensInPlay.equals(allTokensInOffer) || allTokensInPlay.size() != allTokensInOffer.size();
     }
 
     /**
@@ -165,6 +164,7 @@ public class Grid implements PropertyChangeListener {
 
 
     /**
+     * Public constructor:
      * sets the state of the grid to inactive and, by default,
      * the distributionOfPatches is set to random and different
      */

@@ -13,6 +13,8 @@ public class GameController implements ActionListener {
     public GameController(HumanPlayer humanPlayer) {
         this.humanPlayer = humanPlayer;
     }
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
