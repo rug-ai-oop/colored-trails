@@ -10,10 +10,11 @@ public class Grid implements PropertyChangeListener {
     private ArrayList<ColoredTrailsPlayer> players;
     private ArrayList<Token> allTokensInPlay;
     private HashMap<ColoredTrailsPlayer, ArrayList<Token>> tokens;
+    private HashMap<ColoredTrailsPlayer, ArrayList<ArrayList<Token>>> offers;
     private String wayOfAssigningGoals;
 
     private enum STATE {
-        INACTIVE, ACTIVE, WAITING_FOR_OFFER
+        INACTIVE, ACTIVE, WAITING_FOR_OFFER, WAITING_FOR_COUNTER_OFFER
     }
     private STATE gameState;
 
@@ -42,8 +43,16 @@ public class Grid implements PropertyChangeListener {
     }
 
     /**
+     * Sets the gameState to the given parameter
+     * @param gameState
+     */
+    private void setGameState(STATE gameState) {
+        this.gameState = gameState;
+    }
+
+    /**
      * defines the allowed indices in the five by five grid
-     * @return  a patch with an allowed index
+     * @return a patch with an allowed index
      */
     private Patch pickRandomGoalFiveByFive() {
         Random random = new Random();
@@ -114,8 +123,26 @@ public class Grid implements PropertyChangeListener {
         }
     }
 
-    private void makeOffer(ColoredTrailsPlayer player, ArrayList<Token> offer) {
-        player.receiveOffer(this, offer);
+    /**
+     * The method lets the playerToBeAnnounced that the goal of its partner is goalOfPartner
+     * @param playerToBeAnnounced: The player which is announced
+     * @param goalOfPartner: The goal of the partner
+     */
+    private void announceGoal(ColoredTrailsPlayer playerToBeAnnounced, Patch goalOfPartner) {
+        playerToBeAnnounced.listenToGoal(goalOfPartner);
+    }
+
+    /**
+     * The method sends the offer of the playerToOffer to playerToReceive
+     * @param playerToOffer: The player which made the offer
+     * @param playerToReceive: The player receiving the offer
+     */
+    private void makeOffer(ColoredTrailsPlayer playerToOffer, ColoredTrailsPlayer playerToReceive) {
+        // Clone the offer of the playerToOffer
+        ArrayList<ArrayList<Token>> offer = (ArrayList<ArrayList<Token>>) offers.get(playerToOffer).clone();
+        // Reverse the offer, so that the playerToReceive receives it with its offered hand at index 0
+        Collections.reverse(offer);
+        playerToReceive.receiveOffer(offer);
     }
 
 
@@ -187,11 +214,12 @@ public class Grid implements PropertyChangeListener {
     }
 
     /**
-     * adds a player to the list of players
+     * adds a player to the list of players and sets its grid to this
      * @param player The player to be added
      */
     public void addPlayer(ColoredTrailsPlayer player) {
         players.add(player);
+        player.setGrid(this);
     }
 
     /**
@@ -216,6 +244,14 @@ public class Grid implements PropertyChangeListener {
         assignGoalsToPlayers();
     }
 
+    /**
+     * The method updates the offer associated to the player, according to the parameter offer.
+     * @param player: The player which makes the offer
+     * @param offer: The offer of the player
+     */
+    public void setOffer(ColoredTrailsPlayer player, ArrayList<ArrayList<Token>> offer) {
+        offers.put(player, offer);
+    }
 
     /**
      * Starts the negotiations. Ends when both players sent the same offer or the number of turns has reached the
@@ -229,7 +265,12 @@ public class Grid implements PropertyChangeListener {
         ArrayList<ArrayList<Token>> nextOffer = null;   //Initialize the initial offer with null
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
-            ColoredTrailsPlayer nextPlayer = getPlayer(numberOfTurns + 1);
+            setGameState(STATE.WAITING_FOR_OFFER);
+            //There are two possibilities: I could pass the grid to the players and let them manage the state of the grid
+            //and the flow of the game, or do it classically in this loop. The latter would be a lot more interesting
+            currentPlayer.makeOffer();
+
+
             //currentOffer = currentPlayer.makeOffer(tokens.get(currentPlayer), tokens.get(nextPlayer));!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             //reverse the order of the hands in nextOffer, so that the order of the hands aligns with the one of players
             //nextOffer = nextPlayer.makeOffer(currentOffer.get(1), currentOffer.get(0));!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -269,7 +310,7 @@ public class Grid implements PropertyChangeListener {
      */
     public ArrayList<Patch> getPatches() {
         return patches;
-    }
+    }           // This can be problematic when sending the grid, send a copy instead, or delete the getter
 
     /**
      * sets the wayOfAssigningGoals to the given string
@@ -286,6 +327,21 @@ public class Grid implements PropertyChangeListener {
     public void setMaximumNumberOfTurns(int maximumNumberOfTurns) {
         this.maximumNumberOfTurns = maximumNumberOfTurns;
     }
+
+
+    /**
+     * The method is intended to be used by players to change the state of the game. The state can only be changed if
+     * the game is active (Here, we should think of way to allow it without messing the game, maybe think of a hierarchy
+     * if commands, for instance, revealing the goal should be prioritized compared to offering)
+     * @param state
+     */
+    public void setGameStateByPlayer(STATE state) {
+        if(gameState == STATE.ACTIVE) {
+            gameState = state;
+        }
+    }
+
+
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

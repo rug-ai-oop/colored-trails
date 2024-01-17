@@ -8,6 +8,8 @@ public abstract class ColoredTrailsPlayer {
     protected Patch goal;
     protected Patch goalPartner;
     protected Patch goalToCommunicate;
+    protected ArrayList<ArrayList<Token>> offerPartner;
+    protected Grid grid;
     public ColoredTrailsPlayer() {
         goalPartner = null;
         goalToCommunicate = null;
@@ -21,10 +23,11 @@ public abstract class ColoredTrailsPlayer {
     public Patch getGoal() {
         return goal;
     }
-    public abstract void communicateGoal(Grid grid, Patch goalToCommunicate);
-    public abstract ArrayList<Token> makeOffer(Grid grid);
+    public abstract void communicateGoal(Patch goalToCommunicate);
+    public abstract void listenToGoal(Patch goal);
+    public abstract ArrayList<Token> makeOffer();
 
-    public abstract void receiveOffer(Grid grid, ArrayList<Token> offer);
+    public abstract void receiveOffer(ArrayList<ArrayList<Token>> offer);
 
     public void setGoalToCommunicate(Patch goalToCommunicate) {
         this.goalToCommunicate = goalToCommunicate;
@@ -32,6 +35,10 @@ public abstract class ColoredTrailsPlayer {
 
     public void setGoal(Patch goal) {
         this.goal = goal;
+    }
+
+    public void setGrid(Grid grid) {
+        this.grid = grid;
     }
 
     public Patch getGoalToCommunicate() {
