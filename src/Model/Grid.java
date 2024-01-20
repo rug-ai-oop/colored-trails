@@ -6,6 +6,7 @@ import java.lang.Math;
 
 public class Grid implements PropertyChangeListener {
     private int maximumNumberOfTurns;
+    private int numberOfTurns;
     private ArrayList<Patch> patches;
     private ArrayList<ColoredTrailsPlayer> players;
     private ArrayList<Token> allTokensInPlay;
@@ -15,7 +16,7 @@ public class Grid implements PropertyChangeListener {
     private String wayOfAssigningGoals;
 
     private enum STATE {
-        INACTIVE, ACTIVE, WAITING_FOR_OFFER, WAITING_FOR_COUNTER_OFFER
+        INACTIVE, ACTIVE, WAITING_FOR_OFFER
     }
     private STATE gameState;
 
@@ -57,7 +58,7 @@ public class Grid implements PropertyChangeListener {
      */
     private Patch pickRandomGoalFiveByFive() {
         Random random = new Random();
-        ArrayList<Integer> allowedIndices = new ArrayList<>(Arrays.asList(0, 2, 3, 4, 5, 9, 15, 19, 20, 21, 23, 24));
+        ArrayList<Integer> allowedIndices = new ArrayList<>(Arrays.asList(0, 1, 3, 4, 5, 9, 15, 19, 20, 21, 23, 24));
         Integer randomIndex = (Integer) random.nextInt(25);
         while( ! allowedIndices.contains( randomIndex ) ) {
             randomIndex = (Integer) random.nextInt(25);
@@ -203,7 +204,8 @@ public class Grid implements PropertyChangeListener {
     public Grid() {
         this.gameState = STATE.INACTIVE;
         this.wayOfAssigningGoals = "randDif";
-        this.maximumNumberOfTurns = 10;
+        this.maximumNumberOfTurns = 40;
+        this.numberOfTurns = 0;
     }
 
     /**
@@ -275,7 +277,6 @@ public class Grid implements PropertyChangeListener {
      */
     public boolean start() {
         setGameState(STATE.ACTIVE);
-        int numberOfTurns = 0;                      //Initialize the number of turns with 0
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
             ColoredTrailsPlayer partner = getPlayer(numberOfTurns + 1);
