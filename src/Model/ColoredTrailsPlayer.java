@@ -1,15 +1,13 @@
 package Model;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 public abstract class ColoredTrailsPlayer {
-    protected Patch goal;
-    protected Patch goalPartner;
-    protected Patch goalToCommunicate;
-    protected ArrayList<ArrayList<Token>> offerPartner;
-    protected Grid grid;
+    private Patch goal;
+    private Patch goalPartner;
+    private Patch goalToCommunicate;
+    private ArrayList<ArrayList<Token>> offerPartner;
+    private Grid grid;
     public ColoredTrailsPlayer() {
         goalPartner = null;
         goalToCommunicate = null;
@@ -23,7 +21,7 @@ public abstract class ColoredTrailsPlayer {
     public Patch getGoal() {
         return goal;
     }
-    public abstract void communicateGoal(Patch goalToCommunicate);
+    public abstract void revealGoal();
     public abstract void listenToGoal(Patch goal);
     public abstract ArrayList<Token> makeOffer();
 

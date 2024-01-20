@@ -11,6 +11,7 @@ public class Grid implements PropertyChangeListener {
     private ArrayList<Token> allTokensInPlay;
     private HashMap<ColoredTrailsPlayer, ArrayList<Token>> tokens;
     private HashMap<ColoredTrailsPlayer, ArrayList<ArrayList<Token>>> offers;
+    private HashMap<ColoredTrailsPlayer, Patch> goalsToAnnounce;
     private String wayOfAssigningGoals;
 
     private enum STATE {
@@ -214,12 +215,14 @@ public class Grid implements PropertyChangeListener {
     }
 
     /**
-     * adds a player to the list of players and sets its grid to this
+     * adds a player to the list of players, sets the grid of the player to this grid,
+     * and associates null to the player as its supposed goal to be announced
      * @param player The player to be added
      */
     public void addPlayer(ColoredTrailsPlayer player) {
         players.add(player);
         player.setGrid(this);
+        goalsToAnnounce.put(player, null);
     }
 
     /**
@@ -254,35 +257,39 @@ public class Grid implements PropertyChangeListener {
     }
 
     /**
+     * The method assumes that the player can only reveal its goal once. This needs to be discussed.
+     * Associates the goalToAnnounce to the player as the goal the player wants to communicate to its partner
+     * @param player The player communicating the supposed goal
+     * @param goalToAnnounce The goal the player wants the partner
+     */
+    public void setGoalToAnnounce(ColoredTrailsPlayer player, Patch goalToAnnounce) {
+        if (goalsToAnnounce.get(player) == null) {
+            this.goalsToAnnounce.put(player, goalToAnnounce);
+        }
+    }
+
+    /**
      * Starts the negotiations. Ends when both players sent the same offer or the number of turns has reached the
      * maximumNumberOfTurns, initially set to 10
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
     public boolean start() {
-        gameState = STATE.ACTIVE;                   //Initialize the state of the game with ACTIVE
+        setGameState(STATE.ACTIVE);
         int numberOfTurns = 0;                      //Initialize the number of turns with 0
-        ArrayList<ArrayList<Token>> currentOffer = null;   //Initialize the initial offer with null
-        ArrayList<ArrayList<Token>> nextOffer = null;   //Initialize the initial offer with null
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
+            ColoredTrailsPlayer partner = getPlayer(numberOfTurns + 1);
+            currentPlayer.revealGoal();        // Ask the player to reveal its goal
+            if(goalsToAnnounce.get(currentPlayer) != null) {
+                partner.listenToGoal(goalsToAnnounce.get(currentPlayer));
+            }
             setGameState(STATE.WAITING_FOR_OFFER);
-            //There are two possibilities: I could pass the grid to the players and let them manage the state of the grid
-            //and the flow of the game, or do it classically in this loop. The latter would be a lot more interesting
-            currentPlayer.makeOffer();
-
-
-            //currentOffer = currentPlayer.makeOffer(tokens.get(currentPlayer), tokens.get(nextPlayer));!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //reverse the order of the hands in nextOffer, so that the order of the hands aligns with the one of players
-            //nextOffer = nextPlayer.makeOffer(currentOffer.get(1), currentOffer.get(0));!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if(!isOfferLegal(currentOffer)) {
-                currentOffer = null;
-            }
-            if(!isOfferLegal(nextOffer)) {
-                nextOffer = null;
-            }
-            if (currentOffer != null && nextOffer != null) {
-                if(acceptedOffer(currentOffer, nextOffer)) {
-                    gameState = STATE.INACTIVE;
+            currentPlayer.makeOffer();      // Ask the player to make an offer
+            if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
+                offers.put(currentPlayer, null);
+            } else {
+                if(acceptedOffer(offers.get(currentPlayer), offers.get(partner))) {
+                    setGameState(STATE.INACTIVE);
                 }
             }
             numberOfTurns++;

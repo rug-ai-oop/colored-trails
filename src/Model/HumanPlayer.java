@@ -7,7 +7,7 @@ public class HumanPlayer extends ColoredTrailsPlayer{
 
 
     @Override
-    public void communicateGoal(Patch goalToCommunicate) {
+    public void revealGoal() {
 
     }
 
