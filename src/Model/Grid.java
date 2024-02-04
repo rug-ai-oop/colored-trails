@@ -212,8 +212,15 @@ public class Grid implements PropertyChangeListener {
      * @param player: The player which the tokens belong to
      * @return A clone of tokens of the player
      */
-    public ArrayList<Token> getTokens(ColoredTrailsPlayer player) {
+    public ArrayList<Token> getTokensOfPlayer(ColoredTrailsPlayer player) {
         return (ArrayList) tokens.get(player).clone();
+    }
+
+    /**
+     * @return A clone of allTokensInPlay
+     */
+    public ArrayList<Token> getAllTokensInPlay() {
+        return (ArrayList) allTokensInPlay.clone();
     }
 
     /**

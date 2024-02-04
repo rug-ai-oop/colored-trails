@@ -1,12 +1,15 @@
 package View;
 
+import Controller.GameController;
 import Model.Grid;
+import Model.HumanPlayer;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class OfferPane  extends JPanel {
     private Grid grid;
+    private GameController controller;
 
     /**
      * The method sets up the components in the offer panel
@@ -15,6 +18,7 @@ public class OfferPane  extends JPanel {
         int labelHeight = 50;
         int labelWidth = 100;
         this.setLayout(new BorderLayout(0, 0));
+
         // "Your tokens" label
         JLabel yourTokensLabel = new JLabel("Your Tokens");
         yourTokensLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -82,8 +86,9 @@ public class OfferPane  extends JPanel {
 
     }
 
-    public OfferPane(Grid grid) {
+    public OfferPane(Grid grid, GameController controller) {
         this.grid = grid;
+        this.controller = controller;
         setUp();
     }
 
@@ -91,7 +96,7 @@ public class OfferPane  extends JPanel {
         JFrame frame = new JFrame();
         frame.setSize(700, 300);
         Grid game = new Grid();
-        OfferPane offerPane = new OfferPane(game);
+        OfferPane offerPane = new OfferPane(game, new GameController(new HumanPlayer()));
         frame.add(offerPane);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
