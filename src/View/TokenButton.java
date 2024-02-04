@@ -1,5 +1,6 @@
 package View;
 
+import Model.Color;
 import Model.Token;
 
 import javax.swing.*;
@@ -9,6 +10,6 @@ public class TokenButton extends JButton {
     public TokenButton(Token token) {
         super();
         this.token = token;
-        //this.setBackground(token.getColor());
+        this.setBackground(Color.getColor(token.getColor()));
     }
 }
