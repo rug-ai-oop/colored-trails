@@ -7,12 +7,12 @@ import java.lang.Math;
 public class Grid implements PropertyChangeListener {
     private int maximumNumberOfTurns;
     private int numberOfTurns;
-    private ArrayList<Patch> patches;
-    private ArrayList<ColoredTrailsPlayer> players;
-    private ArrayList<Token> allTokensInPlay;
-    private HashMap<ColoredTrailsPlayer, ArrayList<Token>> tokens;
-    private HashMap<ColoredTrailsPlayer, ArrayList<ArrayList<Token>>> offers;
-    private HashMap<ColoredTrailsPlayer, Patch> goalsToAnnounce;
+    private ArrayList<Patch> patches = new ArrayList();
+    private ArrayList<ColoredTrailsPlayer> players = new ArrayList();
+    private ArrayList<Token> allTokensInPlay = new ArrayList();
+    private HashMap<ColoredTrailsPlayer, ArrayList<Token>> tokens = new HashMap();
+    private HashMap<ColoredTrailsPlayer, ArrayList<ArrayList<Token>>> offers = new HashMap();
+    private HashMap<ColoredTrailsPlayer, Patch> goalsToAnnounce = new HashMap();
     private String wayOfAssigningGoals;
 
     private enum STATE {
@@ -79,6 +79,10 @@ public class Grid implements PropertyChangeListener {
                 if(numberOfDistributedTokens < 4 * players.size()) {
                     ColoredTrailsPlayer playerToReceiveToken = players.get(numberOfDistributedTokens % players.size());
                     Token tokenToBeReceived = new Token(patchToBeReceived.getColor());
+                    if(tokens.get(playerToReceiveToken) == null) {
+                        // Initialize the ArrayList of tokens for the player
+                        tokens.put(playerToReceiveToken, new ArrayList());
+                    }
                     tokens.get(playerToReceiveToken).add(tokenToBeReceived);
                     allTokensInPlay.add(tokenToBeReceived);
                 } else {
@@ -252,6 +256,7 @@ public class Grid implements PropertyChangeListener {
      * sets up the game by distributing the tokens to players and assigning goals to players
      */
     public void setUp() {
+        generatePatchesFiveByFive();
         distributeTokensToPlayers();
         assignGoalsToPlayers();
     }
