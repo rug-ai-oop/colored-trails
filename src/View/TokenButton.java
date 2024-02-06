@@ -10,6 +10,9 @@ public class TokenButton extends JButton {
     public TokenButton(Token token) {
         super();
         this.token = token;
-        this.setBackground(Color.getColor(token.getColor()));
+    }
+
+    public Token getToken() {
+        return token;
     }
 }

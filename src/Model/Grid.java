@@ -213,6 +213,13 @@ public class Grid implements PropertyChangeListener {
     }
 
     /**
+     * @return The current player in turn
+     */
+    public ColoredTrailsPlayer getCurrentPlayer() {
+        return getPlayer(numberOfTurns);
+    }
+
+    /**
      * @param player: The player which the tokens belong to
      * @return A clone of tokens of the player
      */

@@ -17,8 +17,14 @@ public class HumanPlayer extends ColoredTrailsPlayer{
 
     }
 
+    /**
+     * Idea to implement this: make a private ArrayList offer and have the controller able to add and remove
+     * tokens from the offer, until it presses send, when offer is sent to the grid
+     * @return
+     */
     @Override
     public ArrayList<Token> makeOffer() {
+
         return null;
     }
 

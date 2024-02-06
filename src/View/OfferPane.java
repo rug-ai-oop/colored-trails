@@ -127,7 +127,9 @@ public class OfferPane  extends JPanel {
      */
     private void addInitialButtonsToUnassignedTokensPanel() {
         for(Token token : grid.getAllTokensInPlay()) {
-            JButton tokenButton = new JButton();
+            TokenButton tokenButton = new TokenButton(token);
+            tokenButton.setActionCommand("selectToken");
+            tokenButton.addActionListener(controller);
             tokenButton.setPreferredSize(new Dimension(40, 40));
             Image scaledTokenImage =  tokenImages.get(token.getColor()).getScaledInstance(40, 20, Image.SCALE_SMOOTH);
             tokenButton.setIcon(new ImageIcon(scaledTokenImage));
@@ -147,12 +149,12 @@ public class OfferPane  extends JPanel {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        frame.setSize(700, 300);
+        frame.setSize(1200, 200);
         Grid game = new Grid();
         game.addPlayer(new HumanPlayer());
         game.addPlayer(new HumanPlayer());
         game.setUp();
-        OfferPane offerPane = new OfferPane(game, new GameController(new HumanPlayer()));
+        OfferPane offerPane = new OfferPane(game, new GameController(game));
         frame.add(offerPane);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);

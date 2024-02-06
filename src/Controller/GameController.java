@@ -1,17 +1,21 @@
 package Controller;
 
 import Model.ColoredTrailsPlayer;
+import Model.Grid;
 import Model.HumanPlayer;
+import Model.Token;
+import View.TokenButton;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GameController implements ActionListener {
-    private HumanPlayer humanPlayer;  //remove it when game is implemented
+    private Grid grid;  //remove it when game is implemented
+    private Token selectedToken;
 
-    public GameController(HumanPlayer humanPlayer) {
-        this.humanPlayer = humanPlayer;
+    public GameController(Grid grid) {
+        this.grid = grid;
     }
 
 
@@ -43,6 +47,9 @@ public class GameController implements ActionListener {
                 System.out.println("moved");
                 System.out.println( ((JButton) e.getSource()).getBackground());
                 break;
+            case "selectToken":
+                Token selectedToken = (((TokenButton) e.getSource()).getToken());
+                System.out.println(selectedToken.getColor());
         }
 
     }
