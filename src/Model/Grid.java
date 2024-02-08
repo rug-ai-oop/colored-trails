@@ -103,6 +103,7 @@ public class Grid implements PropertyChangeListener {
             patches.add(new Patch(colors.get(i)));
             patches.get(i).setState(Patch.State.ACTIVE);
         }
+        patches.get(12).setState(Patch.State.INACTIVE);
     }
 
     /**
@@ -336,8 +337,8 @@ public class Grid implements PropertyChangeListener {
      * @return patches
      */
     public ArrayList<Patch> getPatches() {
-        return patches;
-    }           // This can be problematic when sending the grid, send a copy instead, or delete the getter
+        return (ArrayList<Patch>) patches.clone();
+    }
 
     /**
      * sets the wayOfAssigningGoals to the given string

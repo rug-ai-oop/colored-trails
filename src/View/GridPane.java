@@ -10,52 +10,46 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GridPane extends JPanel {
-    private GridLayout grid;
+    private Grid grid;
     private GameController controller;
     public void init() {
-        grid = new GridLayout(5, 5, 10, 10);
-        this.setLayout(grid);
+        this.setLayout(new GridLayout(5, 5, 10, 10));
         addButtonsToGrid();
     }
     public void addButtonsToGrid() {
-        for(int i = 0; i < grid.getRows() ; i++) {
-            for(int j = 0; j < grid.getColumns(); j++) {
-                IndexButton button = new IndexButton();
-                button.setColumnOnGrid(j);
-                button.setRowOnGrid(i);
-                //generate random integer between 0 and 5
-                int random = (int)(Math.random() * 5);
-                switch (random) {
-                    case 0:
-                        button.setBackground(java.awt.Color.CYAN);
-                        break;
-                    case 1:
-                        button.setBackground(java.awt.Color.magenta);
-                        break;
-                    case 2:
-                        button.setBackground(java.awt.Color.RED);
-                        break;
-                    case 3:
-                        button.setBackground(java.awt.Color.orange);
-                        break;
-                    case 4:
-                        button.setBackground(java.awt.Color.BLUE);
-                        break;
-                }
+        for(int i = 0; i < grid.getPatches().size(); i++) {
+            Patch patch = grid.getPatches().get(i);
+            JButton button = new JButton();
+            if(patch.getState() == Patch.State.ACTIVE) {
+                button.setBackground(Color.getColor(patch.getColor()));
+                button.setActionCommand("selectPatch");
                 button.addActionListener(controller);
-                button.setActionCommand("move");
-                this.add(button);
+            } else {
+                button.setBackground(java.awt.Color.BLACK);
+                button.setEnabled(false);
+                if(i == 12) {
+                    button.setText("START");
+                    button.setForeground(java.awt.Color.WHITE);
+                }
             }
+            add(button);
         }
+        repaint();
+        revalidate();
     }
-    public GridPane(GameController controller) {
+    public GridPane(Grid grid, GameController controller) {
+        this.grid = grid;
         this.controller = controller;
         init();
     }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        GridPane gridPane = new GridPane(new GameController(new Grid()));
+        Grid game = new Grid();
+        game.addPlayer(new HumanPlayer());
+        game.addPlayer(new HumanPlayer());
+        game.setUp();
+        GridPane gridPane = new GridPane(game, new GameController(game));
         frame.add(gridPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 300);
