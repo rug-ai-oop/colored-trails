@@ -3,11 +3,11 @@ package Model;
 import java.util.ArrayList;
 
 public abstract class ColoredTrailsPlayer {
-    private Patch goal;
-    private Patch goalPartner;
-    private Patch goalToCommunicate;
-    private ArrayList<ArrayList<Token>> offerPartner;
-    private Grid grid;
+    protected Patch goal;
+    protected Patch goalPartner;
+    protected Patch goalToCommunicate;
+    protected ArrayList<ArrayList<Token>> offerPartner;
+    protected Grid grid;
     public ColoredTrailsPlayer() {
         goalPartner = null;
         goalToCommunicate = null;
@@ -23,7 +23,7 @@ public abstract class ColoredTrailsPlayer {
     }
     public abstract void revealGoal();
     public abstract void listenToGoal(Patch goal);
-    public abstract ArrayList<Token> makeOffer();
+    public abstract void makeOffer();
 
     public abstract void receiveOffer(ArrayList<ArrayList<Token>> offer);
 

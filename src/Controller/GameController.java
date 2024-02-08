@@ -4,6 +4,7 @@ import Model.ColoredTrailsPlayer;
 import Model.Grid;
 import Model.HumanPlayer;
 import Model.Token;
+import View.OfferPane;
 import View.TokenButton;
 
 import javax.swing.*;
@@ -21,6 +22,7 @@ public class GameController implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        ColoredTrailsPlayer currentPlayer = grid.getCurrentPlayer();
         switch (e.getActionCommand()) {
             case "initiateOffer" :
                 //change to grid
@@ -48,8 +50,18 @@ public class GameController implements ActionListener {
                 System.out.println( ((JButton) e.getSource()).getBackground());
                 break;
             case "selectToken":
-                Token selectedToken = (((TokenButton) e.getSource()).getToken());
+                selectedToken = (((TokenButton) e.getSource()).getToken());
                 System.out.println(selectedToken.getColor());
+                break;
+            case "moveToYours":
+                if(currentPlayer instanceof HumanPlayer && selectedToken != null) {
+                    ((HumanPlayer) currentPlayer).addTokenToSupposedOwnTokens(selectedToken);
+                }
+                break;
+            case "send":
+                if(currentPlayer instanceof HumanPlayer) {
+                    ((HumanPlayer) currentPlayer).setState(HumanPlayer.OfferState.COMPLETE);
+                }
         }
 
     }

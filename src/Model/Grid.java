@@ -291,7 +291,7 @@ public class Grid implements PropertyChangeListener {
 
     /**
      * Starts the negotiations. Ends when both players sent the same offer or the number of turns has reached the
-     * maximumNumberOfTurns, initially set to 10
+     * maximumNumberOfTurns, initially set to 40
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
     public boolean start() {

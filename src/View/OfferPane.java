@@ -8,17 +8,24 @@ import Model.Token;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.dnd.MouseDragGestureRecognizer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 
 public class OfferPane  extends JPanel {
+    protected static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
     private Grid grid;
     private GameController controller;
     private JButton yourTokensButton;
     private JButton partnerTokensButton;
     private JButton unassignedTokensButton;
+    private JButton sendButton;
+    private TokenButton tokenButtonToMove;
     private JLabel offerPanelLabel;
     private JPanel centerPanel;
     private JPanel leftPanel;
@@ -27,8 +34,49 @@ public class OfferPane  extends JPanel {
     private JPanel unassignedTokensPanel;
     private JPanel rightPanel;
     private JPanel partnerTokensPanel;
+    private boolean isSendButtonOnScreen = false;
 
-    public static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
+    /**
+     * Inner ActionListener which controls the movements of the components in the view that do not involve the model
+     */
+    private ActionListener viewModifier = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(e.getActionCommand() == "selectToken") {
+                tokenButtonToMove = (TokenButton) e.getSource();
+            } else if (e.getActionCommand() == "moveTo" || e.getActionCommand() == "moveToYours" ||
+                    e.getActionCommand() == "moveToPartner") {
+                if(tokenButtonToMove != null) {
+                    // the panel which initially holds the TokenButton
+                    JPanel sourcePanel = getSourceOfTokenButtonPanelAccordingToSelectedButton();
+                    // the panel corresponding to selected button
+                    JPanel destinationPanel = getDestinationOfTokenButtonPanel((JButton) e.getSource());
+                    if(sourcePanel != destinationPanel) {
+                        // move the button from source to destination
+                        destinationPanel.add(tokenButtonToMove);
+                        sourcePanel.remove(tokenButtonToMove);
+                        if(unassignedTokensPanel.getComponentCount() == 0) {
+                            // add the sendOfferButton when all the tokens are distributed
+                            if(isSendButtonOnScreen == false) {
+                                unassignedTokensPanel.add(sendButton);
+                                isSendButtonOnScreen = true;
+                            }
+                        } else {
+                            // remove the sendOfferButton when a token has been unselected
+                            if(isSendButtonOnScreen && destinationPanel == unassignedTokensPanel) {
+                                unassignedTokensPanel.remove(sendButton);
+                                isSendButtonOnScreen = false;
+                            }
+                        }
+                        repaint();
+                        revalidate();
+                    }
+                    tokenButtonToMove = null;
+                }
+            }
+        }
+    };
+
 
     /**
      * Preloads images
@@ -46,9 +94,53 @@ public class OfferPane  extends JPanel {
     }
 
     /**
+     * The method checks which of the three panels contains the selected button and returns that panel
+     */
+    private JPanel getSourceOfTokenButtonPanelAccordingToSelectedButton() {
+        for(Component component : yourTokensPanel.getComponents()) {
+            if(component == tokenButtonToMove) {
+                return yourTokensPanel;
+            }
+        }
+        for(Component component : partnerTokensPanel.getComponents()) {
+            if(component == tokenButtonToMove) {
+                return partnerTokensPanel;
+            }
+        }
+        for(Component component : unassignedTokensPanel.getComponents()) {
+            if(component == tokenButtonToMove) {
+                return unassignedTokensPanel;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * The method is designed to only be called with the arguments yourTokensButton, partnerTokensButton
+     * or unassignedTokensButton
+     * @param source The pressed button
+     * @return The panel on the view corresponding to button source
+     */
+    private JPanel getDestinationOfTokenButtonPanel(JButton source) {
+        if (source == yourTokensButton) {
+            return yourTokensPanel;
+        }
+        if (source == unassignedTokensButton) {
+            return unassignedTokensPanel;
+        }
+        if (source == partnerTokensButton) {
+            return partnerTokensPanel;
+        }
+        return null;
+    }
+
+
+    /**
      * The method sets up the components in the offer panel
      */
     private void setUp() {
+
         int labelHeight = 50;
         int labelWidth = 100;
         this.setLayout(new BorderLayout(0, 0));
@@ -59,13 +151,19 @@ public class OfferPane  extends JPanel {
         yourTokensButton.setBackground(Color.LIGHT_GRAY);
         yourTokensButton.setOpaque(true);
         yourTokensButton.setPreferredSize(new Dimension(labelWidth, labelHeight));
+        yourTokensButton.setActionCommand("moveToYours");
+        yourTokensButton.addActionListener(controller);
+        yourTokensButton.addActionListener(viewModifier);
 
-        // "Partner's tokens" label
+        // "Partner's tokens" button
         partnerTokensButton = new JButton("Partner's Tokens");
         partnerTokensButton.setHorizontalAlignment(JLabel.CENTER);
         partnerTokensButton.setBackground(Color.LIGHT_GRAY);
         partnerTokensButton.setOpaque(true);
         partnerTokensButton.setPreferredSize(new Dimension(labelWidth, labelHeight));
+        partnerTokensButton.setActionCommand("moveToPartner");
+        partnerTokensButton.addActionListener(controller);
+        partnerTokensButton.addActionListener(viewModifier);
 
         // "Offer Panel" label
         offerPanelLabel = new JLabel("Offer Panel");
@@ -74,12 +172,15 @@ public class OfferPane  extends JPanel {
         offerPanelLabel.setOpaque(true);
         offerPanelLabel.setBackground(Color.GRAY);
 
-        // "Unassigned tokens" label
+        // "Unassigned tokens" button
         unassignedTokensButton = new JButton("Unassigned Tokens");
         unassignedTokensButton.setHorizontalAlignment(JLabel.CENTER);
         unassignedTokensButton.setBackground(new Color(200, 200, 200));
         unassignedTokensButton.setOpaque(true);
         unassignedTokensButton.setPreferredSize(new Dimension(labelWidth, labelHeight));
+        unassignedTokensButton.setActionCommand("moveTo");
+        unassignedTokensButton.addActionListener(controller);
+        unassignedTokensButton.addActionListener(viewModifier);
 
         // North panel
         this.add(offerPanelLabel, BorderLayout.NORTH);
@@ -119,6 +220,14 @@ public class OfferPane  extends JPanel {
         centerPanel.add(rightPanel);
         this.add(centerPanel, BorderLayout.CENTER);
 
+        // Send Button
+        sendButton = new JButton("Send Offer");
+        sendButton.setActionCommand("send");
+        sendButton.addActionListener(controller);
+        sendButton.setHorizontalAlignment(JLabel.CENTER);
+        sendButton.setBackground(new Color(0, 200, 0));
+        sendButton.setOpaque(true);
+        sendButton.setPreferredSize(new Dimension(200, 40));
     }
 
     /**
@@ -129,13 +238,15 @@ public class OfferPane  extends JPanel {
         for(Token token : grid.getAllTokensInPlay()) {
             TokenButton tokenButton = new TokenButton(token);
             tokenButton.setActionCommand("selectToken");
-            tokenButton.addActionListener(controller);
             tokenButton.setPreferredSize(new Dimension(40, 40));
             Image scaledTokenImage =  tokenImages.get(token.getColor()).getScaledInstance(40, 20, Image.SCALE_SMOOTH);
             tokenButton.setIcon(new ImageIcon(scaledTokenImage));
+            tokenButton.addActionListener(controller);
+            tokenButton.addActionListener(viewModifier);
             unassignedTokensPanel.add(tokenButton);
         }
         this.repaint();
+        this.revalidate();
     }
 
     public OfferPane(Grid grid, GameController controller) {
