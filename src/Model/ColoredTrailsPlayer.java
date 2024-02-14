@@ -1,19 +1,43 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public abstract class ColoredTrailsPlayer {
+    private static ArrayList<Integer> hashes = new ArrayList<>();
     protected Patch goal;
     protected Patch goalPartner;
     protected Patch goalToCommunicate;
     protected ArrayList<ArrayList<Token>> offerPartner;
     protected Grid grid;
+    private final int hash = generateHash();
+    private int playerPosition;             //make this actually useful instead of a ghost variable
+
+    /**
+     * Generates a random number smaller or equal than 100000, that is not already assigned to any player
+     * @return the generated random hash
+     */
+    private int generateHash() {
+        Random random = new Random();
+        Integer randomHash = (Integer) random.nextInt(100000);
+        while (hashes.contains(randomHash)) {
+            randomHash = (Integer) random.nextInt(100000);
+        }
+        hashes.add((Integer) randomHash);
+        return randomHash;
+    }
     public ColoredTrailsPlayer() {
         goalPartner = null;
         goalToCommunicate = null;
     }
 
-    private int playerPosition;             //make this actually useful instead of a ghost variable
+    /**
+     * Cannot be overloaded by child classes
+     * @return the hash of the player
+     */
+    public final int getHash() {
+        return hash;
+    }
     public int getPlayerPosition() {
         return playerPosition;
     }

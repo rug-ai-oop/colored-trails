@@ -1,14 +1,18 @@
 package Model;
+import View.AllowedToListen;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.lang.Math;
 
-public class Grid implements PropertyChangeListener {
+public class Grid {
     private int maximumNumberOfTurns;
     private int numberOfTurns;
+    private int startPatchIndex;
     private ArrayList<Patch> patches = new ArrayList();
-    private ArrayList<ColoredTrailsPlayer> players = new ArrayList();
+    private ArrayList<ColoredTrailsPlayer> players = new ArrayList(2);
+    private ArrayList<PropertyChangeListener> listeners = new ArrayList();
     private ArrayList<Token> allTokensInPlay = new ArrayList();
     private HashMap<ColoredTrailsPlayer, ArrayList<Token>> tokens = new HashMap();
     private HashMap<ColoredTrailsPlayer, ArrayList<ArrayList<Token>>> offers = new HashMap();
@@ -71,7 +75,6 @@ public class Grid implements PropertyChangeListener {
      */
     private void distributeTokensToPlayers() {
         if(players != null && patches != null) {
-            Random random = new Random();
             ArrayList<Patch> patchesCopy = (ArrayList<Patch>) patches.clone();
             Collections.shuffle(patchesCopy);
             for(Patch patchToBeReceived : patchesCopy) {
@@ -103,11 +106,11 @@ public class Grid implements PropertyChangeListener {
             patches.add(new Patch(colors.get(i)));
             patches.get(i).setState(Patch.State.ACTIVE);
         }
-        patches.get(12).setState(Patch.State.INACTIVE);
+        patches.get(startPatchIndex).setState(Patch.State.INACTIVE);
     }
 
     /**
-     * assigns DIFFERENT goals to each player
+     * assigns DIFFERENT goals to each player && notifies the listeners that the players have been assigned
      */
     private void assignDifferentRandomGoalsToPlayers() {
         ArrayList<Patch> assignedPatches = new ArrayList();
@@ -118,6 +121,8 @@ public class Grid implements PropertyChangeListener {
             }
             player.setGoal(goal);
             assignedPatches.add(goal);
+            notifyListeners(new PropertyChangeEvent(player, "assignedGoalsIndex",
+                    null, patches.indexOf(goal)));
         }
     }
 
@@ -211,6 +216,7 @@ public class Grid implements PropertyChangeListener {
         this.wayOfAssigningGoals = "randDif";
         this.maximumNumberOfTurns = 40;
         this.numberOfTurns = 0;
+        this.startPatchIndex = 12;
     }
 
     /**
@@ -244,6 +250,26 @@ public class Grid implements PropertyChangeListener {
         players.add(player);
         player.setGrid(this);
         goalsToAnnounce.put(player, null);
+    }
+
+    /**
+     * @param listener PropertyChangeListener which is added to the listeners of the grid
+     */
+    public void addListener(PropertyChangeListener listener) {
+        if(listener instanceof AllowedToListen) {
+            listeners.add(listener);
+        }
+
+    }
+
+    /**
+     * Notifies the listeners
+     * @param evt PropertyChangeEvent passed in the propertyChange()
+     */
+    public void notifyListeners(PropertyChangeEvent evt) {
+        for(PropertyChangeListener listener : listeners) {
+            listener.propertyChange(evt);
+        }
     }
 
     /**
@@ -334,7 +360,14 @@ public class Grid implements PropertyChangeListener {
     }
 
     /**
-     * @return patches
+     * @return The index of the starting patch in patches
+     */
+    public int getStartPatchIndex() {
+        return startPatchIndex;
+    }
+
+    /**
+     * @return a clone of patches
      */
     public ArrayList<Patch> getPatches() {
         return (ArrayList<Patch>) patches.clone();
@@ -370,19 +403,6 @@ public class Grid implements PropertyChangeListener {
     }
 
 
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-
-    }
-
-    public static void main(String[] args) {
-        Grid grid = new Grid();
-        grid.generatePatchesFiveByFive();
-        for(Patch patch : grid.getPatches()) {
-            System.out.println(patch.getColor());
-        }
-    }
 
 
 }
