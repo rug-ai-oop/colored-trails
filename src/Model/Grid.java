@@ -455,7 +455,7 @@ public class Grid {
 
     /**
      * Handling the A* algorithm.
-     * To improve: add a proper priority mechanism (by cost)
+     * To improve: fix a proper priority mechanism (by cost)
      * @param player, the player for whom the score is calculated
      *        tokens, the list of the tokens that a player can spend
      *        visited, the list of the visited fields while looking for the solution
@@ -465,11 +465,18 @@ public class Grid {
         int position = player.getPlayerPosition();
         int finalScore = -1;
 
-        PriorityQueue<SearchNode> queue = new PriorityQueue<>();
+        ArrayList<Integer> heuristicArray = calculateHeuristicArray(player);
+        PriorityQueue<SearchNode> queue = new PriorityQueue<>(new Comparator<SearchNode>() {
+            public int compare(SearchNode node1, SearchNode node2) {
+                if (node1.cost +  heuristicArray.get(node1.position) < node2.cost + heuristicArray.get(node1.position)) return -1;
+                if (node1.cost + heuristicArray.get(node1.position) > node2.cost + heuristicArray.get(node1.position)) return 1;
+                return 0;
+            }
+        });
         SearchNode startNode = new SearchNode(position, tokens, 0);
         queue.add(startNode);
 
-        ArrayList<Integer> heuristicArray = calculateHeuristicArray(player);
+
         ArrayList<Token> tokenCopy = (ArrayList<Token>) tokens.clone();
         int goalPosition = player.getGoal().getPatchPosition();
         int goalY = goalPosition % 5;
