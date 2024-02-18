@@ -345,22 +345,6 @@ public class Grid {
     }
 
     /**
-     * Deleting a token from the list of player tokens to move to a patch
-     * @param tokens, the current token list available to a player
-     *        destination, the destination of the move
-     * @return modified token list
-     */
-    public ArrayList<Token> spendToken(ArrayList<Token> tokens, Patch destination) {
-        for(Token token : tokens) {
-            if(token.getColor() == destination.getColor()) {
-                tokens.remove(token);
-                break;
-            }
-        }
-        return tokens;
-    }
-
-    /**
      * Calculating the bonus score from unspent tokens
      * @param tokens, the current token list available to a player
      * @return score, the bonus score
@@ -372,6 +356,26 @@ public class Grid {
             score += 1;
         }
         return score;
+    }
+
+    /**
+     * Creating a heuristic array for the A* algorithm based on the manhattan distance to the goal coordinates
+     * @param player the player for whom the score is calculated
+     * @return heuristicArray, the heuristic array of that player
+     */
+    public ArrayList<Integer> calculateHeuristicArray(ColoredTrailsPlayer player) {
+        ArrayList<Integer> heuristicArray = new ArrayList<>();
+        int goalPosition = player.getGoal().getPatchPosition();
+        for (int i=0;i<25;i++) {
+            int y = i % 5;
+            int x = i / 5;
+            int goalY = goalPosition % 5;
+            int goalX = goalPosition / 5;
+            int distance = Math.abs(x-goalX) + Math.abs(y-goalY);
+            heuristicArray.add(distance);
+
+        }
+        return heuristicArray;
     }
 
     /**
@@ -387,6 +391,22 @@ public class Grid {
             }
         }
         return false;
+    }
+
+    /**
+     * Deleting a token from the list of player tokens to move to a patch
+     * @param tokens, the current token list available to a player
+     *        destination, the destination of the move
+     * @return modified token list
+     */
+    public ArrayList<Token> spendToken(ArrayList<Token> tokens, Patch destination) {
+        for(Token token : tokens) {
+            if(token.getColor() == destination.getColor()) {
+                tokens.remove(token);
+                break;
+            }
+        }
+        return tokens;
     }
 
     public boolean indexInRange(int index){
@@ -433,25 +453,6 @@ public class Grid {
         return queue;
     }
 
-    /**
-     * Creating a heuristic array for the A* algorithm based on the manhattan distance to the goal coordinates
-     * @param player the player for whom the score is calculated
-     * @return heuristicArray, the heuristic array of that player
-     */
-    public ArrayList<Integer> calculateHeuristicArray(ColoredTrailsPlayer player) {
-        ArrayList<Integer> heuristicArray = new ArrayList<>();
-        int goalPosition = player.getGoal().getPatchPosition();
-        for (int i=0;i<25;i++) {
-            int y = i % 5;
-            int x = i / 5;
-            int goalY = goalPosition % 5;
-            int goalX = goalPosition / 5;
-            int distance = Math.abs(x-goalX) + Math.abs(y-goalY);
-            heuristicArray.add(distance);
-
-        }
-        return heuristicArray;
-    }
     /**
      * Handling the A* algorithm.
      * To improve: add a proper priority mechanism (by cost)
