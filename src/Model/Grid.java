@@ -345,18 +345,120 @@ public class Grid {
     }
 
     /**
-     * initial score calculation, should be improved to represent not only the distance.
-     * @param player
-     * @return utility
+     * Deleting a token from the list of player tokens to move to a patch
+     * @param tokens, the current token list available to a player
+     *        destination, the destination of the move
+     * @return modified token list
      */
-    public int calculateFinalScore(ColoredTrailsPlayer player) {        //make this useful
+    public ArrayList<Token> spendToken(ArrayList<Token> tokens, Patch destination) {
+        for(Token token : tokens) {
+            if(token.getColor() == destination.getColor()) {
+                tokens.remove(token);
+                break;
+            }
+        }
+        return tokens;
+    }
+
+    /**
+     * Calculating the bonus score from unspent tokens
+     * @param tokens, the current token list available to a player
+     * @return score, the bonus score
+     */
+
+    public int tokenScore(ArrayList<Token> tokens){
+        int score = 0;
+        for(Token token : tokens) {
+            score += 1;
+        }
+        return score;
+    }
+
+    /**
+     * Checking whether a move is possible
+     * @param tokens, the current token list available to a player
+     *        destination, the destination of the move
+     */
+
+    public boolean isTokenAvailable(ArrayList<Token> tokens, Patch destination) {
+        for(Token token : tokens) {
+            if(token.getColor() == destination.getColor()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * Adding new positions to the priority queue
+     * @param queue, the current queue
+     *        position, the current position
+     *        visited, the list of the already visited fields
+     * @return updated queue
+     */
+    public PriorityQueue<Integer> addNeighborsToQueue(PriorityQueue<Integer> queue, int position, int[] visited) {
+        if  (visited[position+1] == 0) queue.add(position+1);
+        if  (visited[position-1] == 0) queue.add(position-1);
+        if  (visited[position+5] == 0) queue.add(position+5);
+        if  (visited[position-5] == 0) queue.add(position - 5);
+        return queue;
+    }
+
+    /**
+     * Handling the A* algorithm.
+     * To improve: add a proper priority mechanism and a heuristic function.
+     * @param player, the player for whom the score is calculated
+     *        tokens, the list of the tokens that a player can spend
+     *        visited, the list of the visited fields while looking for the solution
+     * @return finalScore, the score of that player made up of the remaining tokens and its best position
+     */
+    public int astarTraverse(ColoredTrailsPlayer player, ArrayList<Token> tokens, int[] visited) {
         int position = player.getPlayerPosition();
-        int playerY = position % 5;
-        int playerX = position / 5;
+        int finalScore = -1;
+
+        PriorityQueue<Integer> queue = new PriorityQueue<Integer>();
+        queue.add(position);
+
+        ArrayList<Token> tokenCopy = (ArrayList<Token>) tokens.clone();
         int goalPosition = player.getGoal().getPatchPosition();
         int goalY = goalPosition % 5;
         int goalX = goalPosition / 5;
-        return 4 - (Math.abs(playerX-goalX) + Math.abs(playerY-goalY));
+
+        while (!queue.isEmpty()) {
+            int currentPosition = queue.poll();
+            visited[currentPosition] = 1;
+            queue = addNeighborsToQueue(queue, currentPosition, visited);
+
+            if(currentPosition == goalPosition) {
+                finalScore = tokenScore(tokenCopy);
+                break;
+            }
+            if (isTokenAvailable(tokenCopy, patches.get(currentPosition))) {
+                visited[currentPosition]=1;
+                tokenCopy = spendToken(tokenCopy, patches.get(currentPosition));
+
+                int playerY = currentPosition % 5;
+                int playerX = currentPosition/ 5;
+                int positionScore = 4 - (Math.abs(playerX-goalX) + Math.abs(playerY-goalY));
+                int tokenScore = tokenScore(tokenCopy);
+
+                if (finalScore < positionScore + tokenScore ) finalScore = positionScore + tokenScore;
+            }
+
+        }
+        return finalScore;
+    }
+
+    /**
+     * Final score calculation based on A* traversal.
+     * @param player, the player for whom the score is calculated
+     * @return bestScore, the score of that player
+     */
+    public int calculateFinalScore(ColoredTrailsPlayer player) {
+        int[] visited = new int[25];
+        for(int i = 0; i<25; i++) {
+            visited[i] = 0;
+        }
+        return astarTraverse(player,tokens.get(player),visited);
     }
 
     /**
@@ -401,8 +503,5 @@ public class Grid {
             gameState = state;
         }
     }
-
-
-
 
 }
