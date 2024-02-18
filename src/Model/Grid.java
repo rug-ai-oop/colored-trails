@@ -388,25 +388,54 @@ public class Grid {
         }
         return false;
     }
+
+    public boolean indexInRange(int index){
+        return index >= 0 && index < 25;
+    }
+
     /**
      * Adding new positions to the priority queue
      * @param queue, the current queue
-     *        position, the current position
-     *        visited, the list of the already visited fields
+     * @param position, the current position
+     * @param visited, the list of the already visited fields
+     * @param tokens, the current token list available to a player
      * @return updated queue
      */
-    public PriorityQueue<Integer> addNeighborsToQueue(PriorityQueue<Integer> queue, int position, int[] visited) {
-        if  (visited[position+1] == 0) queue.add(position+1);
-        if  (visited[position-1] == 0) queue.add(position-1);
-        if  (visited[position+5] == 0) queue.add(position+5);
-        if  (visited[position-5] == 0) queue.add(position - 5);
+    public PriorityQueue<SearchNode> addNeighborsToQueue(PriorityQueue<SearchNode> queue, int position, int[] visited, ArrayList<Token> tokens) {
+        if (indexInRange(position + 1)) {
+            if  (visited[position + 1] == 0) {
+                if  (isTokenAvailable(tokens, patches.get(position+1))) {
+                    queue.add(new SearchNode(position+1, spendToken(tokens, patches.get(position+1)), 1));
+                }
+            }
+        }
+        if (indexInRange(position - 1)) {
+            if (visited[position - 1] == 0) {
+                if (isTokenAvailable(tokens, patches.get(position - 1))) {
+                    queue.add(new SearchNode(position - 1, spendToken(tokens, patches.get(position-1)), 1));
+                }
+            }
+        }
+        if (indexInRange(position+5)) {
+            if (visited[position + 5] == 0) {
+                if (isTokenAvailable(tokens, patches.get(position + 5))) {
+                    queue.add(new SearchNode(position + 5, spendToken(tokens, patches.get(position+5)), 1));
+                }
+            }
+        }
+        if (indexInRange(position-5)) {
+            if  (visited[position-5] == 0) {
+                if (isTokenAvailable(tokens, patches.get(position - 5))) {
+                    queue.add(new SearchNode(position - 5, spendToken(tokens, patches.get(position-5)), 1));
+                }
+            }
+        }
         return queue;
     }
 
     /**
      * Handling the A* algorithm.
-     * To improve: add a proper priority mechanism and a heuristic function.
-     * For now the function also deletes the tokens and does not reuse them for multiple routes, change it too
+     * To improve: add a proper priority mechanism (by cost) and a heuristic function.
      * @param player, the player for whom the score is calculated
      *        tokens, the list of the tokens that a player can spend
      *        visited, the list of the visited fields while looking for the solution
@@ -416,8 +445,9 @@ public class Grid {
         int position = player.getPlayerPosition();
         int finalScore = -1;
 
-        PriorityQueue<Integer> queue = new PriorityQueue<Integer>();
-        queue.add(position);
+        PriorityQueue<SearchNode> queue = new PriorityQueue<>();
+        SearchNode startNode = new SearchNode(position, tokens, 0);
+        queue.add(startNode);
 
         ArrayList<Token> tokenCopy = (ArrayList<Token>) tokens.clone();
         int goalPosition = player.getGoal().getPatchPosition();
@@ -425,9 +455,10 @@ public class Grid {
         int goalX = goalPosition / 5;
 
         while (!queue.isEmpty()) {
-            int currentPosition = queue.poll();
+            SearchNode currentNode = queue.poll();
+            int currentPosition = currentNode.position;
             visited[currentPosition] = 1;
-            queue = addNeighborsToQueue(queue, currentPosition, visited);
+            queue = addNeighborsToQueue(queue, currentPosition, visited, tokenCopy);
 
             if(currentPosition == goalPosition) {
                 finalScore = tokenScore(tokenCopy);
