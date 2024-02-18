@@ -434,8 +434,27 @@ public class Grid {
     }
 
     /**
+     * Creating a heuristic array for the A* algorithm based on the manhattan distance to the goal coordinates
+     * @param player the player for whom the score is calculated
+     * @return heuristicArray, the heuristic array of that player
+     */
+    public ArrayList<Integer> calculateHeuristicArray(ColoredTrailsPlayer player) {
+        ArrayList<Integer> heuristicArray = new ArrayList<>();
+        int goalPosition = player.getGoal().getPatchPosition();
+        for (int i=0;i<25;i++) {
+            int y = i % 5;
+            int x = i / 5;
+            int goalY = goalPosition % 5;
+            int goalX = goalPosition / 5;
+            int distance = Math.abs(x-goalX) + Math.abs(y-goalY);
+            heuristicArray.add(distance);
+
+        }
+        return heuristicArray;
+    }
+    /**
      * Handling the A* algorithm.
-     * To improve: add a proper priority mechanism (by cost) and a heuristic function.
+     * To improve: add a proper priority mechanism (by cost)
      * @param player, the player for whom the score is calculated
      *        tokens, the list of the tokens that a player can spend
      *        visited, the list of the visited fields while looking for the solution
@@ -449,6 +468,7 @@ public class Grid {
         SearchNode startNode = new SearchNode(position, tokens, 0);
         queue.add(startNode);
 
+        ArrayList<Integer> heuristicArray = calculateHeuristicArray(player);
         ArrayList<Token> tokenCopy = (ArrayList<Token>) tokens.clone();
         int goalPosition = player.getGoal().getPatchPosition();
         int goalY = goalPosition % 5;
