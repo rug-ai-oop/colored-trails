@@ -406,6 +406,7 @@ public class Grid {
     /**
      * Handling the A* algorithm.
      * To improve: add a proper priority mechanism and a heuristic function.
+     * For now the function also deletes the tokens and does not reuse them for multiple routes, change it too
      * @param player, the player for whom the score is calculated
      *        tokens, the list of the tokens that a player can spend
      *        visited, the list of the visited fields while looking for the solution
