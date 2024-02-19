@@ -355,7 +355,7 @@ public class Grid {
         for(Token token : tokens) {
             score += 1;
         }
-        return score;
+        return 5*score;
     }
 
     /**
@@ -487,19 +487,20 @@ public class Grid {
             int currentPosition = currentNode.position;
             int currentCost = currentNode.cost;
             ArrayList<Token> currentTokens =  currentNode.tokens;
+
             visited[currentPosition] = 1;
             queue = addNeighborsToQueue(queue, currentPosition, visited, currentTokens, heuristicArray,currentCost);
 
             if(currentPosition == goalPosition) {
-                finalScore = tokenScore(currentTokens) + 4;
+                finalScore = tokenScore(currentTokens) + 50;
                 break;
             }
             //calculate the utility of the current position
             int playerY = currentPosition % 5;
             int playerX = currentPosition/ 5;
-            int positionScore = 4 - (Math.abs(playerX-goalX) + Math.abs(playerY-goalY));
+            int positionScore = 50 - 10*((Math.abs(playerX-goalX) + Math.abs(playerY-goalY)));
             int tokenScore = tokenScore(currentTokens);
-            if (finalScore < positionScore + tokenScore ) finalScore = positionScore + tokenScore;
+            if (finalScore < positionScore + tokenScore) finalScore = positionScore + tokenScore;
 
         }
         return finalScore;
