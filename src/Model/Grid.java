@@ -419,34 +419,35 @@ public class Grid {
      * @param position, the current position
      * @param visited, the list of the already visited fields
      * @param tokens, the current token list available to a player
+     * @param heuristicArray, the heuristic array of that player
      * @return updated queue
      */
-    public PriorityQueue<SearchNode> addNeighborsToQueue(PriorityQueue<SearchNode> queue, int position, int[] visited, ArrayList<Token> tokens) {
+    public PriorityQueue<SearchNode> addNeighborsToQueue(PriorityQueue<SearchNode> queue, int position, int[] visited, ArrayList<Token> tokens, ArrayList<Integer> heuristicArray, int currentCost) {
         if (indexInRange(position + 1)) {
             if  (visited[position + 1] == 0) {
                 if  (isTokenAvailable(tokens, patches.get(position+1))) {
-                    queue.add(new SearchNode(position+1, spendToken(tokens, patches.get(position+1)), 1));
+                    queue.add(new SearchNode(position+1, spendToken(tokens, patches.get(position+1)), currentCost + heuristicArray.get(position+1)));
                 }
             }
         }
         if (indexInRange(position - 1)) {
             if (visited[position - 1] == 0) {
                 if (isTokenAvailable(tokens, patches.get(position - 1))) {
-                    queue.add(new SearchNode(position - 1, spendToken(tokens, patches.get(position-1)), 1));
+                    queue.add(new SearchNode(position - 1, spendToken(tokens, patches.get(position-1)), currentCost + heuristicArray.get(position-1)));
                 }
             }
         }
         if (indexInRange(position+5)) {
             if (visited[position + 5] == 0) {
                 if (isTokenAvailable(tokens, patches.get(position + 5))) {
-                    queue.add(new SearchNode(position + 5, spendToken(tokens, patches.get(position+5)), 1));
+                    queue.add(new SearchNode(position + 5, spendToken(tokens, patches.get(position+5)), currentCost + heuristicArray.get(position+5)));
                 }
             }
         }
         if (indexInRange(position-5)) {
             if  (visited[position-5] == 0) {
                 if (isTokenAvailable(tokens, patches.get(position - 5))) {
-                    queue.add(new SearchNode(position - 5, spendToken(tokens, patches.get(position-5)), 1));
+                    queue.add(new SearchNode(position - 5, spendToken(tokens, patches.get(position-5)), currentCost + heuristicArray.get(position-5)));
                 }
             }
         }
@@ -455,7 +456,7 @@ public class Grid {
 
     /**
      * Handling the A* algorithm.
-     * To improve: fix a proper priority mechanism (by cost)
+     * To improve: check for plausability
      * @param player, the player for whom the score is calculated
      *        tokens, the list of the tokens that a player can spend
      *        visited, the list of the visited fields while looking for the solution
@@ -466,12 +467,10 @@ public class Grid {
         int finalScore = -1;
 
         ArrayList<Integer> heuristicArray = calculateHeuristicArray(player);
-        PriorityQueue<SearchNode> queue = new PriorityQueue<>(new Comparator<SearchNode>() {
-            public int compare(SearchNode node1, SearchNode node2) {
-                if (node1.cost +  heuristicArray.get(node1.position) < node2.cost + heuristicArray.get(node1.position)) return -1;
-                if (node1.cost + heuristicArray.get(node1.position) > node2.cost + heuristicArray.get(node1.position)) return 1;
-                return 0;
-            }
+        PriorityQueue<SearchNode> queue = new PriorityQueue<>((node1, node2) -> {
+            if (node1.cost +  heuristicArray.get(node1.position) < node2.cost + heuristicArray.get(node1.position)) return -1;
+            if (node1.cost + heuristicArray.get(node1.position) > node2.cost + heuristicArray.get(node1.position)) return 1;
+            return 0;
         });
         SearchNode startNode = new SearchNode(position, tokens, 0);
         queue.add(startNode);
@@ -485,8 +484,9 @@ public class Grid {
         while (!queue.isEmpty()) {
             SearchNode currentNode = queue.poll();
             int currentPosition = currentNode.position;
+            int currentCost = currentNode.cost;
             visited[currentPosition] = 1;
-            queue = addNeighborsToQueue(queue, currentPosition, visited, tokenCopy);
+            queue = addNeighborsToQueue(queue, currentPosition, visited, tokenCopy, heuristicArray,currentCost);
 
             if(currentPosition == goalPosition) {
                 finalScore = tokenScore(tokenCopy);
