@@ -472,11 +472,12 @@ public class Grid {
             if (node1.cost + heuristicArray.get(node1.position) > node2.cost + heuristicArray.get(node1.position)) return 1;
             return 0;
         });
-        SearchNode startNode = new SearchNode(position, tokens, 0);
-        queue.add(startNode);
-
 
         ArrayList<Token> tokenCopy = (ArrayList<Token>) tokens.clone();
+
+        SearchNode startNode = new SearchNode(position, tokenCopy, 0);
+        queue.add(startNode);
+
         int goalPosition = player.getGoal().getPatchPosition();
         int goalY = goalPosition % 5;
         int goalX = goalPosition / 5;
@@ -485,24 +486,20 @@ public class Grid {
             SearchNode currentNode = queue.poll();
             int currentPosition = currentNode.position;
             int currentCost = currentNode.cost;
+            ArrayList<Token> currentTokens =  currentNode.tokens;
             visited[currentPosition] = 1;
-            queue = addNeighborsToQueue(queue, currentPosition, visited, tokenCopy, heuristicArray,currentCost);
+            queue = addNeighborsToQueue(queue, currentPosition, visited, currentTokens, heuristicArray,currentCost);
 
             if(currentPosition == goalPosition) {
-                finalScore = tokenScore(tokenCopy);
+                finalScore = tokenScore(currentTokens) + 4;
                 break;
             }
-            if (isTokenAvailable(tokenCopy, patches.get(currentPosition))) {
-                visited[currentPosition]=1;
-                tokenCopy = spendToken(tokenCopy, patches.get(currentPosition));
-
-                int playerY = currentPosition % 5;
-                int playerX = currentPosition/ 5;
-                int positionScore = 4 - (Math.abs(playerX-goalX) + Math.abs(playerY-goalY));
-                int tokenScore = tokenScore(tokenCopy);
-
-                if (finalScore < positionScore + tokenScore ) finalScore = positionScore + tokenScore;
-            }
+            //calculate the utility of the current position
+            int playerY = currentPosition % 5;
+            int playerX = currentPosition/ 5;
+            int positionScore = 4 - (Math.abs(playerX-goalX) + Math.abs(playerY-goalY));
+            int tokenScore = tokenScore(currentTokens);
+            if (finalScore < positionScore + tokenScore ) finalScore = positionScore + tokenScore;
 
         }
         return finalScore;
