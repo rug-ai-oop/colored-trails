@@ -7,6 +7,14 @@ import java.util.*;
 import java.lang.Math;
 
 public class Grid {
+    /**
+     * The order of using the grid is:
+     *      1) Create the grid
+     *      2) Add the players
+     *      3) Set up the grid
+     *      4) Add the listeners (By creating the view components)
+     *      5) Start the grid
+     */
     private int maximumNumberOfTurns;
     private int numberOfTurns;
     private int startPatchIndex;
@@ -107,6 +115,7 @@ public class Grid {
             patches.get(i).setState(Patch.State.ACTIVE);
         }
         patches.get(startPatchIndex).setState(Patch.State.INACTIVE);
+        notifyListeners(new PropertyChangeEvent(this, "createdPatches", null, null));
     }
 
     /**
@@ -122,7 +131,7 @@ public class Grid {
             player.setGoal(goal);
             assignedPatches.add(goal);
             notifyListeners(new PropertyChangeEvent(player, "assignedGoalsIndex",
-                    null, patches.indexOf(goal)));
+                    player, patches.indexOf(goal)));    // Uses the oldValue to pass the player with the goal
         }
     }
 
@@ -130,8 +139,11 @@ public class Grid {
      * assigns the same goal to each player
      */
     private void assignSameRandomGoalsToPlayers() {
+        Patch goal = pickRandomGoalFiveByFive();
         for(ColoredTrailsPlayer player : players) {
-            player.setGoal(pickRandomGoalFiveByFive());
+            player.setGoal(goal);
+            notifyListeners(new PropertyChangeEvent(player, "assignedGoalsIndex",
+                    player, patches.indexOf(goal)));    // Uses the oldValue to pass the player with the goal
         }
     }
 
@@ -329,6 +341,8 @@ public class Grid {
             currentPlayer.revealGoal();        // Ask the player to reveal its goal
             if(goalsToAnnounce.get(currentPlayer) != null) {
                 partner.listenToGoal(goalsToAnnounce.get(currentPlayer));
+                notifyListeners(new PropertyChangeEvent(currentPlayer, "announceGoal", null,
+                        goalsToAnnounce.get(currentPlayer)));
             }
             setGameState(STATE.WAITING_FOR_OFFER);
             currentPlayer.makeOffer();      // Ask the player to make an offer
@@ -337,11 +351,24 @@ public class Grid {
             } else {
                 if(acceptedOffer(offers.get(currentPlayer), offers.get(partner))) {
                     setGameState(STATE.INACTIVE);
+                    notifyListeners(new PropertyChangeEvent(this, "gameOver", null,
+                            numberOfTurns < maximumNumberOfTurns));
+                } else {
+                    numberOfTurns++;
+                    notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
+                            offers.get(currentPlayer)));
                 }
             }
-            numberOfTurns++;
         }
         return numberOfTurns < maximumNumberOfTurns;
+    }
+
+    /**
+     * @param player to be checked
+     * @return true if it is player's turn
+     */
+    public boolean isPlayerActive(ColoredTrailsPlayer player) {
+        return getCurrentPlayer() == player;
     }
 
     /**
@@ -550,16 +577,5 @@ public class Grid {
     }
 
 
-    /**
-     * The method is intended to be used by players to change the state of the game. The state can only be changed if
-     * the game is active (Here, we should think of way to allow it without messing the game, maybe think of a hierarchy
-     * if commands, for instance, revealing the goal should be prioritized compared to offering)
-     * @param state
-     */
-    public void setGameStateByPlayer(STATE state) {
-        if(gameState == STATE.ACTIVE) {
-            gameState = state;
-        }
-    }
 
 }

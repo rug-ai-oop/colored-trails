@@ -18,7 +18,6 @@ public class GridPane extends JPanel implements PropertyChangeListener, AllowedT
     private ArrayList<JButton> buttons = new ArrayList();
     public void init() {
         this.setLayout(new GridLayout(5, 5, 5, 5));
-        addButtonsToGrid();
     }
 
     /**
@@ -46,6 +45,7 @@ public class GridPane extends JPanel implements PropertyChangeListener, AllowedT
         repaint();
         revalidate();
     }
+
     public GridPane(Grid grid, GameController controller) {
         this.grid = grid;
         grid.addListener(this);
@@ -70,13 +70,17 @@ public class GridPane extends JPanel implements PropertyChangeListener, AllowedT
     public void propertyChange(PropertyChangeEvent evt) {
         switch (evt.getPropertyName()) {
             case "assignedGoalsIndex":
-                if(evt.getSource() instanceof HumanPlayer) {
+                if(evt.getOldValue() instanceof HumanPlayer) {
                     JButton button = buttons.get((Integer) evt.getNewValue());
-                    Image scaledTokenImage =  OfferPane.auxiliaryImages.get("redFlag").getScaledInstance(button.getWidth()
-                            , button.getHeight(), Image.SCALE_SMOOTH);
+                    Image scaledTokenImage =  OfferPane.auxiliaryImages.get("redFlag").getScaledInstance(80
+                            , 80, Image.SCALE_SMOOTH);
                     button.setIcon(new ImageIcon(scaledTokenImage));
                 }
+                System.out.println("Failure");
                 break;
+            case "createdPatches":
+                break;
+
         }
     }
 }

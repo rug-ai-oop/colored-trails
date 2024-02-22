@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class OfferPane  extends JPanel implements PropertyChangeListener {
+    private static Color defaultButtonColor = new Color(238, 238, 238);
     protected static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
     protected static final Map<String, BufferedImage> auxiliaryImages = new HashMap<>(5);
     private Grid grid;
@@ -46,7 +47,11 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             if(e.getActionCommand() == "selectToken") {
+                if(tokenButtonToMove != null) {
+                    tokenButtonToMove.setBackground(defaultButtonColor);
+                }
                 tokenButtonToMove = (TokenButton) e.getSource();
+                tokenButtonToMove.setBackground(new Color(60, 200, 30));
             } else if (e.getActionCommand() == "moveTo" || e.getActionCommand() == "moveToYours" ||
                     e.getActionCommand() == "moveToPartner") {
                 if(tokenButtonToMove != null) {
@@ -74,6 +79,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
                         repaint();
                         revalidate();
                     }
+                    tokenButtonToMove.setBackground(defaultButtonColor);
                     tokenButtonToMove = null;
                 }
             }
@@ -259,7 +265,6 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
         this.controller = controller;
         loadImages();
         setUp();
-        addInitialButtonsToUnassignedTokensPanel();
     }
 
 
@@ -278,6 +283,6 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-
+        
     }
 }

@@ -15,9 +15,9 @@ public class ViewTester {
         // PropertyChange needs to be implemented in the grid, so that the listeners can be added after
         game.addPlayer(new HumanPlayer());
         game.addPlayer(new HumanPlayer());
-        game.setUp();
         OfferPane offerPane = new OfferPane(game, new GameController(game));
         GridPane gridPane = new GridPane(game, new GameController(game));
+        game.setUp();
         frame.setLayout(new BorderLayout());
         frame.add(offerPane, BorderLayout.SOUTH);
         frame.add(gridPane);
