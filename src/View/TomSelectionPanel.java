@@ -25,6 +25,13 @@ public class TomSelectionPanel extends JPanel {
         levelTwoButton = new JButton("2");
         levelTwoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Add action listeners to the buttons
+        levelZeroButton.addActionListener(e -> {printButtonNumber("0");});
+
+        levelOneButton.addActionListener(e -> {printButtonNumber("1");});
+
+        levelTwoButton.addActionListener(e -> {printButtonNumber("2");});
+
         add(Box.createVerticalGlue());
         add(tomLabel);
         add(Box.createRigidArea(new Dimension(0, 10)));
@@ -35,6 +42,10 @@ public class TomSelectionPanel extends JPanel {
         add(levelTwoButton);
         add(Box.createVerticalGlue());
 
+    }
+
+    private void printButtonNumber(String number) {
+        System.out.println("Agent ToM level is set to" + number);
     }
 
     public static void main(String[] args) {
