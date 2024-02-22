@@ -8,14 +8,22 @@ import Model.Patch;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
-public class GridPane extends JPanel {
+public class GridPane extends JPanel implements PropertyChangeListener, AllowedToListen {
     private Grid grid;
     private GameController controller;
+    private ArrayList<JButton> buttons = new ArrayList();
     public void init() {
-        this.setLayout(new GridLayout(5, 5, 10, 10));
+        this.setLayout(new GridLayout(5, 5, 5, 5));
         addButtonsToGrid();
     }
+
+    /**
+     * Constructs the grid, where every Patch is a button
+     */
     public void addButtonsToGrid() {
         for(int i = 0; i < grid.getPatches().size(); i++) {
             Patch patch = grid.getPatches().get(i);
@@ -27,11 +35,12 @@ public class GridPane extends JPanel {
             } else {
                 button.setBackground(java.awt.Color.BLACK);
                 button.setEnabled(false);
-                if(i == 12) {
+                if(i == grid.getStartPatchIndex()) {
                     button.setText("START");
                     button.setForeground(java.awt.Color.WHITE);
                 }
             }
+            buttons.add(button);
             add(button);
         }
         repaint();
@@ -39,6 +48,7 @@ public class GridPane extends JPanel {
     }
     public GridPane(Grid grid, GameController controller) {
         this.grid = grid;
+        grid.addListener(this);
         this.controller = controller;
         init();
     }
@@ -54,6 +64,20 @@ public class GridPane extends JPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 300);
         frame.setVisible(true);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        switch (evt.getPropertyName()) {
+            case "assignedGoalsIndex":
+                if(evt.getSource() instanceof HumanPlayer) {
+                    JButton button = buttons.get((Integer) evt.getNewValue());
+                    Image scaledTokenImage =  OfferPane.auxiliaryImages.get("redFlag").getScaledInstance(button.getWidth()
+                            , button.getHeight(), Image.SCALE_SMOOTH);
+                    button.setIcon(new ImageIcon(scaledTokenImage));
+                }
+                break;
+        }
     }
 }
 

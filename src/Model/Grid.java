@@ -1,14 +1,18 @@
 package Model;
+import View.AllowedToListen;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.lang.Math;
 
-public class Grid implements PropertyChangeListener {
+public class Grid {
     private int maximumNumberOfTurns;
     private int numberOfTurns;
+    private int startPatchIndex;
     private ArrayList<Patch> patches = new ArrayList();
-    private ArrayList<ColoredTrailsPlayer> players = new ArrayList();
+    private ArrayList<ColoredTrailsPlayer> players = new ArrayList(2);
+    private ArrayList<PropertyChangeListener> listeners = new ArrayList();
     private ArrayList<Token> allTokensInPlay = new ArrayList();
     private HashMap<ColoredTrailsPlayer, ArrayList<Token>> tokens = new HashMap();
     private HashMap<ColoredTrailsPlayer, ArrayList<ArrayList<Token>>> offers = new HashMap();
@@ -71,7 +75,6 @@ public class Grid implements PropertyChangeListener {
      */
     private void distributeTokensToPlayers() {
         if(players != null && patches != null) {
-            Random random = new Random();
             ArrayList<Patch> patchesCopy = (ArrayList<Patch>) patches.clone();
             Collections.shuffle(patchesCopy);
             for(Patch patchToBeReceived : patchesCopy) {
@@ -103,11 +106,11 @@ public class Grid implements PropertyChangeListener {
             patches.add(new Patch(colors.get(i)));
             patches.get(i).setState(Patch.State.ACTIVE);
         }
-        patches.get(12).setState(Patch.State.INACTIVE);
+        patches.get(startPatchIndex).setState(Patch.State.INACTIVE);
     }
 
     /**
-     * assigns DIFFERENT goals to each player
+     * assigns DIFFERENT goals to each player && notifies the listeners that the players have been assigned
      */
     private void assignDifferentRandomGoalsToPlayers() {
         ArrayList<Patch> assignedPatches = new ArrayList();
@@ -118,6 +121,8 @@ public class Grid implements PropertyChangeListener {
             }
             player.setGoal(goal);
             assignedPatches.add(goal);
+            notifyListeners(new PropertyChangeEvent(player, "assignedGoalsIndex",
+                    null, patches.indexOf(goal)));
         }
     }
 
@@ -211,6 +216,7 @@ public class Grid implements PropertyChangeListener {
         this.wayOfAssigningGoals = "randDif";
         this.maximumNumberOfTurns = 40;
         this.numberOfTurns = 0;
+        this.startPatchIndex = 12;
     }
 
     /**
@@ -244,6 +250,26 @@ public class Grid implements PropertyChangeListener {
         players.add(player);
         player.setGrid(this);
         goalsToAnnounce.put(player, null);
+    }
+
+    /**
+     * @param listener PropertyChangeListener which is added to the listeners of the grid
+     */
+    public void addListener(PropertyChangeListener listener) {
+        if(listener instanceof AllowedToListen) {
+            listeners.add(listener);
+        }
+
+    }
+
+    /**
+     * Notifies the listeners
+     * @param evt PropertyChangeEvent passed in the propertyChange()
+     */
+    public void notifyListeners(PropertyChangeEvent evt) {
+        for(PropertyChangeListener listener : listeners) {
+            listener.propertyChange(evt);
+        }
     }
 
     /**
@@ -319,22 +345,189 @@ public class Grid implements PropertyChangeListener {
     }
 
     /**
-     * initial score calculation, should be improved to represent not only the distance.
-     * @param player
-     * @return utility
+     * Calculating the bonus score from unspent tokens
+     * @param tokens, the current token list available to a player
+     * @return score, the bonus score
      */
-    public int calculateFinalScore(ColoredTrailsPlayer player) {        //make this useful
-        int position = player.getPlayerPosition();
-        int playerY = position % 5;
-        int playerX = position / 5;
-        int goalPosition = player.getGoal().getPatchPosition();
-        int goalY = goalPosition % 5;
-        int goalX = goalPosition / 5;
-        return 4 - (Math.abs(playerX-goalX) + Math.abs(playerY-goalY));
+
+    public int tokenScore(ArrayList<Token> tokens){
+        int score = 0;
+        for(Token token : tokens) {
+            score += 1;
+        }
+        return 5*score;
     }
 
     /**
-     * @return patches
+     * Creating a heuristic array for the A* algorithm based on the manhattan distance to the goal coordinates
+     * @param player the player for whom the score is calculated
+     * @return heuristicArray, the heuristic array of that player
+     */
+    public ArrayList<Integer> calculateHeuristicArray(ColoredTrailsPlayer player) {
+        ArrayList<Integer> heuristicArray = new ArrayList<>();
+        int goalPosition = player.getGoal().getPatchPosition();
+        for (int i=0;i<25;i++) {
+            int y = i % 5;
+            int x = i / 5;
+            int goalY = goalPosition % 5;
+            int goalX = goalPosition / 5;
+            int distance = Math.abs(x-goalX) + Math.abs(y-goalY);
+            heuristicArray.add(distance);
+
+        }
+        return heuristicArray;
+    }
+
+    /**
+     * Checking whether a move is possible
+     * @param tokens, the current token list available to a player
+     *        destination, the destination of the move
+     */
+
+    public boolean isTokenAvailable(ArrayList<Token> tokens, Patch destination) {
+        for(Token token : tokens) {
+            if(token.getColor() == destination.getColor()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Deleting a token from the list of player tokens to move to a patch
+     * @param tokens, the current token list available to a player
+     *        destination, the destination of the move
+     * @return modified token list
+     */
+    public ArrayList<Token> spendToken(ArrayList<Token> tokens, Patch destination) {
+        for(Token token : tokens) {
+            if(token.getColor() == destination.getColor()) {
+                tokens.remove(token);
+                break;
+            }
+        }
+        return tokens;
+    }
+
+    public boolean indexInRange(int index){
+        return index >= 0 && index < 25;
+    }
+
+    /**
+     * Adding new positions to the priority queue
+     * @param queue, the current queue
+     * @param position, the current position
+     * @param visited, the list of the already visited fields
+     * @param tokens, the current token list available to a player
+     * @param heuristicArray, the heuristic array of that player
+     * @return updated queue
+     */
+    public PriorityQueue<SearchNode> addNeighborsToQueue(PriorityQueue<SearchNode> queue, int position, int[] visited, ArrayList<Token> tokens, ArrayList<Integer> heuristicArray, int currentCost) {
+        if (indexInRange(position + 1)) {
+            if  (visited[position + 1] == 0) {
+                if  (isTokenAvailable(tokens, patches.get(position+1))) {
+                    queue.add(new SearchNode(position+1, spendToken(tokens, patches.get(position+1)), currentCost + heuristicArray.get(position+1)));
+                }
+            }
+        }
+        if (indexInRange(position - 1)) {
+            if (visited[position - 1] == 0) {
+                if (isTokenAvailable(tokens, patches.get(position - 1))) {
+                    queue.add(new SearchNode(position - 1, spendToken(tokens, patches.get(position-1)), currentCost + heuristicArray.get(position-1)));
+                }
+            }
+        }
+        if (indexInRange(position+5)) {
+            if (visited[position + 5] == 0) {
+                if (isTokenAvailable(tokens, patches.get(position + 5))) {
+                    queue.add(new SearchNode(position + 5, spendToken(tokens, patches.get(position+5)), currentCost + heuristicArray.get(position+5)));
+                }
+            }
+        }
+        if (indexInRange(position-5)) {
+            if  (visited[position-5] == 0) {
+                if (isTokenAvailable(tokens, patches.get(position - 5))) {
+                    queue.add(new SearchNode(position - 5, spendToken(tokens, patches.get(position-5)), currentCost + heuristicArray.get(position-5)));
+                }
+            }
+        }
+        return queue;
+    }
+
+    /**
+     * Handling the A* algorithm.
+     * To improve: check for plausability
+     * @param player, the player for whom the score is calculated
+     *        tokens, the list of the tokens that a player can spend
+     *        visited, the list of the visited fields while looking for the solution
+     * @return finalScore, the score of that player made up of the remaining tokens and its best position
+     */
+    public int astarTraverse(ColoredTrailsPlayer player, ArrayList<Token> tokens, int[] visited) {
+        int position = player.getPlayerPosition();
+        int finalScore = -1;
+
+        ArrayList<Integer> heuristicArray = calculateHeuristicArray(player);
+        PriorityQueue<SearchNode> queue = new PriorityQueue<>((node1, node2) -> {
+            if (node1.cost +  heuristicArray.get(node1.position) < node2.cost + heuristicArray.get(node1.position)) return -1;
+            if (node1.cost + heuristicArray.get(node1.position) > node2.cost + heuristicArray.get(node1.position)) return 1;
+            return 0;
+        });
+
+        ArrayList<Token> tokenCopy = (ArrayList<Token>) tokens.clone();
+
+        SearchNode startNode = new SearchNode(position, tokenCopy, 0);
+        queue.add(startNode);
+
+        int goalPosition = player.getGoal().getPatchPosition();
+        int goalY = goalPosition % 5;
+        int goalX = goalPosition / 5;
+
+        while (!queue.isEmpty()) {
+            SearchNode currentNode = queue.poll();
+            int currentPosition = currentNode.position;
+            int currentCost = currentNode.cost;
+            ArrayList<Token> currentTokens =  currentNode.tokens;
+
+            visited[currentPosition] = 1;
+            queue = addNeighborsToQueue(queue, currentPosition, visited, currentTokens, heuristicArray,currentCost);
+
+            if(currentPosition == goalPosition) {
+                finalScore = tokenScore(currentTokens) + 50;
+                break;
+            }
+            //calculate the utility of the current position
+            int playerY = currentPosition % 5;
+            int playerX = currentPosition/ 5;
+            int positionScore = 50 - 10*((Math.abs(playerX-goalX) + Math.abs(playerY-goalY)));
+            int tokenScore = tokenScore(currentTokens);
+            if (finalScore < positionScore + tokenScore) finalScore = positionScore + tokenScore;
+
+        }
+        return finalScore;
+    }
+
+    /**
+     * Final score calculation based on A* traversal.
+     * @param player, the player for whom the score is calculated
+     * @return bestScore, the score of that player
+     */
+    public int calculateFinalScore(ColoredTrailsPlayer player) {
+        int[] visited = new int[25];
+        for(int i = 0; i<25; i++) {
+            visited[i] = 0;
+        }
+        return astarTraverse(player,tokens.get(player),visited);
+    }
+
+    /**
+     * @return The index of the starting patch in patches
+     */
+    public int getStartPatchIndex() {
+        return startPatchIndex;
+    }
+
+    /**
+     * @return a clone of patches
      */
     public ArrayList<Patch> getPatches() {
         return (ArrayList<Patch>) patches.clone();
@@ -368,21 +561,5 @@ public class Grid implements PropertyChangeListener {
             gameState = state;
         }
     }
-
-
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-
-    }
-
-    public static void main(String[] args) {
-        Grid grid = new Grid();
-        grid.generatePatchesFiveByFive();
-        for(Patch patch : grid.getPatches()) {
-            System.out.println(patch.getColor());
-        }
-    }
-
 
 }

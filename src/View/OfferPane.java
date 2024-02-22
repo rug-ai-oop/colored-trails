@@ -13,12 +13,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 
-public class OfferPane  extends JPanel {
+public class OfferPane  extends JPanel implements PropertyChangeListener {
     protected static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
+    protected static final Map<String, BufferedImage> auxiliaryImages = new HashMap<>(5);
     private Grid grid;
     private GameController controller;
     private JButton yourTokensButton;
@@ -87,6 +90,7 @@ public class OfferPane  extends JPanel {
                 tokenImages.put(color,
                         ImageIO.read(OfferPane.class.getResource("/" + color + ".png")));
             }
+            auxiliaryImages.put("redFlag", ImageIO.read(OfferPane.class.getResource("/RED_FLAG.png")));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -251,6 +255,7 @@ public class OfferPane  extends JPanel {
 
     public OfferPane(Grid grid, GameController controller) {
         this.grid = grid;
+        grid.addListener(this);
         this.controller = controller;
         loadImages();
         setUp();
@@ -269,5 +274,10 @@ public class OfferPane  extends JPanel {
         frame.add(offerPane);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+
     }
 }
