@@ -2,13 +2,11 @@ package View;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Stack;
 
 public class MainPanel extends JPanel {
     private CardLayout cardLayout;
     private JFrame frame; // Reference to the main JFrame
-
-    // Define titles for each card
-    private static final String[] CARD_TITLES = {"Game Options", "Dummy Options", "Tom Selection"};
 
     public MainPanel(JFrame frame) {
         this.frame = frame;
@@ -24,26 +22,12 @@ public class MainPanel extends JPanel {
         add(gameOptionsPanel, "GameOptions");
         add(dummyOptionsPanel, "DummyOptions");
         add(tomSelectionPanel, "TomSelection");
+
     }
 
     // Method to switch to a specific card
     public void showCard(String cardName) {
         cardLayout.show(this, cardName);
-        updateFrameTitle(cardName);
-    }
-
-    // Method to update the frame title based on the card being shown
-    private void updateFrameTitle(String cardName) {
-        int index = -1;
-        for (int i = 0; i < CARD_TITLES.length; i++) {
-            if (CARD_TITLES[i].equals(cardName)) {
-                index = i;
-                break;
-            }
-        }
-        if (index != -1) {
-            frame.setTitle(CARD_TITLES[index]);
-        }
     }
 
     public static void main(String[] args) {

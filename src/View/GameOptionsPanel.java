@@ -43,17 +43,17 @@ public class GameOptionsPanel extends JPanel {
 
         humanVsAgentButton.addActionListener(e -> {
             printGameOption("Human vs. Agent");
-            ((MainPanel) getParent()).showCard("DummyOptions");
+            ((MainPanel) getParent()).showCard("TomSelection");
         });
 
         agentVsAgentButton.addActionListener(e -> {
             printGameOption("Agent vs. Agent");
-            ((MainPanel) getParent()).showCard("DummyOptions");
+            ((MainPanel) getParent()).showCard("TomSelection");
         });
 
         humanVsHumanLikeAgent.addActionListener(e -> {
             printGameOption("Human vs. Human like Agent");
-            ((MainPanel) getParent()).showCard("DummyOptions");
+            ((MainPanel) getParent()).showCard("TomSelection");
         });
 
         // Adding components to panel
@@ -80,7 +80,7 @@ public class GameOptionsPanel extends JPanel {
         MainPanel mainPanel = new MainPanel(frame); // Create an instance of MainPanel
         frame.getContentPane().add(mainPanel); // Add the main panel to the frame
         GameOptionsPanel gameOptionsPanel = new GameOptionsPanel(mainPanel); // Pass the main panel to the constructor
-        mainPanel.add(gameOptionsPanel, "GameOptions"); // Add the GameOptionsPanel to the main panel with CardLayout
+        mainPanel.add(gameOptionsPanel, "GameOptions"); // Add the GameOptionsPanel to the main panel
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

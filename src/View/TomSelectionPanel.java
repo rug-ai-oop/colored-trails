@@ -7,7 +7,10 @@ public class TomSelectionPanel extends JPanel {
     private JButton levelZeroButton;
     private JButton levelOneButton;
     private JButton levelTwoButton;
+    private JButton backButton;
     private JLabel tomLabel;
+
+    private MainPanel mainPanel; // Reference to the main panel
 
     public TomSelectionPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -25,12 +28,27 @@ public class TomSelectionPanel extends JPanel {
         levelTwoButton = new JButton("2");
         levelTwoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        backButton = new JButton("Back");
+
         // Add action listeners to the buttons
-        levelZeroButton.addActionListener(e -> {printButtonNumber("0");});
+        levelZeroButton.addActionListener(e -> {
+            printButtonNumber("0");
+            ((MainPanel) getParent()).showCard("DummyOptions");
+        });
 
-        levelOneButton.addActionListener(e -> {printButtonNumber("1");});
+        levelOneButton.addActionListener(e -> {
+            printButtonNumber("1");
+            ((MainPanel) getParent()).showCard("DummyOptions");
+        });
 
-        levelTwoButton.addActionListener(e -> {printButtonNumber("2");});
+        levelTwoButton.addActionListener(e -> {
+            printButtonNumber("2");
+            ((MainPanel) getParent()).showCard("DummyOptions");
+        });
+
+        backButton.addActionListener(e -> {
+            ((MainPanel) getParent()).showCard("GameOptions");
+        });
 
         add(Box.createVerticalGlue());
         add(tomLabel);
@@ -40,6 +58,7 @@ public class TomSelectionPanel extends JPanel {
         add(levelOneButton);
         add(Box.createRigidArea(new Dimension(0, 5)));
         add(levelTwoButton);
+        add(backButton);
         add(Box.createVerticalGlue());
 
     }
