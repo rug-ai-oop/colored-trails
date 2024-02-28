@@ -11,8 +11,8 @@ public class Grid {
      * The order of using the grid is:
      *      1) Create the grid
      *      2) Add the players
-     *      3) Set up the grid
-     *      4) Add the listeners (By creating the view components)
+     *      3) Add the listeners (By creating the view components)
+     *      4) Set up the grid
      *      5) Start the grid
      */
     private int maximumNumberOfTurns;
@@ -81,7 +81,7 @@ public class Grid {
     /**
      * if the players and patches have been created, assigns 4 tokens randomly to each player
      */
-    private void distributeTokensToPlayers() {
+    private void distributeTokensToPlayers() throws IllegalAccessException {
         if(players != null && patches != null) {
             ArrayList<Patch> patchesCopy = (ArrayList<Patch>) patches.clone();
             Collections.shuffle(patchesCopy);
@@ -96,11 +96,12 @@ public class Grid {
                     }
                     tokens.get(playerToReceiveToken).add(tokenToBeReceived);
                     allTokensInPlay.add(tokenToBeReceived);
-                } else {
-                    return;
                 }
-
             }
+            notifyListeners(new PropertyChangeEvent(this, "tokensDistributed",
+                    null, null));
+        } else {
+            throw new IllegalAccessException("The players and patches need to be created first");
         }
     }
 
@@ -303,7 +304,11 @@ public class Grid {
      */
     public void setUp() {
         generatePatchesFiveByFive();
-        distributeTokensToPlayers();
+        try {
+            distributeTokensToPlayers();
+        } catch (IllegalAccessException e) {
+            System.out.println(e.getStackTrace());
+        }
         assignGoalsToPlayers();
     }
 

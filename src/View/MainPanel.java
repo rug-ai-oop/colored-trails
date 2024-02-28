@@ -1,5 +1,9 @@
 package View;
 
+import Controller.GameController;
+import Model.Grid;
+import Model.HumanPlayer;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -53,6 +57,11 @@ public class MainPanel extends JPanel {
 
             MainPanel mainPanel = new MainPanel(frame);
             frame.add(mainPanel);
+
+            Grid game = new Grid();
+            game.addPlayer(new HumanPlayer());
+            game.addPlayer(new HumanPlayer());
+            game.setUp();
 
             // Show a specific card initially
             mainPanel.showCard("GameOptions");

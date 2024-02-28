@@ -10,13 +10,14 @@ import java.awt.*;
 public class ViewTester {
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        frame.setSize(1200, 1000);
+        frame.setSize(500, 400);
         Grid game = new Grid();
         // PropertyChange needs to be implemented in the grid, so that the listeners can be added after
         game.addPlayer(new HumanPlayer());
         game.addPlayer(new HumanPlayer());
-        OfferPane offerPane = new OfferPane(game, new GameController(game));
-        GridPane gridPane = new GridPane(game, new GameController(game));
+        GameController controller = new GameController(game);
+        GridPane gridPane = new GridPane(game, controller);
+        OfferPane offerPane = new OfferPane(game, controller);
         game.setUp();
         frame.setLayout(new BorderLayout());
         frame.add(offerPane, BorderLayout.SOUTH);

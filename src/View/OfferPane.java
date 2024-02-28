@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 
-public class OfferPane  extends JPanel implements PropertyChangeListener {
+public class OfferPane  extends JPanel implements PropertyChangeListener, AllowedToListen {
     private static Color defaultButtonColor = new Color(238, 238, 238);
     protected static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
     protected static final Map<String, BufferedImage> auxiliaryImages = new HashMap<>(5);
@@ -261,28 +261,17 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
 
     public OfferPane(Grid grid, GameController controller) {
         this.grid = grid;
-        grid.addListener(this);
         this.controller = controller;
+        grid.addListener(this);
         loadImages();
         setUp();
     }
 
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setSize(1200, 200);
-        Grid game = new Grid();
-        game.addPlayer(new HumanPlayer());
-        game.addPlayer(new HumanPlayer());
-        game.setUp();
-        OfferPane offerPane = new OfferPane(game, new GameController(game));
-        frame.add(offerPane);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setVisible(true);
-    }
-
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        
+        if(evt.getPropertyName() == "tokensDistributed") {
+            addInitialButtonsToUnassignedTokensPanel();
+        }
     }
 }

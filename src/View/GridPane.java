@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 public class GridPane extends JPanel implements PropertyChangeListener, AllowedToListen {
     private Grid grid;
+    private ArrayList<HumanPlayer> humanPlayers = new ArrayList();
     private GameController controller;
     private ArrayList<JButton> buttons = new ArrayList();
     public void init() {
@@ -75,10 +76,11 @@ public class GridPane extends JPanel implements PropertyChangeListener, AllowedT
                     Image scaledTokenImage =  OfferPane.auxiliaryImages.get("redFlag").getScaledInstance(80
                             , 80, Image.SCALE_SMOOTH);
                     button.setIcon(new ImageIcon(scaledTokenImage));
+                    humanPlayers.add((HumanPlayer) evt.getOldValue());
                 }
-                System.out.println("Failure");
                 break;
             case "createdPatches":
+                addButtonsToGrid();
                 break;
 
         }
