@@ -385,9 +385,9 @@ public class Grid {
     public int tokenScore(ArrayList<Token> tokens){
         int score = 0;
         for(Token token : tokens) {
-            score += 1;
+            score += 5;
         }
-        return 5*score;
+        return score;
     }
 
     /**
