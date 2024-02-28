@@ -269,6 +269,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
         unassignedTokensPanel.removeAll();
         yourTokensPanel.removeAll();
         partnerTokensPanel.removeAll();
+        isSendButtonOnScreen = false;
     }
 
     public OfferPane(Grid grid, GameController controller) {
@@ -284,15 +285,15 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
     public void propertyChange(PropertyChangeEvent evt) {
         switch (evt.getPropertyName()) {
             case "initiatingOffer":
-                resetOfferPanel();
                 if(grid.getCurrentPlayer() instanceof HumanPlayer) {
-                    addButtonsToUnassignedTokensPanel();
                     this.add(centerPanel, BorderLayout.CENTER);
+                    addButtonsToUnassignedTokensPanel();
                     revalidate();
                 }
                 break;
             case "offerFinished":
                 this.remove(centerPanel);
+                resetOfferPanel();
                 revalidate();
                 break;
         }

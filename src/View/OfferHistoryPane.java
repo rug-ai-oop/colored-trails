@@ -26,6 +26,7 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener, 
         mainPanel.setBackground(OfferPane.defaultButtonColor);
         this.setBackground(OfferPane.defaultButtonColor);
         scrollPane.setBackground(OfferPane.defaultButtonColor);
+        this.add(mainPanel);
     }
 
     public OfferHistoryPane(Grid grid, HumanPlayer playerToDisplayOnTheLeft) {
@@ -53,24 +54,22 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener, 
 
         // Adds the tokens to the left panel of the offer panel
         for(Token token : offer.get(0)) {
-            JButton tokenButton = new JButton();
-            tokenButton.setPreferredSize(new Dimension(40, 40));
-            tokenButton.setEnabled(false);
+            JLabel tokenLabel = new JLabel();
+            tokenLabel.setPreferredSize(new Dimension(40, 40));
             Image scaledTokenImage =  OfferPane.tokenImages.get(token.getColor()).
                     getScaledInstance(40, 20, Image.SCALE_SMOOTH);
-            tokenButton.setIcon(new ImageIcon(scaledTokenImage));
-            leftOfferPanel.add(tokenButton);
+            tokenLabel.setIcon(new ImageIcon(scaledTokenImage));
+            leftOfferPanel.add(tokenLabel);
         }
 
         // Adds the tokens to the right panel of the offer panel
         for(Token token : offer.get(1)) {
-            JButton tokenButton = new JButton();
-            tokenButton.setPreferredSize(new Dimension(40, 40));
-            tokenButton.setEnabled(false);
+            JLabel tokenLabel = new JLabel();
+            tokenLabel.setPreferredSize(new Dimension(40, 40));
             Image scaledTokenImage =  OfferPane.tokenImages.get(token.getColor()).
                     getScaledInstance(40, 20, Image.SCALE_SMOOTH);
-            tokenButton.setIcon(new ImageIcon(scaledTokenImage));
-            rightOfferPanel.add(tokenButton);
+            tokenLabel.setIcon(new ImageIcon(scaledTokenImage));
+            rightOfferPanel.add(tokenLabel);
         }
 
         mainOfferPanel.add(leftOfferPanel, BorderLayout.WEST);

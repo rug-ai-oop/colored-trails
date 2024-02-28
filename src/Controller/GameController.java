@@ -29,11 +29,19 @@ public class GameController implements ActionListener {
                 if(currentPlayer instanceof HumanPlayer && selectedToken != null) {
                     ((HumanPlayer) currentPlayer).addTokenToSupposedOwnTokens(selectedToken);
                 }
+                selectedToken = null;
+                break;
+            case "moveToPartner", "moveTo":
+                if(currentPlayer instanceof HumanPlayer && selectedToken != null) {
+                    ((HumanPlayer) currentPlayer).removeFromSupposedOwnTokens(selectedToken);
+                }
+                selectedToken = null;
                 break;
             case "send":
                 if(currentPlayer instanceof HumanPlayer) {
                     ((HumanPlayer) currentPlayer).setState(HumanPlayer.OfferState.COMPLETE);
                 }
+                selectedToken = null;
         }
 
     }

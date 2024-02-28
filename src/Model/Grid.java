@@ -188,7 +188,21 @@ public class Grid {
         for(ArrayList<Token> hand : offer) {
             allTokensInOffer.addAll(hand);
         }
-        if(!( allTokensInPlay.equals(allTokensInOffer) || allTokensInPlay.size() != allTokensInOffer.size() )) {
+        System.out.println(allTokensInPlay.size());
+        System.out.println(allTokensInOffer.size());
+        if(allTokensInPlay.size() != allTokensInOffer.size() ) {
+            throw new IllegalAccessException("The number of allTokensInPlay does not match the number of allTokensInOffer" +
+                    " The tokens need to be conserved within the game!");
+        }
+        for(int i = 0; i < allTokensInPlay.size(); i++) {
+            for(int j = 0; j < allTokensInOffer.size(); j++) {
+                if(allTokensInPlay.get(i).getColor() == allTokensInOffer.get(j).getColor()) {
+                    allTokensInOffer.remove(j);
+                    break;
+                }
+            }
+        }
+        if(!allTokensInOffer.isEmpty()) {
             throw new IllegalAccessException("The tokens need to be conserved within the game!");
         }
         return true;
@@ -313,7 +327,7 @@ public class Grid {
         try {
             distributeTokensToPlayers();
         } catch (IllegalAccessException e) {
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
         assignGoalsToPlayers();
     }
@@ -347,7 +361,6 @@ public class Grid {
     public boolean start() throws IllegalAccessException {
         setGameState(STATE.ACTIVE);
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
-            System.out.println(numberOfTurns);
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
             ColoredTrailsPlayer partner = getPlayer(numberOfTurns + 1);
             currentPlayer.revealGoal();        // Ask the player to reveal its goal
@@ -363,7 +376,6 @@ public class Grid {
             notifyListeners(new PropertyChangeEvent(currentPlayer, "offerFinished", null, null));
             if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
                 offers.put(currentPlayer, null);
-                System.out.println("Illegal Offer");
             } else {
                 if(acceptedOffer(offers.get(currentPlayer), offers.get(partner))) {
                     setGameState(STATE.INACTIVE);
