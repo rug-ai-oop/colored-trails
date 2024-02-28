@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class OfferPane  extends JPanel implements PropertyChangeListener, AllowedToListen {
-    private static Color defaultButtonColor = new Color(238, 238, 238);
-    protected static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
+    public static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
+    public static Color defaultButtonColor = new Color(238, 238, 238);
     protected static final Map<String, BufferedImage> auxiliaryImages = new HashMap<>(5);
     private Grid grid;
     private GameController controller;
@@ -90,13 +90,17 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
     /**
      * Preloads images
      */
-    protected static void loadImages() {
+    public static void loadImages() {
         try {
-            for (Model.Color color : Model.Color.values()) {
-                tokenImages.put(color,
-                        ImageIO.read(OfferPane.class.getResource("/" + color + ".png")));
+            if (tokenImages.isEmpty()) {
+                for (Model.Color color : Model.Color.values()) {
+                    tokenImages.put(color,
+                            ImageIO.read(OfferPane.class.getResource("/" + color + ".png")));
+                }
             }
-            auxiliaryImages.put("redFlag", ImageIO.read(OfferPane.class.getResource("/RED_FLAG.png")));
+            if(auxiliaryImages.isEmpty()) {
+                auxiliaryImages.put("redFlag", ImageIO.read(OfferPane.class.getResource("/RED_FLAG.png")));
+            }
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -228,7 +232,6 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
         centerPanel.add(leftPanel);
         centerPanel.add(middlePanel);
         centerPanel.add(rightPanel);
-        this.add(centerPanel, BorderLayout.CENTER);
 
         // Send Button
         sendButton = new JButton("Send Offer");
@@ -244,7 +247,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
      * The method adds the buttons on the unassignedTokensPanel
      * corresponding to all the grid's tokens in play
      */
-    private void addInitialButtonsToUnassignedTokensPanel() {
+    private void addButtonsToUnassignedTokensPanel() {
         for(Token token : grid.getAllTokensInPlay()) {
             TokenButton tokenButton = new TokenButton(token);
             tokenButton.setActionCommand("selectToken");
@@ -259,6 +262,15 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
         this.revalidate();
     }
 
+    /**
+     * Removes all the buttons on the panels
+     */
+    private void resetOfferPanel() {
+        unassignedTokensPanel.removeAll();
+        yourTokensPanel.removeAll();
+        partnerTokensPanel.removeAll();
+    }
+
     public OfferPane(Grid grid, GameController controller) {
         this.grid = grid;
         this.controller = controller;
@@ -270,8 +282,19 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if(evt.getPropertyName() == "tokensDistributed") {
-            addInitialButtonsToUnassignedTokensPanel();
+        switch (evt.getPropertyName()) {
+            case "initiatingOffer":
+                resetOfferPanel();
+                if(grid.getCurrentPlayer() instanceof HumanPlayer) {
+                    addButtonsToUnassignedTokensPanel();
+                    this.add(centerPanel, BorderLayout.CENTER);
+                    revalidate();
+                }
+                break;
+            case "offerFinished":
+                this.remove(centerPanel);
+                revalidate();
+                break;
         }
     }
 }

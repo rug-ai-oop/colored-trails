@@ -180,15 +180,18 @@ public class Grid {
      *              representing their offered hand
      * @return true if the offer is legal, false otherwise
      */
-    private boolean isOfferLegal(ArrayList<ArrayList<Token>> offer) {
+    private boolean isOfferLegal(ArrayList<ArrayList<Token>> offer) throws IllegalAccessException {
         if(offer.size() != players.size()) {    //check that the players offered something for all players
-            return false;
+            throw new IllegalAccessException("All the players need a hand!");
         }
         ArrayList<Token> allTokensInOffer = new ArrayList<>();
         for(ArrayList<Token> hand : offer) {
             allTokensInOffer.addAll(hand);
         }
-        return allTokensInPlay.equals(allTokensInOffer) || allTokensInPlay.size() != allTokensInOffer.size();
+        if(!( allTokensInPlay.equals(allTokensInOffer) || allTokensInPlay.size() != allTokensInOffer.size() )) {
+            throw new IllegalAccessException("The tokens need to be conserved within the game!");
+        }
+        return true;
     }
 
     /**
@@ -263,6 +266,9 @@ public class Grid {
         players.add(player);
         player.setGrid(this);
         goalsToAnnounce.put(player, null);
+        offers.put(player, new ArrayList(2));
+        offers.get(player).add(new ArrayList<>());
+        offers.get(player).add(new ArrayList<>());
     }
 
     /**
@@ -317,7 +323,7 @@ public class Grid {
      * @param player: The player which makes the offer
      * @param offer: The offer of the player
      */
-    public void setOffer(ColoredTrailsPlayer player, ArrayList<ArrayList<Token>> offer) {
+    private void setOffer(ColoredTrailsPlayer player, ArrayList<ArrayList<Token>> offer) {
         offers.put(player, offer);
     }
 
@@ -338,9 +344,10 @@ public class Grid {
      * maximumNumberOfTurns, initially set to 40
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
-    public boolean start() {
+    public boolean start() throws IllegalAccessException {
         setGameState(STATE.ACTIVE);
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
+            System.out.println(numberOfTurns);
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
             ColoredTrailsPlayer partner = getPlayer(numberOfTurns + 1);
             currentPlayer.revealGoal();        // Ask the player to reveal its goal
@@ -350,20 +357,24 @@ public class Grid {
                         goalsToAnnounce.get(currentPlayer)));
             }
             setGameState(STATE.WAITING_FOR_OFFER);
-            currentPlayer.makeOffer();      // Ask the player to make an offer
+            notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
+            ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
+            setOffer(currentPlayer, offer);
+            notifyListeners(new PropertyChangeEvent(currentPlayer, "offerFinished", null, null));
             if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
                 offers.put(currentPlayer, null);
+                System.out.println("Illegal Offer");
             } else {
                 if(acceptedOffer(offers.get(currentPlayer), offers.get(partner))) {
                     setGameState(STATE.INACTIVE);
                     notifyListeners(new PropertyChangeEvent(this, "gameOver", null,
                             numberOfTurns < maximumNumberOfTurns));
-                } else {
-                    numberOfTurns++;
-                    notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
-                            offers.get(currentPlayer)));
+                    return false;
                 }
+                notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
+                        offers.get(currentPlayer).clone()));
             }
+            numberOfTurns++;
         }
         return numberOfTurns < maximumNumberOfTurns;
     }

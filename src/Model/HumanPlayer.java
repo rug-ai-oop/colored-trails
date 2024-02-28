@@ -52,17 +52,17 @@ public class HumanPlayer extends ColoredTrailsPlayer{
      * The method waits until the offer is complete, when it sets the offer in the grid
      */
     @Override
-    public void makeOffer() {
+    public ArrayList<ArrayList<Token>> makeOffer() {
         while(state != OfferState.COMPLETE) {
-            continue;
+            System.out.println("");
         }
         ArrayList<ArrayList<Token>> offer = new ArrayList(2);
         ArrayList<Token> partnerHand = grid.getAllTokensInPlay();
         partnerHand.removeAll(supposedOwnTokens);
         offer.add(0, supposedOwnTokens);
         offer.add(1, partnerHand);
-        grid.setOffer(this, offer);
-        System.out.println("Offer sent");
+        System.out.println(offer);
+        return offer;
     }
 
 }
