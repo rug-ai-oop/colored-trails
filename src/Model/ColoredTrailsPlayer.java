@@ -47,7 +47,7 @@ public abstract class ColoredTrailsPlayer {
     }
     public abstract void revealGoal();
     public abstract void listenToGoal(Patch goal);
-    public abstract void makeOffer();
+    public abstract ArrayList<ArrayList<Token>> makeOffer();
 
     public abstract void receiveOffer(ArrayList<ArrayList<Token>> offer);
 

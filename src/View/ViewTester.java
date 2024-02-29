@@ -10,18 +10,37 @@ import java.awt.*;
 public class ViewTester {
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        frame.setSize(1200, 1000);
+        frame.setSize(500, 400);
         Grid game = new Grid();
-        // PropertyChange needs to be implemented in the grid, so that the listeners can be added after
-        game.addPlayer(new HumanPlayer());
-        game.addPlayer(new HumanPlayer());
-        OfferPane offerPane = new OfferPane(game, new GameController(game));
-        GridPane gridPane = new GridPane(game, new GameController(game));
+        HumanPlayer firstPlayer = new HumanPlayer();
+        HumanPlayer secondPlayer = new HumanPlayer();
+        game.addPlayer(firstPlayer);
+        game.addPlayer(secondPlayer);
+        GameController controller = new GameController(game);
+        GridPane gridPane = new GridPane(game, controller);
+        OfferPane offerPane = new OfferPane(game, controller);
         game.setUp();
         frame.setLayout(new BorderLayout());
         frame.add(offerPane, BorderLayout.SOUTH);
         frame.add(gridPane);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
+
+        JFrame frameForOffers = new JFrame("Offers");
+        frameForOffers.setLayout(new BorderLayout());
+        frameForOffers.setSize(500, 400);
+        frameForOffers.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        OfferHistoryPane offerHistoryPane = new OfferHistoryPane(game, firstPlayer);
+        frameForOffers.add(offerHistoryPane);
+        frameForOffers.setVisible(true);
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        try {
+            game.start();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 }
