@@ -14,7 +14,7 @@ public class TomSelectionPanel extends JPanel {
 
     public TomSelectionPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setPreferredSize(new Dimension(250, 250));
+        setPreferredSize(new Dimension(250, 300));
 
         tomLabel = new JLabel("ToM Level of agent");
         tomLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -58,21 +58,21 @@ public class TomSelectionPanel extends JPanel {
         add(levelOneButton);
         add(Box.createRigidArea(new Dimension(0, 5)));
         add(levelTwoButton);
+        add(Box.createRigidArea(new Dimension(0, 5)));
         add(backButton);
         add(Box.createVerticalGlue());
 
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        // Set the bounds of the backButton after the panel has been displayed
+        backButton.setBounds(10, getHeight() - backButton.getHeight() - 10, 100, 30);
     }
 
     private void printButtonNumber(String number) {
         System.out.println("Agent ToM level is set to" + number);
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("ToM Selection");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(new TomSelectionPanel());
-        frame.pack();
-        frame.setLocationRelativeTo(null); // Center the window
-        frame.setVisible(true);
-    }
 }

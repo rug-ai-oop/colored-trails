@@ -9,6 +9,7 @@ import java.awt.*;
 import java.util.Stack;
 
 public class MainPanel extends JPanel {
+    private String selectedOption; // Store the selected game option
     private CardLayout cardLayout;
     private JFrame frame; // Reference to the main JFrame
 
@@ -16,6 +17,7 @@ public class MainPanel extends JPanel {
         this.frame = frame;
         cardLayout = new CardLayout();
         setLayout(cardLayout);
+        setPreferredSize(new Dimension(250, 250));
 
         // Create instances of panels (cards)
         GameOptionsPanel gameOptionsPanel = new GameOptionsPanel(this);
@@ -32,6 +34,30 @@ public class MainPanel extends JPanel {
     // Method to switch to a specific card
     public void showCard(String cardName) {
         cardLayout.show(this, cardName);
+    }
+
+    public void setGameOption(String option) {
+        selectedOption = option;
+    }
+
+    public void initializeGame() {
+        // Initialize the game based on the selected option
+        System.out.println(selectedOption);
+        if (selectedOption != null) {
+            switch (selectedOption) {
+                case "Human vs. Human":
+                    // Initialize game with 2 human players
+                    break;
+                case "Human vs. Agent":
+                    // Initialize game with 1 human player and 1 agent
+                    break;
+                case "Agent vs. Agent":
+                    // Initialize game with 2 agents
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -52,6 +78,7 @@ public class MainPanel extends JPanel {
 
             frame.pack();
             frame.setLocationRelativeTo(null); // Center the window
+            frame.setResizable(false);
             frame.setVisible(true);
         });
     }

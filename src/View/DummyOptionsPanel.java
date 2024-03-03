@@ -33,11 +33,20 @@ public class DummyOptionsPanel extends JPanel {
         backButton = new JButton("Back");
 
         // Add action listeners to the buttons
-        humanVsHumanButton.addActionListener(e -> {printGameOption("Human vs. Human");});
+        humanVsHumanButton.addActionListener(e -> {
+            printGameOption("Human vs. Human");
+            mainPanel.initializeGame();
+        });
 
-        humanVsAgentButton.addActionListener(e -> {printGameOption("Human vs. Agent");});
+        humanVsAgentButton.addActionListener(e -> {
+            printGameOption("Human vs. Agent");
+            mainPanel.initializeGame();
+        });
 
-        agentVsAgentButton.addActionListener(e -> {printGameOption("Agent vs. Agent");;});
+        agentVsAgentButton.addActionListener(e -> {
+            printGameOption("Agent vs. Agent");
+            mainPanel.initializeGame();
+        });
 
         backButton.addActionListener(e -> {((MainPanel) getParent()).showCard("TomSelection");});
 
@@ -49,9 +58,17 @@ public class DummyOptionsPanel extends JPanel {
         add(humanVsAgentButton);
         add(Box.createRigidArea(new Dimension(0, 5)));
         add(agentVsAgentButton);
+        add(Box.createRigidArea(new Dimension(0, 5)));
         add(backButton);
         add(Box.createVerticalGlue());
 
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        // Set the bounds of the backButton after the panel has been displayed
+        backButton.setBounds(10, getHeight() - backButton.getHeight() - 10, 100, 30);
     }
 
     private void printGameOption(String option) {

@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GameOptionsPanel extends JPanel {
+    private String selectedOption; // Store the selected game option
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
     private JButton agentVsAgentButton;
@@ -17,7 +18,7 @@ public class GameOptionsPanel extends JPanel {
         this.mainPanel = mainPanel;
         // Setting layout
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setPreferredSize(new Dimension(250, 350));
+        setPreferredSize(new Dimension(250, 300));
 
         // Initializing components
         gameOptionsLabel = new JLabel("Game Options");
@@ -38,21 +39,29 @@ public class GameOptionsPanel extends JPanel {
         // Adding action listeners to the buttons
         humanVsHumanButton.addActionListener(e -> {
             printGameOption("Human vs. Human");
+            selectedOption = "Human vs. Human";
+            mainPanel.setGameOption(selectedOption);
             ((MainPanel) getParent()).showCard("DummyOptions");
         });
 
         humanVsAgentButton.addActionListener(e -> {
             printGameOption("Human vs. Agent");
+            selectedOption = "Human vs. Agent";
+            mainPanel.setGameOption(selectedOption);
             ((MainPanel) getParent()).showCard("TomSelection");
         });
 
         agentVsAgentButton.addActionListener(e -> {
             printGameOption("Agent vs. Agent");
+            selectedOption = "Agent vs. Agent";
+            mainPanel.setGameOption(selectedOption);
             ((MainPanel) getParent()).showCard("TomSelection");
         });
 
         humanVsHumanLikeAgent.addActionListener(e -> {
             printGameOption("Human vs. Human like Agent");
+            selectedOption = "Human vs. Human like Agent";
+            mainPanel.setGameOption(selectedOption);
             ((MainPanel) getParent()).showCard("TomSelection");
         });
 
@@ -74,15 +83,4 @@ public class GameOptionsPanel extends JPanel {
         System.out.println("Selected game option: " + option);
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Colored Trails - Game Options");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        MainPanel mainPanel = new MainPanel(frame); // Create an instance of MainPanel
-        frame.getContentPane().add(mainPanel); // Add the main panel to the frame
-        GameOptionsPanel gameOptionsPanel = new GameOptionsPanel(mainPanel); // Pass the main panel to the constructor
-        mainPanel.add(gameOptionsPanel, "GameOptions"); // Add the GameOptionsPanel to the main panel
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
 }
