@@ -373,6 +373,8 @@ public class Grid {
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
             ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
             setOffer(currentPlayer, offer);
+            System.out.println(offer);
+            System.out.println(offers.get(partner));
             notifyListeners(new PropertyChangeEvent(currentPlayer, "offerFinished", null, null));
             if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
                 offers.put(currentPlayer, null);

@@ -7,7 +7,7 @@ public class HumanPlayer extends ColoredTrailsPlayer{
     public enum OfferState {
         COMPLETE, INCOMPLETE
     }
-    private OfferState state = OfferState.INCOMPLETE;
+    private volatile OfferState state = OfferState.INCOMPLETE;
     private ArrayList<Token> supposedOwnTokens;
 
     /**
@@ -19,6 +19,7 @@ public class HumanPlayer extends ColoredTrailsPlayer{
             supposedOwnTokens.remove(0);
         }
     }
+
 
     public HumanPlayer() {
         super();
@@ -70,7 +71,7 @@ public class HumanPlayer extends ColoredTrailsPlayer{
     public ArrayList<ArrayList<Token>> makeOffer() {
         removeAllSupposedTokens();
         while(state != OfferState.COMPLETE) {
-            System.out.println("");
+
         }
         ArrayList<ArrayList<Token>> offer = new ArrayList(2);
         ArrayList<Token> partnerHand = grid.getAllTokensInPlay();
@@ -81,5 +82,6 @@ public class HumanPlayer extends ColoredTrailsPlayer{
         System.out.println(offer);
         return offer;
     }
+
 
 }
