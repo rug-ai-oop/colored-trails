@@ -9,6 +9,7 @@ public class DummyOptionsPanel extends JPanel {
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
     private JButton agentVsAgentButton;
+    private JButton backButton;
     private JLabel subGameOptionsLabel;
     private MainPanel mainPanel; // Reference to the main panel
 
@@ -29,11 +30,25 @@ public class DummyOptionsPanel extends JPanel {
         agentVsAgentButton = new JButton("Agent vs. Agent");
         agentVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        backButton = new JButton("Back");
+
         // Add action listeners to the buttons
+        humanVsHumanButton.addActionListener(e -> {
+            printGameOption("Human vs. Human");
+            mainPanel.initializeGame();
+        });
 
-        humanVsAgentButton.addActionListener(e -> { mainPanel.showCard("TomSelection");});
+        humanVsAgentButton.addActionListener(e -> {
+            printGameOption("Human vs. Agent");
+            mainPanel.initializeGame();
+        });
 
-        agentVsAgentButton.addActionListener(e -> {mainPanel.showCard("TomSelection");});
+        agentVsAgentButton.addActionListener(e -> {
+            printGameOption("Agent vs. Agent");
+            mainPanel.initializeGame();
+        });
+
+        backButton.addActionListener(e -> {((MainPanel) getParent()).showCard("TomSelection");});
 
         add(Box.createVerticalGlue());
         add(subGameOptionsLabel);
@@ -43,6 +58,20 @@ public class DummyOptionsPanel extends JPanel {
         add(humanVsAgentButton);
         add(Box.createRigidArea(new Dimension(0, 5)));
         add(agentVsAgentButton);
+        add(Box.createRigidArea(new Dimension(0, 5)));
+        add(backButton);
         add(Box.createVerticalGlue());
+
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        // Set the bounds of the backButton after the panel has been displayed
+        backButton.setBounds(10, getHeight() - backButton.getHeight() - 10, 100, 30);
+    }
+
+    private void printGameOption(String option) {
+        System.out.println("Game option selected by participant: " + option);
     }
 }

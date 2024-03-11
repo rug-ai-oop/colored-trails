@@ -7,11 +7,14 @@ public class TomSelectionPanel extends JPanel {
     private JButton levelZeroButton;
     private JButton levelOneButton;
     private JButton levelTwoButton;
+    private JButton backButton;
     private JLabel tomLabel;
+
+    private MainPanel mainPanel; // Reference to the main panel
 
     public TomSelectionPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setPreferredSize(new Dimension(250, 250));
+        setPreferredSize(new Dimension(250, 300));
 
         tomLabel = new JLabel("ToM Level of agent");
         tomLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -25,12 +28,27 @@ public class TomSelectionPanel extends JPanel {
         levelTwoButton = new JButton("2");
         levelTwoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        backButton = new JButton("Back");
+
         // Add action listeners to the buttons
-        levelZeroButton.addActionListener(e -> {printButtonNumber("0");});
+        levelZeroButton.addActionListener(e -> {
+            printButtonNumber("0");
+            ((MainPanel) getParent()).showCard("DummyOptions");
+        });
 
-        levelOneButton.addActionListener(e -> {printButtonNumber("1");});
+        levelOneButton.addActionListener(e -> {
+            printButtonNumber("1");
+            ((MainPanel) getParent()).showCard("DummyOptions");
+        });
 
-        levelTwoButton.addActionListener(e -> {printButtonNumber("2");});
+        levelTwoButton.addActionListener(e -> {
+            printButtonNumber("2");
+            ((MainPanel) getParent()).showCard("DummyOptions");
+        });
+
+        backButton.addActionListener(e -> {
+            ((MainPanel) getParent()).showCard("GameOptions");
+        });
 
         add(Box.createVerticalGlue());
         add(tomLabel);
@@ -40,20 +58,21 @@ public class TomSelectionPanel extends JPanel {
         add(levelOneButton);
         add(Box.createRigidArea(new Dimension(0, 5)));
         add(levelTwoButton);
+        add(Box.createRigidArea(new Dimension(0, 5)));
+        add(backButton);
         add(Box.createVerticalGlue());
 
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        // Set the bounds of the backButton after the panel has been displayed
+        backButton.setBounds(10, getHeight() - backButton.getHeight() - 10, 100, 30);
     }
 
     private void printButtonNumber(String number) {
         System.out.println("Agent ToM level is set to" + number);
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("ToM Selection");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(new TomSelectionPanel());
-        frame.pack();
-        frame.setLocationRelativeTo(null); // Center the window
-        frame.setVisible(true);
-    }
 }
