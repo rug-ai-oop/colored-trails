@@ -387,6 +387,8 @@ public class Grid {
 
     /**
      * Creating a heuristic array for the A* algorithm based on the manhattan distance to the goal coordinates
+     * On each position, multiply the distance by 5 as going closer to 1 step requires to lose 5 points.
+     * Then, the distance
      * @param player the player for whom the score is calculated
      * @return heuristicArray, the heuristic array of that player
      */
@@ -399,7 +401,7 @@ public class Grid {
             int goalY = goalPosition % 5;
             int goalX = goalPosition / 5;
             int distance = Math.abs(x-goalX) + Math.abs(y-goalY);
-            heuristicArray.add(distance);
+            heuristicArray.add(Math.max(0,50 - 5*distance));
 
         }
         return heuristicArray;
@@ -436,12 +438,41 @@ public class Grid {
         return tokens;
     }
 
+    /**
+     * Calculating utility based on the position change and the tokens left to spend
+     * @param position, the position the player wants to move to
+     * @param tokens, the current token list available to a player
+     * @param heuristicArray, the heuristic array of that player
+     * @return tileScore, the combined token and
+     * */
+    public int getTileUtility(int position, ArrayList<Token> tokens, ArrayList<Integer> heuristicArray) {
+        int tileScore = tokenScore(tokens) -5; //-5 as one token has to be spent to move
+        tileScore = tileScore + heuristicArray.get(position);
+        return tileScore;
+    }
+
+    /**
+     * Adjusting utility based on the position change, as going closer to the goal should increase the utility
+     * while going back should decrease it
+     * @param tileUtility, the new utility obtained by moving to a tile
+     * @param currentCost, the utility before moving to a tile
+     * @return tileScore, the combined token and
+     * */
+    public int compareUtilities(int tileUtility, int currentCost) {
+        if (tileUtility >= currentCost) {
+            return tileUtility + 10;
+        }
+        else {
+            return tileUtility - 10;
+        }
+    }
+
     public boolean indexInRange(int index){
         return index >= 0 && index < 25;
     }
 
     /**
-     * Adding new positions to the priority queue
+     * Adding new positions to the priority queue based on tile utilities calculated from predefined rules
      * @param queue, the current queue
      * @param position, the current position
      * @param visited, the list of the already visited fields
@@ -452,29 +483,37 @@ public class Grid {
     public PriorityQueue<SearchNode> addNeighborsToQueue(PriorityQueue<SearchNode> queue, int position, int[] visited, ArrayList<Token> tokens, ArrayList<Integer> heuristicArray, int currentCost) {
         if (indexInRange(position + 1)) {
             if  (visited[position + 1] == 0) {
-                if  (isTokenAvailable(tokens, patches.get(position+1))) {
-                    queue.add(new SearchNode(position+1, spendToken(tokens, patches.get(position+1)), currentCost + heuristicArray.get(position+1)));
+                if  (isTokenAvailable(tokens, patches.get(position + 1))) {
+                    int tileUtility =  getTileUtility(position + 1, tokens, heuristicArray);
+                    tileUtility = compareUtilities(tileUtility, currentCost);
+                    queue.add(new SearchNode(position+1, spendToken(tokens, patches.get(position+1)), tileUtility));
                 }
             }
         }
         if (indexInRange(position - 1)) {
             if (visited[position - 1] == 0) {
                 if (isTokenAvailable(tokens, patches.get(position - 1))) {
-                    queue.add(new SearchNode(position - 1, spendToken(tokens, patches.get(position-1)), currentCost + heuristicArray.get(position-1)));
+                    int tileUtility =  getTileUtility(position - 1, tokens, heuristicArray);
+                    tileUtility = compareUtilities(tileUtility, currentCost);
+                    queue.add(new SearchNode(position - 1, spendToken(tokens, patches.get(position-1)), tileUtility));
                 }
             }
         }
         if (indexInRange(position+5)) {
             if (visited[position + 5] == 0) {
                 if (isTokenAvailable(tokens, patches.get(position + 5))) {
-                    queue.add(new SearchNode(position + 5, spendToken(tokens, patches.get(position+5)), currentCost + heuristicArray.get(position+5)));
+                    int tileUtility =  getTileUtility(position + 5, tokens, heuristicArray);
+                    tileUtility = compareUtilities(tileUtility, currentCost);
+                    queue.add(new SearchNode(position + 5, spendToken(tokens, patches.get(position+5)), tileUtility));
                 }
             }
         }
         if (indexInRange(position-5)) {
             if  (visited[position-5] == 0) {
                 if (isTokenAvailable(tokens, patches.get(position - 5))) {
-                    queue.add(new SearchNode(position - 5, spendToken(tokens, patches.get(position-5)), currentCost + heuristicArray.get(position-5)));
+                    int tileUtility =  getTileUtility(position - 5, tokens, heuristicArray);
+                    tileUtility = compareUtilities(tileUtility, currentCost);
+                    queue.add(new SearchNode(position - 5, spendToken(tokens, patches.get(position-5)), tileUtility));
                 }
             }
         }
@@ -493,10 +532,11 @@ public class Grid {
         int position = player.getPlayerPosition();
         int finalScore = -1;
 
+        //possibly reverse the signs if the worst option is chosen (no clue)
         ArrayList<Integer> heuristicArray = calculateHeuristicArray(player);
         PriorityQueue<SearchNode> queue = new PriorityQueue<>((node1, node2) -> {
-            if (node1.cost +  heuristicArray.get(node1.position) < node2.cost + heuristicArray.get(node1.position)) return -1;
-            if (node1.cost + heuristicArray.get(node1.position) > node2.cost + heuristicArray.get(node1.position)) return 1;
+            if (node1.utility < node2.utility) return -1;
+            if (node1.utility > node2.utility) return 1;
             return 0;
         });
 
@@ -512,17 +552,17 @@ public class Grid {
         while (!queue.isEmpty()) {
             SearchNode currentNode = queue.poll();
             int currentPosition = currentNode.position;
-            int currentCost = currentNode.cost;
+            int currentUtility = currentNode.utility;
             ArrayList<Token> currentTokens =  currentNode.tokens;
 
             visited[currentPosition] = 1;
-            queue = addNeighborsToQueue(queue, currentPosition, visited, currentTokens, heuristicArray,currentCost);
+            queue = addNeighborsToQueue(queue, currentPosition, visited, currentTokens, heuristicArray,currentUtility);
 
             if(currentPosition == goalPosition) {
                 finalScore = tokenScore(currentTokens) + 50;
                 break;
             }
-            //calculate the utility of the current position
+            //calculate the actual utility of the current position
             int playerY = currentPosition % 5;
             int playerX = currentPosition/ 5;
             int positionScore = 50 - 10*((Math.abs(playerX-goalX) + Math.abs(playerY-goalY)));
