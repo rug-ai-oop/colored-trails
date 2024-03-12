@@ -170,6 +170,20 @@ public class Grid {
         playerToReceive.receiveOffer(offer);
     }
 
+    /**
+     * Prints the colours of the tokens in the offers
+     */
+    private void printOffer(ArrayList<ArrayList<Token>> offer) {
+        for(ArrayList<Token> hand : offer) {
+            String offerAsString = "";
+            for(Token token : hand) {
+                offerAsString += token.getColor();
+                offerAsString += ", ";
+            }
+            System.out.println(offerAsString);
+        }
+    }
+
 
     /**
      * The method assumes that tokens must be preserved within negotiations, i.e. the tokens in play
@@ -373,8 +387,7 @@ public class Grid {
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
             ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
             setOffer(currentPlayer, offer);
-            System.out.println(offer);
-            System.out.println(offers.get(partner));
+            printOffer(offer);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "offerFinished", null, null));
             if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
                 offers.put(currentPlayer, null);

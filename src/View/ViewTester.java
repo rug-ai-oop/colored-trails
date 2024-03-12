@@ -37,7 +37,7 @@ public class ViewTester {
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
-            game.start();
+            System.out.println(game.start());
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
