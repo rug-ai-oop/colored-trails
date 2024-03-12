@@ -7,8 +7,19 @@ public class HumanPlayer extends ColoredTrailsPlayer{
     public enum OfferState {
         COMPLETE, INCOMPLETE
     }
-    private OfferState state = OfferState.INCOMPLETE;
+    private volatile OfferState state = OfferState.INCOMPLETE;
     private ArrayList<Token> supposedOwnTokens;
+
+    /**
+     * Removes all tokens from the supposedOwnTokens
+     */
+    private void removeAllSupposedTokens() {
+        int numberOfSupposedTokens = supposedOwnTokens.size();
+        for(int i = 0; i < numberOfSupposedTokens; i++) {
+            supposedOwnTokens.remove(0);
+        }
+    }
+
 
     public HumanPlayer() {
         super();
@@ -37,7 +48,9 @@ public class HumanPlayer extends ColoredTrailsPlayer{
      * @param token
      */
     public void addTokenToSupposedOwnTokens(Token token) {
-        supposedOwnTokens.add(token);
+        if(!supposedOwnTokens.contains(token)) {
+            supposedOwnTokens.add(token);
+        }
     }
 
     /**
@@ -45,24 +58,30 @@ public class HumanPlayer extends ColoredTrailsPlayer{
      * @param token
      */
     public void removeFromSupposedOwnTokens(Token token) {
-        supposedOwnTokens.remove(token);
+        if(supposedOwnTokens.contains(token)) {
+            supposedOwnTokens.remove(token);
+        }
     }
+
 
     /**
      * The method waits until the offer is complete, when it sets the offer in the grid
      */
     @Override
-    public void makeOffer() {
+    public ArrayList<ArrayList<Token>> makeOffer() {
+        removeAllSupposedTokens();
         while(state != OfferState.COMPLETE) {
-            continue;
+
         }
         ArrayList<ArrayList<Token>> offer = new ArrayList(2);
         ArrayList<Token> partnerHand = grid.getAllTokensInPlay();
         partnerHand.removeAll(supposedOwnTokens);
         offer.add(0, supposedOwnTokens);
         offer.add(1, partnerHand);
-        grid.setOffer(this, offer);
-        System.out.println("Offer sent");
+        state = OfferState.INCOMPLETE;
+        System.out.println(offer);
+        return offer;
     }
+
 
 }

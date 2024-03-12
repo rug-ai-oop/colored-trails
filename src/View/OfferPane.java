@@ -19,9 +19,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 
-public class OfferPane  extends JPanel implements PropertyChangeListener {
-    private static Color defaultButtonColor = new Color(238, 238, 238);
-    protected static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
+public class OfferPane  extends JPanel implements PropertyChangeListener, AllowedToListen {
+    public static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
+    public static Color defaultButtonColor = new Color(238, 238, 238);
     protected static final Map<String, BufferedImage> auxiliaryImages = new HashMap<>(5);
     private Grid grid;
     private GameController controller;
@@ -90,13 +90,17 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
     /**
      * Preloads images
      */
-    protected static void loadImages() {
+    public static void loadImages() {
         try {
-            for (Model.Color color : Model.Color.values()) {
-                tokenImages.put(color,
-                        ImageIO.read(OfferPane.class.getResource("/" + color + ".png")));
+            if (tokenImages.isEmpty()) {
+                for (Model.Color color : Model.Color.values()) {
+                    tokenImages.put(color,
+                            ImageIO.read(OfferPane.class.getResource("/" + color + ".png")));
+                }
             }
-            auxiliaryImages.put("redFlag", ImageIO.read(OfferPane.class.getResource("/RED_FLAG.png")));
+            if(auxiliaryImages.isEmpty()) {
+                auxiliaryImages.put("redFlag", ImageIO.read(OfferPane.class.getResource("/RED_FLAG.png")));
+            }
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -228,7 +232,6 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
         centerPanel.add(leftPanel);
         centerPanel.add(middlePanel);
         centerPanel.add(rightPanel);
-        this.add(centerPanel, BorderLayout.CENTER);
 
         // Send Button
         sendButton = new JButton("Send Offer");
@@ -244,7 +247,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
      * The method adds the buttons on the unassignedTokensPanel
      * corresponding to all the grid's tokens in play
      */
-    private void addInitialButtonsToUnassignedTokensPanel() {
+    private void addButtonsToUnassignedTokensPanel() {
         for(Token token : grid.getAllTokensInPlay()) {
             TokenButton tokenButton = new TokenButton(token);
             tokenButton.setActionCommand("selectToken");
@@ -259,30 +262,40 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
         this.revalidate();
     }
 
+    /**
+     * Removes all the buttons on the panels
+     */
+    private void resetOfferPanel() {
+        unassignedTokensPanel.removeAll();
+        yourTokensPanel.removeAll();
+        partnerTokensPanel.removeAll();
+        isSendButtonOnScreen = false;
+    }
+
     public OfferPane(Grid grid, GameController controller) {
         this.grid = grid;
-        grid.addListener(this);
         this.controller = controller;
+        grid.addListener(this);
         loadImages();
         setUp();
     }
 
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setSize(1200, 200);
-        Grid game = new Grid();
-        game.addPlayer(new HumanPlayer());
-        game.addPlayer(new HumanPlayer());
-        game.setUp();
-        OfferPane offerPane = new OfferPane(game, new GameController(game));
-        frame.add(offerPane);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setVisible(true);
-    }
-
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        
+        switch (evt.getPropertyName()) {
+            case "initiatingOffer":
+                if(grid.getCurrentPlayer() instanceof HumanPlayer) {
+                    this.add(centerPanel, BorderLayout.CENTER);
+                    addButtonsToUnassignedTokensPanel();
+                    revalidate();
+                }
+                break;
+            case "offerFinished":
+                this.remove(centerPanel);
+                resetOfferPanel();
+                revalidate();
+                break;
+        }
     }
 }

@@ -11,8 +11,8 @@ public class Grid {
      * The order of using the grid is:
      *      1) Create the grid
      *      2) Add the players
-     *      3) Set up the grid
-     *      4) Add the listeners (By creating the view components)
+     *      3) Add the listeners (By creating the view components)
+     *      4) Set up the grid
      *      5) Start the grid
      */
     private int maximumNumberOfTurns;
@@ -81,7 +81,7 @@ public class Grid {
     /**
      * if the players and patches have been created, assigns 4 tokens randomly to each player
      */
-    private void distributeTokensToPlayers() {
+    private void distributeTokensToPlayers() throws IllegalAccessException {
         if(players != null && patches != null) {
             ArrayList<Patch> patchesCopy = (ArrayList<Patch>) patches.clone();
             Collections.shuffle(patchesCopy);
@@ -96,11 +96,12 @@ public class Grid {
                     }
                     tokens.get(playerToReceiveToken).add(tokenToBeReceived);
                     allTokensInPlay.add(tokenToBeReceived);
-                } else {
-                    return;
                 }
-
             }
+            notifyListeners(new PropertyChangeEvent(this, "tokensDistributed",
+                    null, null));
+        } else {
+            throw new IllegalAccessException("The players and patches need to be created first");
         }
     }
 
@@ -179,15 +180,32 @@ public class Grid {
      *              representing their offered hand
      * @return true if the offer is legal, false otherwise
      */
-    private boolean isOfferLegal(ArrayList<ArrayList<Token>> offer) {
+    private boolean isOfferLegal(ArrayList<ArrayList<Token>> offer) throws IllegalAccessException {
         if(offer.size() != players.size()) {    //check that the players offered something for all players
-            return false;
+            throw new IllegalAccessException("All the players need a hand!");
         }
         ArrayList<Token> allTokensInOffer = new ArrayList<>();
         for(ArrayList<Token> hand : offer) {
             allTokensInOffer.addAll(hand);
         }
-        return allTokensInPlay.equals(allTokensInOffer) || allTokensInPlay.size() != allTokensInOffer.size();
+        System.out.println(allTokensInPlay.size());
+        System.out.println(allTokensInOffer.size());
+        if(allTokensInPlay.size() != allTokensInOffer.size() ) {
+            throw new IllegalAccessException("The number of allTokensInPlay does not match the number of allTokensInOffer" +
+                    " The tokens need to be conserved within the game!");
+        }
+        for(int i = 0; i < allTokensInPlay.size(); i++) {
+            for(int j = 0; j < allTokensInOffer.size(); j++) {
+                if(allTokensInPlay.get(i).getColor() == allTokensInOffer.get(j).getColor()) {
+                    allTokensInOffer.remove(j);
+                    break;
+                }
+            }
+        }
+        if(!allTokensInOffer.isEmpty()) {
+            throw new IllegalAccessException("The tokens need to be conserved within the game!");
+        }
+        return true;
     }
 
     /**
@@ -262,6 +280,9 @@ public class Grid {
         players.add(player);
         player.setGrid(this);
         goalsToAnnounce.put(player, null);
+        offers.put(player, new ArrayList(2));
+        offers.get(player).add(new ArrayList<>());
+        offers.get(player).add(new ArrayList<>());
     }
 
     /**
@@ -303,7 +324,11 @@ public class Grid {
      */
     public void setUp() {
         generatePatchesFiveByFive();
-        distributeTokensToPlayers();
+        try {
+            distributeTokensToPlayers();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         assignGoalsToPlayers();
     }
 
@@ -312,7 +337,7 @@ public class Grid {
      * @param player: The player which makes the offer
      * @param offer: The offer of the player
      */
-    public void setOffer(ColoredTrailsPlayer player, ArrayList<ArrayList<Token>> offer) {
+    private void setOffer(ColoredTrailsPlayer player, ArrayList<ArrayList<Token>> offer) {
         offers.put(player, offer);
     }
 
@@ -333,7 +358,7 @@ public class Grid {
      * maximumNumberOfTurns, initially set to 40
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
-    public boolean start() {
+    public boolean start() throws IllegalAccessException {
         setGameState(STATE.ACTIVE);
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
@@ -345,7 +370,12 @@ public class Grid {
                         goalsToAnnounce.get(currentPlayer)));
             }
             setGameState(STATE.WAITING_FOR_OFFER);
-            currentPlayer.makeOffer();      // Ask the player to make an offer
+            notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
+            ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
+            setOffer(currentPlayer, offer);
+            System.out.println(offer);
+            System.out.println(offers.get(partner));
+            notifyListeners(new PropertyChangeEvent(currentPlayer, "offerFinished", null, null));
             if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
                 offers.put(currentPlayer, null);
             } else {
@@ -353,12 +383,12 @@ public class Grid {
                     setGameState(STATE.INACTIVE);
                     notifyListeners(new PropertyChangeEvent(this, "gameOver", null,
                             numberOfTurns < maximumNumberOfTurns));
-                } else {
-                    numberOfTurns++;
-                    notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
-                            offers.get(currentPlayer)));
+                    return false;
                 }
+                notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
+                        offers.get(currentPlayer).clone()));
             }
+            numberOfTurns++;
         }
         return numberOfTurns < maximumNumberOfTurns;
     }
