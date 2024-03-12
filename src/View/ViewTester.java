@@ -34,10 +34,14 @@ public class ViewTester {
         OfferHistoryPane offerHistoryPane = new OfferHistoryPane(game, firstPlayer);
         frameForOffers.add(offerHistoryPane);
         frameForOffers.setVisible(true);
-
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
-            System.out.println(game.start());
+            game.start();
+            //print score
+            System.out.println("player1:");
+            System.out.println(game.calculateFinalScore(firstPlayer));
+            System.out.println("player2:");
+            System.out.println(game.calculateFinalScore(secondPlayer));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

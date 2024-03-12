@@ -593,18 +593,24 @@ public class Grid {
         int goalX = goalPosition / 5;
 
         while (!queue.isEmpty()) {
+            System.out.println("current best score:");
+            System.out.println(finalScore);
             SearchNode currentNode = queue.poll();
             int currentPosition = currentNode.position;
             int currentUtility = currentNode.utility;
             ArrayList<Token> currentTokens =  currentNode.tokens;
 
-            visited[currentPosition] = 1;
-            queue = addNeighborsToQueue(queue, currentPosition, visited, currentTokens, heuristicArray,currentUtility);
-
             if(currentPosition == goalPosition) {
+                //System.out.println(goalPosition);
+                //System.out.println(currentPosition);
+                System.out.println("Reached goal!");
                 finalScore = tokenScore(currentTokens) + 50;
                 break;
             }
+
+            visited[currentPosition] = 1;
+            queue = addNeighborsToQueue(queue, currentPosition, visited, currentTokens, heuristicArray,currentUtility);
+
             //calculate the actual utility of the current position
             int playerY = currentPosition % 5;
             int playerX = currentPosition/ 5;
