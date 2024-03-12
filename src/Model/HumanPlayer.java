@@ -79,7 +79,6 @@ public class HumanPlayer extends ColoredTrailsPlayer{
         offer.add(0, supposedOwnTokens);
         offer.add(1, partnerHand);
         state = OfferState.INCOMPLETE;
-        System.out.println(offer);
         return offer;
     }
 
