@@ -16,17 +16,39 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener, 
     private HumanPlayer playerToDisplayOnTheLeft;
     private JScrollPane scrollPane;
     private JPanel mainPanel = new JPanel();
+    private JPanel labelPanel = new JPanel();
+    private JLabel yourTokens = new JLabel("Your tokens");
+    private JLabel partnerTokens = new JLabel("Partner's tokens");
+    private JPanel middlePanel = new JPanel();
+    private Dimension middlePanelDimension = new Dimension(80, 40);
+    private Dimension sidePanelDimension = new Dimension(320, 40);
 
     private void setUp() {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        scrollPane = new JScrollPane(mainPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+        scrollPane = new JScrollPane(mainPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS
                 , JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        this.add(scrollPane);
         OfferPane.loadImages();
         mainPanel.setBackground(OfferPane.defaultButtonColor);
-        this.setBackground(OfferPane.defaultButtonColor);
+        scrollPane.setPreferredSize(new Dimension(740, 160));
         scrollPane.setBackground(OfferPane.defaultButtonColor);
-        this.add(mainPanel);
+
+        labelPanel.setLayout(new BorderLayout());
+        middlePanel.setBackground(Color.BLACK);
+        middlePanel.setPreferredSize(middlePanelDimension);
+
+        yourTokens.setPreferredSize(sidePanelDimension);
+        yourTokens.setHorizontalAlignment(JLabel.CENTER);
+
+        partnerTokens.setPreferredSize(sidePanelDimension);
+        partnerTokens.setHorizontalAlignment(JLabel.CENTER);
+
+        labelPanel.add(yourTokens, BorderLayout.WEST);
+        labelPanel.add(partnerTokens, BorderLayout.EAST);
+        labelPanel.add(middlePanel, BorderLayout.CENTER);
+
+        this.add(labelPanel, BorderLayout.NORTH);
+        this.add(scrollPane, BorderLayout.CENTER);
+        this.setBackground(OfferPane.defaultButtonColor);
     }
 
     public OfferHistoryPane(Grid grid, HumanPlayer playerToDisplayOnTheLeft) {
@@ -41,14 +63,16 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener, 
         mainOfferPanel.setLayout(new BorderLayout());
 
         JPanel middlePanel = new JPanel();
-        middlePanel.setBackground(OfferPane.defaultButtonColor);
-        middlePanel.setPreferredSize(new Dimension(80, 40));
+        middlePanel.setPreferredSize(middlePanelDimension);
+        middlePanel.setBackground(Color.BLACK);
 
         JPanel leftOfferPanel = new JPanel();
+        leftOfferPanel.setPreferredSize(sidePanelDimension);
         int numberOfLeftTokens = offer.get(0).size();
         leftOfferPanel.setLayout(new GridLayout(1, numberOfLeftTokens));
 
         JPanel rightOfferPanel = new JPanel();
+        rightOfferPanel.setPreferredSize(sidePanelDimension);
         int numberOfRightTokens = offer.get(1).size();
         rightOfferPanel.setLayout(new GridLayout(1, numberOfRightTokens));
 

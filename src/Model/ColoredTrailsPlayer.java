@@ -11,6 +11,7 @@ public abstract class ColoredTrailsPlayer {
     protected ArrayList<ArrayList<Token>> offerPartner;
     protected Grid grid;
     private final int hash = generateHash();
+    protected String name;
     private int playerPosition;             //make this actually useful instead of a ghost variable
 
     /**
@@ -27,6 +28,11 @@ public abstract class ColoredTrailsPlayer {
         return randomHash;
     }
     public ColoredTrailsPlayer() {
+        goalPartner = null;
+        goalToCommunicate = null;
+    }
+    public ColoredTrailsPlayer(String name) {
+        this.name = name;
         goalPartner = null;
         goalToCommunicate = null;
     }
