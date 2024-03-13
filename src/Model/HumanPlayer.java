@@ -20,6 +20,26 @@ public class HumanPlayer extends ColoredTrailsPlayer{
         }
     }
 
+    /**
+     * Alternative for .removeAll(), since the tokens are copied and the objects do not correspond
+     * @return the hand of the partner
+     */
+    private ArrayList<Token> constructPartnerHand() {
+        ArrayList<Token> partnerHand = grid.getAllTokensInPlay();
+        if(supposedOwnTokens != null) {
+            for (int i = 0; i < supposedOwnTokens.size(); i ++) {
+                for (int j = 0; j < partnerHand.size(); j ++) {
+                    if(supposedOwnTokens.get(i).getColor() == partnerHand.get(j).getColor()) {
+                        partnerHand.remove(j);
+                        break;
+                    }
+                }
+            }
+        }
+        System.out.println("Partner has  " + partnerHand.size() + "  tokens");
+        return partnerHand;
+    }
+
 
     public HumanPlayer() {
         super();
@@ -74,8 +94,7 @@ public class HumanPlayer extends ColoredTrailsPlayer{
 
         }
         ArrayList<ArrayList<Token>> offer = new ArrayList(2);
-        ArrayList<Token> partnerHand = grid.getAllTokensInPlay();
-        partnerHand.removeAll(supposedOwnTokens);
+        ArrayList<Token> partnerHand = constructPartnerHand();
         offer.add(0, supposedOwnTokens);
         offer.add(1, partnerHand);
         state = OfferState.INCOMPLETE;

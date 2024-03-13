@@ -20,6 +20,21 @@ public enum Color{
             case ULTRAMARINE -> new java.awt.Color(4, 55, 242);
         };
     }
+
+    /**
+     * Intended to be used on ordering lists of Color
+     * @param color
+     * @return The priority in the Color Hierarchy
+     */
+    public static int getColorPriority(Color color) {
+        return switch (color) {
+            case CYAN -> 1;
+            case PINK -> 2;
+            case HONEY -> 3;
+            case BURGUNDY -> 4;
+            case ULTRAMARINE -> 5;
+        };
+    }
 }
 
 

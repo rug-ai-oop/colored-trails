@@ -28,7 +28,7 @@ public class Grid {
     private String wayOfAssigningGoals;
 
     private enum STATE {
-        INACTIVE, ACTIVE, WAITING_FOR_OFFER
+        INACTIVE, ACTIVE, WAITING_FOR_OFFER, WAITING_FOR_GOAL
     }
     private STATE gameState;
 
@@ -202,8 +202,8 @@ public class Grid {
         for(ArrayList<Token> hand : offer) {
             allTokensInOffer.addAll(hand);
         }
-        System.out.println(allTokensInPlay.size());
-        System.out.println(allTokensInOffer.size());
+        System.out.println("Tokens in play " + allTokensInPlay.size());
+        System.out.println("Tokens in offer " + allTokensInOffer.size());
         if(allTokensInPlay.size() != allTokensInOffer.size() ) {
             throw new IllegalAccessException("The number of allTokensInPlay does not match the number of allTokensInOffer" +
                     " The tokens need to be conserved within the game!");
@@ -219,6 +219,7 @@ public class Grid {
         if(!allTokensInOffer.isEmpty()) {
             throw new IllegalAccessException("The tokens need to be conserved within the game!");
         }
+        System.out.println("Legal");
         return true;
     }
 
@@ -234,16 +235,32 @@ public class Grid {
     private boolean acceptedOffer(ArrayList<ArrayList<Token>> priorOffer, ArrayList<ArrayList<Token>> posteriorOffer) {
         ArrayList<ArrayList<Token>> posteriorOfferReversed = (ArrayList<ArrayList<Token>>) posteriorOffer.clone();
         Collections.reverse(posteriorOfferReversed);
+        if (priorOffer.size() != posteriorOffer.size()) {
+            System.out.println("Not accepted because priorOffer.size() != posteriorOffer.size()");
+            return false;
+        }
+
+        Comparator<Token> tokenComparator = (Comparator<Token>) (t1, t2) -> Color.getColorPriority(t1.getColor()) - Color.getColorPriority(t2.getColor());
         for(int index = 0; index < priorOffer.size(); index++) {
-            if( priorOffer.get(index).size() != posteriorOffer.get(index).size()) {
+            if( priorOffer.get(index).size() != posteriorOfferReversed.get(index).size()) {
+                System.out.println("Not accepted because priorOffer.get(index).size() != posteriorOffer.get(index).size()");
                 return false;
             }
+            Collections.sort(priorOffer.get(index), tokenComparator);
+            Collections.sort(posteriorOfferReversed.get(index), tokenComparator);
+        }
+        for(int index = 0; index < priorOffer.size(); index++) {
             for(int indexInHands = 0; indexInHands < priorOffer.get(index).size(); indexInHands++){
-                if(priorOffer.get(index).get(indexInHands).getColor() != posteriorOffer.get(index).get(indexInHands).getColor()) {
+                if(priorOffer.get(index).get(indexInHands).getColor() != posteriorOfferReversed.get(index).get(indexInHands).getColor()) {
+                    System.out.println("Not accepted because " +
+                            "priorOffer.get(index).get(indexInHands).getColor() " +
+                            "!= posteriorOfferReversed.get(index).get(indexInHands).getColor()");
                     return false;
                 }
-            }
+            };
         }
+
+        System.out.println("Accepted");
         return true;
     }
 
@@ -377,6 +394,7 @@ public class Grid {
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
             ColoredTrailsPlayer partner = getPlayer(numberOfTurns + 1);
+            setGameState(STATE.WAITING_FOR_GOAL);
             currentPlayer.revealGoal();        // Ask the player to reveal its goal
             if(goalsToAnnounce.get(currentPlayer) != null) {
                 partner.listenToGoal(goalsToAnnounce.get(currentPlayer));
@@ -392,14 +410,16 @@ public class Grid {
             if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
                 offers.put(currentPlayer, null);
             } else {
-                if(acceptedOffer(offers.get(currentPlayer), offers.get(partner))) {
-                    setGameState(STATE.INACTIVE);
-                    notifyListeners(new PropertyChangeEvent(this, "gameOver", null,
-                            numberOfTurns < maximumNumberOfTurns));
-                    return false;
+                if(offers.get(partner) != null) {
+                    if (acceptedOffer(offers.get(currentPlayer), offers.get(partner))) {
+                        setGameState(STATE.INACTIVE);
+                        notifyListeners(new PropertyChangeEvent(this, "gameOver", null,
+                                numberOfTurns < maximumNumberOfTurns));
+                        return false;
+                    }
+                    notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
+                            offers.get(currentPlayer).clone()));
                 }
-                notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
-                        offers.get(currentPlayer).clone()));
             }
             numberOfTurns++;
         }
