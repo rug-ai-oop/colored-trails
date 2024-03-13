@@ -48,7 +48,18 @@ public class DummyOptionsPanel extends JPanel {
             mainPanel.initializeGame();
         });
 
-        backButton.addActionListener(e -> {((MainPanel) getParent()).showCard("TomSelection");});
+        backButton.addActionListener(e -> {
+            String previousPanel;
+            switch (mainPanel.getSelectedOption()) {
+                case "Human vs. Human":
+                    previousPanel = "GameOptions";
+                    break;
+                default:
+                    previousPanel = "TomSelection";
+                    break;
+            }
+            mainPanel.showCard(previousPanel);
+        });
 
         add(Box.createVerticalGlue());
         add(subGameOptionsLabel);
