@@ -36,13 +36,19 @@ public class HumanPlayer extends ColoredTrailsPlayer{
                 }
             }
         }
-        System.out.println("Partner has  " + partnerHand.size() + "  tokens");
         return partnerHand;
     }
 
+    public String getName() {
+        return name;
+    }
 
     public HumanPlayer() {
         super();
+        supposedOwnTokens = new ArrayList();
+    }
+    public HumanPlayer(String name) {
+        super(name);
         supposedOwnTokens = new ArrayList();
     }
     @Override

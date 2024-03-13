@@ -202,8 +202,6 @@ public class Grid {
         for(ArrayList<Token> hand : offer) {
             allTokensInOffer.addAll(hand);
         }
-        System.out.println("Tokens in play " + allTokensInPlay.size());
-        System.out.println("Tokens in offer " + allTokensInOffer.size());
         if(allTokensInPlay.size() != allTokensInOffer.size() ) {
             throw new IllegalAccessException("The number of allTokensInPlay does not match the number of allTokensInOffer" +
                     " The tokens need to be conserved within the game!");
@@ -219,7 +217,6 @@ public class Grid {
         if(!allTokensInOffer.isEmpty()) {
             throw new IllegalAccessException("The tokens need to be conserved within the game!");
         }
-        System.out.println("Legal");
         return true;
     }
 
@@ -411,14 +408,14 @@ public class Grid {
                 offers.put(currentPlayer, null);
             } else {
                 if(offers.get(partner) != null) {
+                    notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
+                            offers.get(currentPlayer).clone()));
                     if (acceptedOffer(offers.get(currentPlayer), offers.get(partner))) {
                         setGameState(STATE.INACTIVE);
                         notifyListeners(new PropertyChangeEvent(this, "gameOver", null,
                                 numberOfTurns < maximumNumberOfTurns));
                         return false;
                     }
-                    notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
-                            offers.get(currentPlayer).clone()));
                 }
             }
             numberOfTurns++;

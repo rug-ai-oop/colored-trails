@@ -28,7 +28,7 @@ public class ViewTester {
 
         JFrame frameForOffers = new JFrame("Offers");
         frameForOffers.setLayout(new BorderLayout());
-        frameForOffers.setSize(500, 400);
+        frameForOffers.setSize(800, 400);
         frameForOffers.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         OfferHistoryPane offerHistoryPane = new OfferHistoryPane(game, firstPlayer);
