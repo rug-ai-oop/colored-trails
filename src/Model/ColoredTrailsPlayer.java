@@ -5,7 +5,6 @@ import java.util.Random;
 
 public abstract class ColoredTrailsPlayer {
     private static ArrayList<Integer> hashes = new ArrayList<>();
-    protected Patch goal;
     protected Patch goalPartner;
     protected Patch goalToCommunicate;
     protected ArrayList<ArrayList<Token>> offerPartner;
@@ -48,9 +47,6 @@ public abstract class ColoredTrailsPlayer {
         return playerPosition;
     }
 
-    public Patch getGoal() {
-        return goal;
-    }
     public abstract void revealGoal();
     public abstract void listenToGoal(Patch goal);
     public abstract ArrayList<ArrayList<Token>> makeOffer();
@@ -59,10 +55,6 @@ public abstract class ColoredTrailsPlayer {
 
     public void setGoalToCommunicate(Patch goalToCommunicate) {
         this.goalToCommunicate = goalToCommunicate;
-    }
-
-    public void setGoal(Patch goal) {
-        this.goal = goal;
     }
 
     public void setGrid(Grid grid) {

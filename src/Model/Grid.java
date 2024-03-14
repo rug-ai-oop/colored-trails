@@ -24,6 +24,7 @@ public class Grid {
     private ArrayList<Token> allTokensInPlay = new ArrayList();
     private HashMap<ColoredTrailsPlayer, ArrayList<Token>> tokens = new HashMap();
     private HashMap<ColoredTrailsPlayer, ArrayList<ArrayList<Token>>> offers = new HashMap();
+    private HashMap<ColoredTrailsPlayer, Patch> goals = new HashMap();
     private HashMap<ColoredTrailsPlayer, Patch> goalsToAnnounce = new HashMap();
     private String wayOfAssigningGoals;
 
@@ -45,6 +46,15 @@ public class Grid {
             colors.add(Color.values()[random.nextInt(numberOfColors)]);
         }
         return colors;
+    }
+
+    /**
+     * Sets the goal of player
+     * @param player
+     * @param patch
+     */
+    private void setGoal(ColoredTrailsPlayer player, Patch patch) {
+        goals.put(player, patch);
     }
 
     /**
@@ -112,7 +122,7 @@ public class Grid {
         patches = new ArrayList<>();
         ArrayList<Color> colors = generateRandomColorFiveByFive();
         for(int i = 0; i < 25; i++) {
-            patches.add(new Patch(colors.get(i)));
+            patches.add(new Patch(colors.get(i), i));
             patches.get(i).setState(Patch.State.ACTIVE);
         }
         patches.get(startPatchIndex).setState(Patch.State.INACTIVE);
@@ -129,7 +139,7 @@ public class Grid {
             while(assignedPatches.contains(goal)) {
                 goal = pickRandomGoalFiveByFive();
             }
-            player.setGoal(goal);
+            setGoal(player, goal);
             assignedPatches.add(goal);
             notifyListeners(new PropertyChangeEvent(player, "assignedGoalsIndex",
                     player, patches.indexOf(goal)));    // Uses the oldValue to pass the player with the goal
@@ -142,7 +152,7 @@ public class Grid {
     private void assignSameRandomGoalsToPlayers() {
         Patch goal = pickRandomGoalFiveByFive();
         for(ColoredTrailsPlayer player : players) {
-            player.setGoal(goal);
+            setGoal(player, goal);
             notifyListeners(new PropertyChangeEvent(player, "assignedGoalsIndex",
                     player, patches.indexOf(goal)));    // Uses the oldValue to pass the player with the goal
         }
@@ -414,7 +424,11 @@ public class Grid {
                         setGameState(STATE.INACTIVE);
                         notifyListeners(new PropertyChangeEvent(this, "gameOver", null,
                                 numberOfTurns < maximumNumberOfTurns));
-                        return false;
+                        tokens.put(currentPlayer, offers.get(currentPlayer).get(0));
+                        tokens.put(partner, offers.get(partner).get(1));
+                        System.out.println(goals.get(currentPlayer).getPatchPosition());
+                        System.out.println(goals.get(partner).getPatchPosition());
+                        return true;
                     }
                 }
             }
@@ -454,7 +468,7 @@ public class Grid {
      */
     public ArrayList<Integer> calculateHeuristicArray(ColoredTrailsPlayer player) {
         ArrayList<Integer> heuristicArray = new ArrayList<>();
-        int goalPosition = player.getGoal().getPatchPosition();
+        int goalPosition = goals.get(player).getPatchPosition();
         for (int i=0;i<25;i++) {
             int y = i % 5;
             int x = i / 5;
@@ -605,7 +619,7 @@ public class Grid {
         SearchNode startNode = new SearchNode(position, tokenCopy, 0);
         queue.add(startNode);
 
-        int goalPosition = player.getGoal().getPatchPosition();
+        int goalPosition = goals.get(player).getPatchPosition();
         int goalY = goalPosition % 5;
         int goalX = goalPosition / 5;
 
