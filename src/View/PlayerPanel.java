@@ -23,10 +23,10 @@ import java.util.HashMap;
 public class PlayerPanel extends JPanel implements PropertyChangeListener{
     private static Color defaultButtonColor = new Color(238, 238, 238);
     protected static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
-    protected static final Map<String, BufferedImage> auxiliaryImages = new HashMap<>(5);
+    protected static final Map<String, BufferedImage> playerImages = new HashMap<>(5);
     private Grid grid;
     private GameController controller;
-    private JButton makeButton;
+    private JButton revealButton;
     private TokenButton tokenButtonToMove;
     private JPanel centerPanel;
     private JPanel yourTokensPanel;
@@ -41,7 +41,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         setUp();
     }
     /**
-     * Inner ActionListener which controls the movements of the components in the view that do not involve the model
+     * Inner ActionListener, not yet necessary
      */
     private ActionListener viewModifier = new ActionListener() {
         @Override
@@ -51,8 +51,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
                     tokenButtonToMove.setBackground(defaultButtonColor);
                 }
                 tokenButtonToMove = (TokenButton) e.getSource();
-                tokenButtonToMove.setBackground(new Color(60, 200, 30));
-            } else if (e.getActionCommand() == "moveTo") {
+                tokenButtonToMove.setBackground(new Color(30, 38, 200));
             }
         }
     };
@@ -65,9 +64,9 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         try {
             for (Model.Color color : Model.Color.values()) {
                 tokenImages.put(color,
-                        ImageIO.read(OfferPane.class.getResource("/" + color + ".png")));
+                        ImageIO.read(PlayerPanel.class.getResource("/" + color + ".png")));
             }
-            auxiliaryImages.put("redFlag", ImageIO.read(OfferPane.class.getResource("/RED_FLAG.png")));
+            playerImages.put("Lukasz", ImageIO.read(PlayerPanel.class.getResource("/PLAYER_LUKASZ.png")));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -75,35 +74,38 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
     }
 
     /**
-     * The method sets up the components in the offer panel
+     * The method sets up the components in the player panel
      */
     private void setUp() {
         
         this.setLayout(new BorderLayout(0, 0));
 
 
-
-        //Token Panel
-        yourTokensPanel = new JPanel();
-        yourTokensPanel.setBackground(Color.red);
-        yourTokensPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        //yourTokensPanel.addActionListener(controller);
-        //yourTokensPanel.addActionListener(viewModifier);
-
         // Center
         centerPanel = new JPanel();
         centerPanel.setLayout(new GridLayout(1, 3));
-        centerPanel.add(yourTokensPanel, BorderLayout.CENTER);
         this.add(centerPanel, BorderLayout.CENTER);
 
+
+        //Token Panel
+        yourTokensPanel = new JPanel();
+        yourTokensPanel.setBackground(Color.green);
+        yourTokensPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        //yourTokensPanel.addActionListener(controller);
+        //yourTokensPanel.addActionListener(viewModifier);
+        centerPanel.add(yourTokensPanel, BorderLayout.CENTER);
+
         // Send Button
-        makeButton = new JButton("Make Offer");
-        makeButton.setActionCommand("making offer");
-        makeButton.addActionListener(controller);
-        makeButton.setHorizontalAlignment(JLabel.CENTER);
-        makeButton.setBackground(new Color(0, 200, 0));
-        makeButton.setOpaque(true);
-        makeButton.setPreferredSize(new Dimension(200, 40));
+        revealButton = new JButton("Reveal Goal");
+        revealButton.setActionCommand("reveal goal");
+        revealButton.addActionListener(controller);
+        //revealButton.setHorizontalAlignment(JLabel.CENTER);
+        revealButton.setBackground(new Color(179, 119, 162));
+        revealButton.setPreferredSize(new Dimension(10, 10));
+        Image scaledPlayerImage =  playerImages.get("Lukasz").getScaledInstance(50
+                , 80, Image.SCALE_SMOOTH);
+        revealButton.setIcon(new ImageIcon(scaledPlayerImage));
+        centerPanel.add(revealButton);
     }
 
     /**
@@ -133,8 +135,8 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         game.addPlayer(new HumanPlayer());
         game.addPlayer(new HumanPlayer());
         game.setUp();
-        OfferPane offerPane = new OfferPane(game, new GameController(game));
-        frame.add(offerPane);
+        PlayerPanel playerPanel = new PlayerPanel(game, new GameController(game));
+        frame.add(playerPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }

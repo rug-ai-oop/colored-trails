@@ -40,6 +40,10 @@ public class MainPanel extends JPanel {
         selectedOption = option;
     }
 
+    public String getSelectedOption() {
+        return selectedOption;
+    }
+
     public void initializeGame() {
         // Initialize the game based on the selected option
         System.out.println(selectedOption);

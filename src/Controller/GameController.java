@@ -42,6 +42,9 @@ public class GameController implements ActionListener {
                     ((HumanPlayer) currentPlayer).setState(HumanPlayer.OfferState.COMPLETE);
                 }
                 selectedToken = null;
+                break;
+            case "reveal goal":
+                System.out.println("revealing goal");
         }
 
     }
