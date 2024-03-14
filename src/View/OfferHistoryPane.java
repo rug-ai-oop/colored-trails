@@ -34,7 +34,7 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener, 
 
         labelPanel.setLayout(new BorderLayout());
         middlePanel.setBackground(Color.BLACK);
-        middlePanel.setPreferredSize(middlePanelDimension);
+        middlePanel.setPreferredSize(new Dimension(1, 40));
 
         yourTokens.setPreferredSize(sidePanelDimension);
         yourTokens.setHorizontalAlignment(JLabel.CENTER);
@@ -64,7 +64,7 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener, 
 
         JPanel middlePanel = new JPanel();
         middlePanel.setPreferredSize(middlePanelDimension);
-        middlePanel.setBackground(Color.BLACK);
+        middlePanel.setBackground(Color.LIGHT_GRAY);
 
         JPanel leftOfferPanel = new JPanel();
         leftOfferPanel.setPreferredSize(sidePanelDimension);
