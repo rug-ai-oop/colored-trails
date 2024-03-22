@@ -88,6 +88,9 @@ public class Grid {
         return patches.get(randomIndex);
     }
 
+    public ArrayList<Token> getTokens(ColoredTrailsPlayer player){
+        return tokens.get(player);
+    }
     /**
      * if the players and patches have been created, assigns 4 tokens randomly to each player
      */
@@ -603,7 +606,7 @@ public class Grid {
      * @return finalScore, the score of that player made up of the remaining tokens and its best position
      */
     public int astarTraverse(ColoredTrailsPlayer player, ArrayList<Token> tokens, int[] visited) {
-        int position = player.getPlayerPosition();
+        int position = 12;
         int finalScore = -1;
 
         //possibly reverse the signs if the worst option is chosen (no clue)

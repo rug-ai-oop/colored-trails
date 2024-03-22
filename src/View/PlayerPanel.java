@@ -16,14 +16,15 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
 //this shit ain't doing anything but yeah
 public class PlayerPanel extends JPanel implements PropertyChangeListener{
-    private static Color defaultButtonColor = new Color(238, 238, 238);
+    private static Color defaultButtonColor = new Color(26, 194, 26);
     protected static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
-    protected static final Map<String, BufferedImage> playerImages = new HashMap<>(5);
+    protected static final Map<String, BufferedImage> playerImages = new HashMap<>(2);
     private Grid grid;
     private GameController controller;
     private JButton revealButton;
@@ -33,12 +34,12 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
  
 
 
-    public PlayerPanel(Grid grid, GameController controller) {
+    public PlayerPanel(Grid grid, GameController controller, String playerName, HumanPlayer player) {
         this.grid = grid;
         grid.addListener(this);
         this.controller = controller;
         loadImages();
-        setUp();
+        setUp(playerName, player);
     }
     /**
      * Inner ActionListener, not yet necessary
@@ -67,6 +68,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
                         ImageIO.read(PlayerPanel.class.getResource("/" + color + ".png")));
             }
             playerImages.put("Lukasz", ImageIO.read(PlayerPanel.class.getResource("/PLAYER_LUKASZ.png")));
+            playerImages.put("Csenge", ImageIO.read(PlayerPanel.class.getResource("/PLAYER_CSENGE.png")));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -76,66 +78,71 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
     /**
      * The method sets up the components in the player panel
      */
-    private void setUp() {
-        
-        this.setLayout(new BorderLayout(0, 0));
+    private void setUp(String playerName, HumanPlayer player) {
 
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.setBackground(new Color(51, 51, 52));
+        setPreferredSize(new Dimension(200, 400));
 
-        // Center
-        centerPanel = new JPanel();
-        centerPanel.setLayout(new GridLayout(1, 3));
-        this.add(centerPanel, BorderLayout.CENTER);
+        // Player name
+        JLabel playerLabel = new JLabel("Player name: " + playerName);
+        playerLabel.setFont(new Font("Serif", Font.PLAIN, 14));
+        playerLabel.setForeground(Color.GREEN);
+        playerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(playerLabel);
 
+        // Player Image
+        Image scaledPlayerImage =  playerImages.get(playerName).getScaledInstance(80
+                , 120, Image.SCALE_SMOOTH);
+        JLabel playerImage = new JLabel(new ImageIcon(scaledPlayerImage));
+        playerImage.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(playerImage);
+
+        add(Box.createRigidArea(new Dimension(0, 10)));
+
+        // Token title
+        JLabel tokenLabel = new JLabel("Your tokens:");
+        tokenLabel.setFont(new Font("Serif", Font.PLAIN, 14));
+        tokenLabel.setForeground(Color.GREEN);
+        tokenLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(tokenLabel);
 
         //Token Panel
         yourTokensPanel = new JPanel();
-        yourTokensPanel.setBackground(Color.green);
+        yourTokensPanel.setBackground(new Color(51, 51, 52));
         yourTokensPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        //yourTokensPanel.addActionListener(controller);
-        //yourTokensPanel.addActionListener(viewModifier);
-        centerPanel.add(yourTokensPanel, BorderLayout.CENTER);
+        yourTokensPanel.setPreferredSize(new Dimension(100, 100));
+        yourTokensPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        for(Token token : grid.getTokens(player)) {
+            Image scaledTokenImage =  tokenImages.get(token.getColor()).getScaledInstance(40, 20, Image.SCALE_SMOOTH);
+            JLabel tokenImage = new JLabel(new ImageIcon(scaledTokenImage));
+            yourTokensPanel.add(tokenImage);
+        }
+        add(yourTokensPanel);
 
         // Send Button
         revealButton = new JButton("Reveal Goal");
+        revealButton.setFont(new Font("Serif", Font.BOLD, 14));
         revealButton.setActionCommand("reveal goal");
         revealButton.addActionListener(controller);
-        //revealButton.setHorizontalAlignment(JLabel.CENTER);
         revealButton.setBackground(new Color(179, 119, 162));
-        revealButton.setPreferredSize(new Dimension(10, 10));
-        Image scaledPlayerImage =  playerImages.get("Lukasz").getScaledInstance(50
-                , 80, Image.SCALE_SMOOTH);
-        revealButton.setIcon(new ImageIcon(scaledPlayerImage));
-        centerPanel.add(revealButton);
+        revealButton.setPreferredSize(new Dimension(100, 50));
+        revealButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(revealButton);
     }
 
-    /**
-     * The method adds the buttons on the unassignedTokensPanel
-     * corresponding to all the grid's tokens in play
-     */
-    private void addInitialButtonsToUnassignedTokensPanel() {
-        for (Token token : grid.getAllTokensInPlay()) {
-            TokenButton tokenButton = new TokenButton(token);
-            tokenButton.setActionCommand("selectToken");
-            tokenButton.setPreferredSize(new Dimension(40, 40));
-            Image scaledTokenImage = tokenImages.get(token.getColor()).getScaledInstance(40, 20, Image.SCALE_SMOOTH);
-            tokenButton.setIcon(new ImageIcon(scaledTokenImage));
-            tokenButton.addActionListener(controller);
-            tokenButton.addActionListener(viewModifier);
-            yourTokensPanel.add(tokenButton);
-        }
-        this.repaint();
-        this.revalidate();
-    }
 
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        frame.setSize(1200, 200);
+        frame.setSize(200, 350);
         Grid game = new Grid();
-        game.addPlayer(new HumanPlayer());
-        game.addPlayer(new HumanPlayer());
+        HumanPlayer firstPlayer = new HumanPlayer();
+        HumanPlayer secondPlayer = new HumanPlayer();
+        game.addPlayer(firstPlayer);
+        game.addPlayer(secondPlayer);
         game.setUp();
-        PlayerPanel playerPanel = new PlayerPanel(game, new GameController(game));
+        PlayerPanel playerPanel = new PlayerPanel(game, new GameController(game), "Lukasz", firstPlayer);
         frame.add(playerPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);

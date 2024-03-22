@@ -1,6 +1,11 @@
 package Model;
 
+import View.PlayerPanel;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public abstract class ColoredTrailsPlayer {
@@ -11,7 +16,6 @@ public abstract class ColoredTrailsPlayer {
     protected Grid grid;
     private final int hash = generateHash();
     protected String name;
-    private int playerPosition;             //make this actually useful instead of a ghost variable
 
     /**
      * Generates a random number smaller or equal than 100000, that is not already assigned to any player
@@ -43,9 +47,8 @@ public abstract class ColoredTrailsPlayer {
     public final int getHash() {
         return hash;
     }
-    public int getPlayerPosition() {
-        return playerPosition;
-    }
+
+
 
     public abstract void revealGoal();
     public abstract void listenToGoal(Patch goal);
