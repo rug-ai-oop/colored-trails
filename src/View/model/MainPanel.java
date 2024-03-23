@@ -1,12 +1,10 @@
-package View;
+package View.model;
 
-import Controller.GameController;
 import Model.Grid;
 import Model.HumanPlayer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Stack;
 
 public class MainPanel extends JPanel {
     private String selectedOption; // Store the selected game option

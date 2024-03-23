@@ -1,10 +1,14 @@
-package View;
+package View.model;
 
 import javax.swing.*;
 
 public class IndexButton extends JButton {
     private int columnOnGrid;
     private int rowOnGrid;
+
+    public IndexButton() {
+        super();
+    }
 
     public void setColumnOnGrid(int columnOnGrid) {
         this.columnOnGrid = columnOnGrid;

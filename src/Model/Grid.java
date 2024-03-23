@@ -1,5 +1,5 @@
 package Model;
-import View.AllowedToListen;
+import View.model.AllowedToListen;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -295,6 +295,13 @@ public class Grid {
      */
     public ColoredTrailsPlayer getCurrentPlayer() {
         return getPlayer(numberOfTurns);
+    }
+
+    /**
+     * @return A clone of the offer of the partner of the current player
+     */
+    public ArrayList<ArrayList<Token>> getPartnerOffer() {
+        return (ArrayList<ArrayList<Token>>) offers.get(getPlayer(numberOfTurns + 1)).clone();
     }
 
     /**

@@ -1,17 +1,14 @@
-package View;
+package View.model;
 
 import Controller.GameController;
 import Model.Grid;
 import Model.HumanPlayer;
 import Model.Token;
+import View.controller.ViewController;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.dnd.MouseDragGestureRecognizer;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -39,52 +36,8 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
     private JPanel rightPanel;
     private JPanel partnerTokensPanel;
     private boolean isSendButtonOnScreen = false;
+    private ViewController viewController;
 
-    /**
-     * Inner ActionListener which controls the movements of the components in the view that do not involve the model
-     */
-    private ActionListener viewModifier = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if(e.getActionCommand() == "selectToken") {
-                if(tokenButtonToMove != null) {
-                    tokenButtonToMove.setBackground(defaultButtonColor);
-                }
-                tokenButtonToMove = (TokenButton) e.getSource();
-                tokenButtonToMove.setBackground(new Color(60, 200, 30));
-            } else if (e.getActionCommand() == "moveTo" || e.getActionCommand() == "moveToYours" ||
-                    e.getActionCommand() == "moveToPartner") {
-                if(tokenButtonToMove != null) {
-                    // the panel which initially holds the TokenButton
-                    JPanel sourcePanel = getSourceOfTokenButtonPanelAccordingToSelectedButton();
-                    // the panel corresponding to selected button
-                    JPanel destinationPanel = getDestinationOfTokenButtonPanel((JButton) e.getSource());
-                    if(sourcePanel != destinationPanel) {
-                        // move the button from source to destination
-                        destinationPanel.add(tokenButtonToMove);
-                        sourcePanel.remove(tokenButtonToMove);
-                        if(unassignedTokensPanel.getComponentCount() == 0) {
-                            // add the sendOfferButton when all the tokens are distributed
-                            if(isSendButtonOnScreen == false) {
-                                unassignedTokensPanel.add(sendButton);
-                                isSendButtonOnScreen = true;
-                            }
-                        } else {
-                            // remove the sendOfferButton when a token has been unselected
-                            if(isSendButtonOnScreen && destinationPanel == unassignedTokensPanel) {
-                                unassignedTokensPanel.remove(sendButton);
-                                isSendButtonOnScreen = false;
-                            }
-                        }
-                        repaint();
-                        revalidate();
-                    }
-                    tokenButtonToMove.setBackground(defaultButtonColor);
-                    tokenButtonToMove = null;
-                }
-            }
-        }
-    };
 
 
     /**
@@ -110,7 +63,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
     /**
      * The method checks which of the three panels contains the selected button and returns that panel
      */
-    private JPanel getSourceOfTokenButtonPanelAccordingToSelectedButton() {
+    public JPanel getSourceOfTokenButtonPanelAccordingToSelectedButton() {
         for(Component component : yourTokensPanel.getComponents()) {
             if(component == tokenButtonToMove) {
                 return yourTokensPanel;
@@ -136,7 +89,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
      * @param source The pressed button
      * @return The panel on the view corresponding to button source
      */
-    private JPanel getDestinationOfTokenButtonPanel(JButton source) {
+    public JPanel getDestinationOfTokenButtonPanel(JButton source) {
         if (source == yourTokensButton) {
             return yourTokensPanel;
         }
@@ -167,7 +120,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
         yourTokensButton.setPreferredSize(new Dimension(labelWidth, labelHeight));
         yourTokensButton.setActionCommand("moveToYours");
         yourTokensButton.addActionListener(controller);
-        yourTokensButton.addActionListener(viewModifier);
+        yourTokensButton.addActionListener(viewController);
 
         // "Partner's tokens" button
         partnerTokensButton = new JButton("Partner's Tokens");
@@ -177,7 +130,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
         partnerTokensButton.setPreferredSize(new Dimension(labelWidth, labelHeight));
         partnerTokensButton.setActionCommand("moveToPartner");
         partnerTokensButton.addActionListener(controller);
-        partnerTokensButton.addActionListener(viewModifier);
+        partnerTokensButton.addActionListener(viewController);
 
         // "Offer Panel" label
         offerPanelLabel = new JLabel("Offer Panel");
@@ -194,7 +147,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
         unassignedTokensButton.setPreferredSize(new Dimension(labelWidth, labelHeight));
         unassignedTokensButton.setActionCommand("moveTo");
         unassignedTokensButton.addActionListener(controller);
-        unassignedTokensButton.addActionListener(viewModifier);
+        unassignedTokensButton.addActionListener(viewController);
 
         // North panel
         this.add(offerPanelLabel, BorderLayout.NORTH);
@@ -255,7 +208,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
             Image scaledTokenImage =  tokenImages.get(token.getColor()).getScaledInstance(40, 20, Image.SCALE_SMOOTH);
             tokenButton.setIcon(new ImageIcon(scaledTokenImage));
             tokenButton.addActionListener(controller);
-            tokenButton.addActionListener(viewModifier);
+            tokenButton.addActionListener(viewController);
             unassignedTokensPanel.add(tokenButton);
         }
         this.repaint();
@@ -272,9 +225,11 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
         isSendButtonOnScreen = false;
     }
 
-    public OfferPane(Grid grid, GameController controller) {
+    public OfferPane(Grid grid, GameController controller, ViewController viewController) {
         this.grid = grid;
         this.controller = controller;
+        this.viewController = viewController;
+        viewController.setOfferPane(this);
         grid.addListener(this);
         loadImages();
         setUp();
@@ -297,5 +252,35 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
                 revalidate();
                 break;
         }
+    }
+
+    /**
+     * Getters for the ViewController
+     */
+    public TokenButton getTokenButtonToMove() {
+        return tokenButtonToMove;
+    }
+    public JButton getUnassignedTokensButton() {
+        return unassignedTokensButton;
+    }
+    public JButton getSendButton() {
+        return sendButton;
+    }
+    public JPanel getUnassignedTokensPanel() {
+        return unassignedTokensPanel;
+    }
+    public boolean getIsSendButtonOnScreen() {
+        return isSendButtonOnScreen;
+    }
+
+    /**
+     * Setters for the ViewController
+     */
+    public void setIsSendButtonOnScreen(boolean value) {
+        isSendButtonOnScreen = value;
+    }
+
+    public void setTokenButtonToMove(TokenButton tokenButtonToMove) {
+        this.tokenButtonToMove = tokenButtonToMove;
     }
 }

@@ -1,4 +1,4 @@
-package View;
+package View.model;
 
 import Controller.GameController;
 import Model.Grid;
@@ -8,10 +8,8 @@ import Model.Token;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.dnd.MouseDragGestureRecognizer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

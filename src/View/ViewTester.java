@@ -3,6 +3,10 @@ package View;
 import Controller.GameController;
 import Model.Grid;
 import Model.HumanPlayer;
+import View.controller.ViewController;
+import View.model.GridPane;
+import View.model.OfferHistoryPane;
+import View.model.OfferPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +21,9 @@ public class ViewTester {
         game.addPlayer(firstPlayer);
         game.addPlayer(secondPlayer);
         GameController controller = new GameController(game);
+        ViewController viewController = new ViewController();
         GridPane gridPane = new GridPane(game, controller);
-        OfferPane offerPane = new OfferPane(game, controller);
+        OfferPane offerPane = new OfferPane(game, controller, viewController);
         game.setUp();
         frame.setLayout(new BorderLayout());
         frame.add(offerPane, BorderLayout.SOUTH);

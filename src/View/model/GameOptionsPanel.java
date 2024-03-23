@@ -1,9 +1,7 @@
-package View;
+package View.model;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class GameOptionsPanel extends JPanel {
     private String selectedOption; // Store the selected game option

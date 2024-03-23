@@ -1,4 +1,4 @@
-package View;
+package View.model;
 
 import Model.Grid;
 import Model.HumanPlayer;
@@ -46,6 +46,7 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener, 
         labelPanel.add(partnerTokens, BorderLayout.EAST);
         labelPanel.add(middlePanel, BorderLayout.CENTER);
 
+        this.setPreferredSize(sidePanelDimension);
         this.add(labelPanel, BorderLayout.NORTH);
         this.add(scrollPane, BorderLayout.CENTER);
         this.setBackground(OfferPane.defaultButtonColor);
