@@ -41,8 +41,6 @@ public class GameController implements ActionListener {
                 }
                 selectedToken = null;
                 break;
-            case "reveal goal":
-                System.out.println("revealing goal");
         }
 
     }

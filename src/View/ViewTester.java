@@ -22,7 +22,7 @@ public class ViewTester {
         game.addPlayer(secondPlayer);
         GameController controller = new GameController(game);
         ViewController viewController = new ViewController();
-        GridPane gridPane = new GridPane(game, controller);
+        GridPane gridPane = new GridPane(game, controller, viewController);
         OfferPane offerPane = new OfferPane(game, controller, viewController);
         game.setUp();
         frame.setLayout(new BorderLayout());

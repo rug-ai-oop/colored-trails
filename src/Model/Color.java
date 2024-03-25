@@ -1,23 +1,24 @@
 package Model;
+import java.awt.*;
 
 public enum Color{
-    CYAN, //OOFFFF
+    BLUE,
+    RED,
+    GREEN,
     PINK, //FF63C7
-    BURGUNDY, //800020
-    HONEY, //EBA937
-    ULTRAMARINE; //0437F2
+    HONEY; //EBA937
 
     /**
      * @param color The color in the Color enum
      * @return A java.awt.Color Object, matching the color in the enum
      */
-    public static java.awt.Color getColor(Color color) {
+    public static java.awt.Color getColor(Model.Color color) {
         return switch (color) {
-            case CYAN -> new java.awt.Color(0, 255, 255);
+            case GREEN -> new java.awt.Color(127, 186, 0);
             case PINK -> new java.awt.Color(255, 99, 199);
             case HONEY -> new java.awt.Color(235, 169, 55);
-            case BURGUNDY -> new java.awt.Color(128, 0, 32);
-            case ULTRAMARINE -> new java.awt.Color(4, 55, 242);
+            case BLUE -> new java.awt.Color(0, 164, 239);
+            case RED -> new java.awt.Color(242, 80, 34);
         };
     }
 
@@ -28,11 +29,11 @@ public enum Color{
      */
     public static int getColorPriority(Color color) {
         return switch (color) {
-            case CYAN -> 1;
+            case RED -> 1;
             case PINK -> 2;
             case HONEY -> 3;
-            case BURGUNDY -> 4;
-            case ULTRAMARINE -> 5;
+            case GREEN -> 4;
+            case BLUE -> 5;
         };
     }
 }

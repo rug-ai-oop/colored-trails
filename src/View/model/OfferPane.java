@@ -30,11 +30,11 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
     private JLabel offerPanelLabel;
     private JPanel centerPanel;
     private JPanel leftPanel;
-    private JPanel yourTokensPanel;
-    private JPanel middlePanel;
-    private JPanel unassignedTokensPanel;
     private JPanel rightPanel;
-    private JPanel partnerTokensPanel;
+    private JPanel middlePanel;
+    private volatile JPanel yourTokensPanel;
+    private volatile JPanel unassignedTokensPanel;
+    private volatile JPanel partnerTokensPanel;
     private boolean isSendButtonOnScreen = false;
     private ViewController viewController;
 
@@ -60,47 +60,6 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
         }
     }
 
-    /**
-     * The method checks which of the three panels contains the selected button and returns that panel
-     */
-    public JPanel getSourceOfTokenButtonPanelAccordingToSelectedButton() {
-        for(Component component : yourTokensPanel.getComponents()) {
-            if(component == tokenButtonToMove) {
-                return yourTokensPanel;
-            }
-        }
-        for(Component component : partnerTokensPanel.getComponents()) {
-            if(component == tokenButtonToMove) {
-                return partnerTokensPanel;
-            }
-        }
-        for(Component component : unassignedTokensPanel.getComponents()) {
-            if(component == tokenButtonToMove) {
-                return unassignedTokensPanel;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * The method is designed to only be called with the arguments yourTokensButton, partnerTokensButton
-     * or unassignedTokensButton
-     * @param source The pressed button
-     * @return The panel on the view corresponding to button source
-     */
-    public JPanel getDestinationOfTokenButtonPanel(JButton source) {
-        if (source == yourTokensButton) {
-            return yourTokensPanel;
-        }
-        if (source == unassignedTokensButton) {
-            return unassignedTokensPanel;
-        }
-        if (source == partnerTokensButton) {
-            return partnerTokensPanel;
-        }
-        return null;
-    }
 
 
     /**
@@ -271,6 +230,46 @@ public class OfferPane  extends JPanel implements PropertyChangeListener, Allowe
     }
     public boolean getIsSendButtonOnScreen() {
         return isSendButtonOnScreen;
+    }
+    /**
+     * The method is designed to only be called with the arguments yourTokensButton, partnerTokensButton
+     * or unassignedTokensButton
+     * @param source The pressed button
+     * @return The panel on the view corresponding to button source
+     */
+    public JPanel getDestinationOfTokenButtonPanel(JButton source) {
+        if (source == yourTokensButton) {
+            return yourTokensPanel;
+        }
+        if (source == unassignedTokensButton) {
+            return unassignedTokensPanel;
+        }
+        if (source == partnerTokensButton) {
+            return partnerTokensPanel;
+        }
+        return null;
+    }
+    /**
+     * The method checks which of the three panels contains the selected button and returns that panel
+     */
+    public JPanel getSourceOfTokenButtonPanelAccordingToSelectedButton() {
+        for(Component component : yourTokensPanel.getComponents()) {
+            if(component == tokenButtonToMove) {
+                return yourTokensPanel;
+            }
+        }
+        for(Component component : partnerTokensPanel.getComponents()) {
+            if(component == tokenButtonToMove) {
+                return partnerTokensPanel;
+            }
+        }
+        for(Component component : unassignedTokensPanel.getComponents()) {
+            if(component == tokenButtonToMove) {
+                return unassignedTokensPanel;
+            }
+        }
+
+        return null;
     }
 
     /**

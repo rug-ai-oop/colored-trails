@@ -5,6 +5,7 @@ import Model.Color;
 import Model.Grid;
 import Model.HumanPlayer;
 import Model.Patch;
+import View.controller.ViewController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,32 +26,32 @@ public class GridPane extends JPanel implements PropertyChangeListener, AllowedT
     private JLabel communicateGoalLabel = new JLabel("Communicate this patch as your goal?");
     private final ArrayList<JButton> buttons = new ArrayList();
     private ArrayList<Boolean> buttonStates = new ArrayList<>();
+    private ViewController viewController;
 
     /**
      * Inner ActionListener which controls the movements of the components in the view that do not involve the model
      */
-    private ActionListener viewModifier = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if(e.getActionCommand() == "selectPatch") {
-                if(grid.getCurrentPlayer() instanceof HumanPlayer) {
-                    int buttonIndex = buttons.indexOf(e.getSource());
-                    if(buttonStates.get(buttonIndex) == false) {
-                        JPanel panelToChange = ((JPanel) mainPanel.getComponent(buttonIndex));
-                        menuPanelOnButton.setBackground(((JButton) e.getSource()).getBackground());
-                        panelToChange.add(menuPanelOnButton, BorderLayout.CENTER);
-                        buttonStates.set(buttonIndex, true);
-                    } else {
-                        ((JPanel) mainPanel.getComponent(buttonIndex)).remove(menuPanelOnButton);
-                        buttonStates.set(buttonIndex, false);
-                    }
-
-                    revalidate();
-                    repaint();
-                }
-            }
-        }
-    };
+//    private ActionListener viewModifier = new ActionListener() {
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//            if(e.getActionCommand() == "selectPatch") {
+//                if(grid.getCurrentPlayer() instanceof HumanPlayer) {
+//                    int buttonIndex = buttons.indexOf(e.getSource());
+//                    if(buttonStates.get(buttonIndex) == false) {
+//                        JPanel panelToChange = ((JPanel) mainPanel.getComponent(buttonIndex));
+//                        menuPanelOnButton.setBackground(((JButton) e.getSource()).getBackground());
+//                        panelToChange.add(menuPanelOnButton, BorderLayout.CENTER);
+//                        buttonStates.set(buttonIndex, true);
+//                    } else {
+//                        ((JPanel) mainPanel.getComponent(buttonIndex)).remove(menuPanelOnButton);
+//                        buttonStates.set(buttonIndex, false);
+//                    }
+//                    revalidate();
+//                    repaint();
+//                }
+//            }
+//        }
+//    };
 
     /**
      * Constructs the grid, where every Patch is a button
@@ -65,7 +66,7 @@ public class GridPane extends JPanel implements PropertyChangeListener, AllowedT
                 button.setBackground(Color.getColor(patch.getColor()));
                 button.setActionCommand("selectPatch");
                 button.addActionListener(gameController);
-                button.addActionListener(viewModifier);
+                button.addActionListener(viewController);
             } else {
                 button.setBackground(java.awt.Color.BLACK);
                 button.setEnabled(false);
@@ -92,10 +93,12 @@ public class GridPane extends JPanel implements PropertyChangeListener, AllowedT
     }
 
 
-    public GridPane(Grid grid, GameController gameController) {
+    public GridPane(Grid grid, GameController gameController, ViewController viewController) {
         this.grid = grid;
         grid.addListener(this);
         this.gameController = gameController;
+        this.viewController = viewController;
+        viewController.setGridPane(this);
         init();
     }
 
@@ -114,8 +117,31 @@ public class GridPane extends JPanel implements PropertyChangeListener, AllowedT
             case "createdPatches":
                 addButtonsToGrid();
                 break;
-
         }
     }
+
+    /**
+     * Getters and Setters for ViewController
+     */
+    public Grid getGrid() {
+        return grid;
+    }
+    public ArrayList<Boolean> getButtonStates() {
+        return buttonStates;
+    }
+
+    public ArrayList<JButton> getButtons() {
+        return buttons;
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
+    }
+
+    public JPanel getMenuPanelOnButton() {
+        return menuPanelOnButton;
+    }
+
+
 }
 

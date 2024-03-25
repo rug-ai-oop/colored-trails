@@ -1,5 +1,6 @@
 package View.controller;
 
+import Model.HumanPlayer;
 import View.model.GridPane;
 import View.model.OfferPane;
 import View.model.TokenButton;
@@ -8,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 public class ViewController implements ActionListener {
     private GridPane gridPane;
@@ -23,14 +25,14 @@ public class ViewController implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand() == "selectToken") {
+        if (Objects.equals(e.getActionCommand(), "selectToken")) {
             if (offerPane.getTokenButtonToMove() != null) {
                 offerPane.getTokenButtonToMove().setBackground(OfferPane.defaultButtonColor);
             }
             offerPane.setTokenButtonToMove((TokenButton) e.getSource());
             offerPane.getTokenButtonToMove().setBackground(new Color(60, 200, 30));
-        } else if (e.getActionCommand() == "moveTo" || e.getActionCommand() == "moveToYours" ||
-                e.getActionCommand() == "moveToPartner") {
+        } else if (Objects.equals(e.getActionCommand(), "moveTo") || Objects.equals(e.getActionCommand(), "moveToYours") ||
+                Objects.equals(e.getActionCommand(), "moveToPartner")) {
             if (offerPane.getTokenButtonToMove() != null) {
                 // the panel which initially holds the TokenButton
                 JPanel sourcePanel = offerPane.getSourceOfTokenButtonPanelAccordingToSelectedButton();
@@ -40,7 +42,7 @@ public class ViewController implements ActionListener {
                     // move the button from source to destination
                     destinationPanel.add(offerPane.getTokenButtonToMove());
                     sourcePanel.remove(offerPane.getTokenButtonToMove());
-                    if (offerPane.getUnassignedTokensButton().getComponentCount() == 0) {
+                    if (offerPane.getUnassignedTokensPanel().getComponentCount() == 0) {
                         // add the sendOfferButton when all the tokens are distributed
                         if (offerPane.getIsSendButtonOnScreen() == false) {
                             offerPane.getUnassignedTokensPanel().add(offerPane.getSendButton());
@@ -59,6 +61,21 @@ public class ViewController implements ActionListener {
                 }
                 offerPane.getTokenButtonToMove().setBackground(OfferPane.defaultButtonColor);
                 offerPane.setTokenButtonToMove(null);
+            }
+        } else if (Objects.equals(e.getActionCommand(), "selectPatch")) {
+            if(gridPane.getGrid().getCurrentPlayer() instanceof HumanPlayer) {
+                int buttonIndex = gridPane.getButtons().indexOf((JButton) e.getSource());
+                if(gridPane.getButtonStates().get(buttonIndex) == false) {
+                    JPanel panelToChange = ((JPanel) gridPane.getMainPanel().getComponent(buttonIndex));
+                    gridPane.getMenuPanelOnButton().setBackground(((JButton) e.getSource()).getBackground());
+                    panelToChange.add(gridPane.getMenuPanelOnButton(), BorderLayout.CENTER);
+                    gridPane.getButtonStates().set(buttonIndex, true);
+                } else {
+                    ((JPanel) gridPane.getMainPanel().getComponent(buttonIndex)).remove(gridPane.getMenuPanelOnButton());
+                    gridPane.getButtonStates().set(buttonIndex, false);
+                }
+                gridPane.revalidate();
+                gridPane.repaint();
             }
         }
     }
