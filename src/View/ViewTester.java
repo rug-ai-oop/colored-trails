@@ -14,7 +14,7 @@ import java.awt.*;
 public class ViewTester {
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        frame.setSize(500, 400);
+        frame.setSize(800, 800);
         Grid game = new Grid();
         HumanPlayer firstPlayer = new HumanPlayer();
         HumanPlayer secondPlayer = new HumanPlayer();
@@ -40,6 +40,7 @@ public class ViewTester {
         frameForOffers.add(offerHistoryPane);
         frameForOffers.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         try {
             game.start();
             //print score

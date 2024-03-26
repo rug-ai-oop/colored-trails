@@ -1,9 +1,7 @@
 package Controller;
 
-import Model.ColoredTrailsPlayer;
-import Model.Grid;
-import Model.HumanPlayer;
-import Model.Token;
+import Model.*;
+import View.model.IndexButton;
 import View.model.TokenButton;
 
 import java.awt.event.ActionEvent;
@@ -37,10 +35,34 @@ public class GameController implements ActionListener {
                 break;
             case "send":
                 if(currentPlayer instanceof HumanPlayer) {
-                    ((HumanPlayer) currentPlayer).setState(HumanPlayer.OfferState.COMPLETE);
+                    ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.OFFER_COMPLETE);
                 }
                 selectedToken = null;
                 break;
+            case "selectPatch":
+                if (currentPlayer instanceof HumanPlayer) {
+                    int buttonIndex = ((IndexButton) e.getSource()).getIndex();
+                    ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.INCOMPLETE);
+                    currentPlayer.setGoalToCommunicate(grid.getPatches().get(buttonIndex));
+                }
+                break;
+            case "yes":
+                if(currentPlayer instanceof HumanPlayer) {
+                    if (currentPlayer.getGoalToCommunicate() != null) {
+                        ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.GOAL_COMPLETE);
+                    }
+                }
+                break;
+            case "no":
+                currentPlayer.setGoalToCommunicate(null);
+                break;
+            case "yesCommunicate":
+                break;
+            case "noCommunicate":
+                if(currentPlayer instanceof HumanPlayer) {
+                    currentPlayer.setGoalToCommunicate(null);
+                    ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.GOAL_COMPLETE);
+                }
         }
 
     }

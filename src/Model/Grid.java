@@ -1,5 +1,4 @@
 package Model;
-import View.model.AllowedToListen;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -28,7 +27,7 @@ public class Grid {
     private HashMap<ColoredTrailsPlayer, Patch> goalsToAnnounce = new HashMap();
     private String wayOfAssigningGoals;
 
-    private enum STATE {
+    public enum STATE {
         INACTIVE, ACTIVE, WAITING_FOR_OFFER, WAITING_FOR_GOAL
     }
     private STATE gameState;
@@ -320,6 +319,13 @@ public class Grid {
     }
 
     /**
+     * @return the state of the game
+     */
+    public STATE getGameState() {
+        return gameState;
+    }
+
+    /**
      * adds a player to the list of players, sets the grid of the player to this grid,
      * and associates null to the player as its supposed goal to be announced
      * @param player The player to be added
@@ -337,10 +343,7 @@ public class Grid {
      * @param listener PropertyChangeListener which is added to the listeners of the grid
      */
     public void addListener(PropertyChangeListener listener) {
-        if(listener instanceof AllowedToListen) {
-            listeners.add(listener);
-        }
-
+        listeners.add(listener);
     }
 
     /**
@@ -412,11 +415,13 @@ public class Grid {
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
             ColoredTrailsPlayer partner = getPlayer(numberOfTurns + 1);
             setGameState(STATE.WAITING_FOR_GOAL);
-            currentPlayer.revealGoal();        // Ask the player to reveal its goal
+            notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingAnnounceGoal", null,
+                    null));
+            Patch goalToReveal = currentPlayer.revealGoal();        // Ask the player to reveal its goal
             if(goalsToAnnounce.get(currentPlayer) != null) {
-                partner.listenToGoal(goalsToAnnounce.get(currentPlayer));
-                notifyListeners(new PropertyChangeEvent(currentPlayer, "announceGoal", null,
-                        goalsToAnnounce.get(currentPlayer)));
+                partner.listenToGoal(goalToReveal);
+                notifyListeners(new PropertyChangeEvent(currentPlayer, "announceGoalFinished", null,
+                        goalToReveal));
             }
             setGameState(STATE.WAITING_FOR_OFFER);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
@@ -690,6 +695,13 @@ public class Grid {
      */
     public ArrayList<Patch> getPatches() {
         return (ArrayList<Patch>) patches.clone();
+    }
+
+    /**
+     * @return the number of turns (The number of the current turn)
+     */
+    public int getNumberOfTurns() {
+        return numberOfTurns;
     }
 
     /**

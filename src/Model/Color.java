@@ -3,7 +3,7 @@ import java.awt.*;
 
 public enum Color{
     BLUE,
-    RED,
+    VIOLET,
     GREEN,
     PINK, //FF63C7
     HONEY; //EBA937
@@ -18,7 +18,7 @@ public enum Color{
             case PINK -> new java.awt.Color(255, 99, 199);
             case HONEY -> new java.awt.Color(235, 169, 55);
             case BLUE -> new java.awt.Color(0, 164, 239);
-            case RED -> new java.awt.Color(242, 80, 34);
+            case VIOLET -> new java.awt.Color(177, 58, 184);
         };
     }
 
@@ -29,7 +29,7 @@ public enum Color{
      */
     public static int getColorPriority(Color color) {
         return switch (color) {
-            case RED -> 1;
+            case VIOLET -> 1;
             case PINK -> 2;
             case HONEY -> 3;
             case GREEN -> 4;

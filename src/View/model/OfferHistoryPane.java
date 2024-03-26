@@ -11,7 +11,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class OfferHistoryPane extends JPanel implements PropertyChangeListener, AllowedToListen {
+public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
     private Grid grid;
     private HumanPlayer playerToDisplayOnTheLeft;
     private JScrollPane scrollPane;

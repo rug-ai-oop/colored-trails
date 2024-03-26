@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class HumanPlayer extends ColoredTrailsPlayer{
 
-    public enum OfferState {
-        COMPLETE, INCOMPLETE
+    public enum State {
+        OFFER_COMPLETE, INCOMPLETE, GOAL_COMPLETE
     }
-    private volatile OfferState state = OfferState.INCOMPLETE;
+    private volatile State state = State.INCOMPLETE;
     private ArrayList<Token> supposedOwnTokens;
 
     /**
@@ -52,8 +52,11 @@ public class HumanPlayer extends ColoredTrailsPlayer{
         supposedOwnTokens = new ArrayList();
     }
     @Override
-    public void revealGoal() {
-
+    public Patch revealGoal() {
+        while (state != State.GOAL_COMPLETE) {
+        }
+        setState(State.INCOMPLETE);
+        return goalToCommunicate;
     }
 
     @Override
@@ -65,7 +68,7 @@ public class HumanPlayer extends ColoredTrailsPlayer{
 
     }
 
-    public void setState(OfferState state) {
+    public void setState(State state) {
         this.state = state;
     }
 
@@ -96,14 +99,14 @@ public class HumanPlayer extends ColoredTrailsPlayer{
     @Override
     public ArrayList<ArrayList<Token>> makeOffer() {
         removeAllSupposedTokens();
-        while(state != OfferState.COMPLETE) {
+        while(state != State.OFFER_COMPLETE) {
 
         }
         ArrayList<ArrayList<Token>> offer = new ArrayList(2);
         ArrayList<Token> partnerHand = constructPartnerHand();
         offer.add(0, supposedOwnTokens);
         offer.add(1, partnerHand);
-        state = OfferState.INCOMPLETE;
+        state = State.INCOMPLETE;
         return offer;
     }
 

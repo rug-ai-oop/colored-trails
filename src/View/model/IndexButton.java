@@ -3,26 +3,14 @@ package View.model;
 import javax.swing.*;
 
 public class IndexButton extends JButton {
-    private int columnOnGrid;
-    private int rowOnGrid;
+    private final int index;
 
-    public IndexButton() {
+    public IndexButton(int index) {
         super();
+        this.index = index;
     }
 
-    public void setColumnOnGrid(int columnOnGrid) {
-        this.columnOnGrid = columnOnGrid;
-    }
-
-    public void setRowOnGrid(int rowOnGrid) {
-        this.rowOnGrid = rowOnGrid;
-    }
-
-    public int getColumnOnGrid() {
-        return columnOnGrid;
-    }
-
-    public int getRowOnGrid() {
-        return rowOnGrid;
+    public int getIndex() {
+        return index;
     }
 }

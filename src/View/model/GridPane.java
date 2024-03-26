@@ -9,49 +9,22 @@ import View.controller.ViewController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class GridPane extends JPanel implements PropertyChangeListener, AllowedToListen {
+public class GridPane extends JPanel implements PropertyChangeListener {
     private Grid grid;
     private ArrayList<HumanPlayer> humanPlayers = new ArrayList();
     private GameController gameController;
     private JPanel mainPanel = new JPanel();
-    private JPanel menuPanelOnButton = new JPanel();
-    private JButton yesButton = new JButton("Yes");
-    private JButton noButton = new JButton("No");
-    private JLabel communicateGoalLabel = new JLabel("Communicate this patch as your goal?");
     private final ArrayList<JButton> buttons = new ArrayList();
-    private ArrayList<Boolean> buttonStates = new ArrayList<>();
     private ViewController viewController;
+    private JOptionPane optionPane;
+    private JDialog dialog;
+    private boolean allowToPickPatch = true;
 
-    /**
-     * Inner ActionListener which controls the movements of the components in the view that do not involve the model
-     */
-//    private ActionListener viewModifier = new ActionListener() {
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-//            if(e.getActionCommand() == "selectPatch") {
-//                if(grid.getCurrentPlayer() instanceof HumanPlayer) {
-//                    int buttonIndex = buttons.indexOf(e.getSource());
-//                    if(buttonStates.get(buttonIndex) == false) {
-//                        JPanel panelToChange = ((JPanel) mainPanel.getComponent(buttonIndex));
-//                        menuPanelOnButton.setBackground(((JButton) e.getSource()).getBackground());
-//                        panelToChange.add(menuPanelOnButton, BorderLayout.CENTER);
-//                        buttonStates.set(buttonIndex, true);
-//                    } else {
-//                        ((JPanel) mainPanel.getComponent(buttonIndex)).remove(menuPanelOnButton);
-//                        buttonStates.set(buttonIndex, false);
-//                    }
-//                    revalidate();
-//                    repaint();
-//                }
-//            }
-//        }
-//    };
 
     /**
      * Constructs the grid, where every Patch is a button
@@ -59,34 +32,100 @@ public class GridPane extends JPanel implements PropertyChangeListener, AllowedT
     private void addButtonsToGrid() {
         for(int i = 0; i < grid.getPatches().size(); i++) {
             Patch patch = grid.getPatches().get(i);
+            JPanel mainPanelInGridSlot = new JPanel();      // The panel which takes care of the cardLayout
+            mainPanelInGridSlot.setLayout(new CardLayout());
             JPanel panelHoldingButton = new JPanel();
+            JPanel menuPanel = getMenuPanelOnButton();
             panelHoldingButton.setLayout(new BorderLayout());
-            JButton button = new JButton();
+            JButton button = new IndexButton(i);
             if(patch.getState() == Patch.State.ACTIVE) {
                 button.setBackground(Color.getColor(patch.getColor()));
+                menuPanel.setBackground(Color.getColor(patch.getColor()));
                 button.setActionCommand("selectPatch");
                 button.addActionListener(gameController);
                 button.addActionListener(viewController);
             } else {
-                button.setBackground(java.awt.Color.BLACK);
+                button.setBackground(java.awt.Color.GRAY);
                 button.setEnabled(false);
                 if(i == grid.getStartPatchIndex()) {
+                    button.setForeground(java.awt.Color.BLACK);
                     button.setText("START");
-                    button.setForeground(java.awt.Color.WHITE);
                 }
             }
             panelHoldingButton.add(button);
             buttons.add(button);
-            buttonStates.add(false);
-            mainPanel.add(panelHoldingButton);
+            mainPanelInGridSlot.add(panelHoldingButton, "button");
+            mainPanelInGridSlot.add(menuPanel, "menu");
+            mainPanel.add(mainPanelInGridSlot);
         }
         repaint();
         revalidate();
     }
 
+    /**
+     * Constructs the menuPanelOnButton by adding yesButton, noButton and communicateGoalLabel
+     */
+    private JPanel getNewMenuPanelOnButton() {
+        JPanel menuPanelOnButton = new JPanel();
+
+        JButton yesButton = new JButton("Yes");
+        yesButton.setActionCommand("yes");
+        JButton noButton = new JButton("No");
+        noButton.setActionCommand("no");
+        JLabel communicateGoalLabel = new JLabel("Communicate as goal?");
+
+        menuPanelOnButton.setLayout(new BorderLayout());
+
+        //Center the text on the label
+        communicateGoalLabel.setHorizontalAlignment(JLabel.CENTER);
+
+        //Add the controllers to the buttons
+        noButton.addActionListener(gameController);
+        noButton.addActionListener(viewController);
+        yesButton.addActionListener(gameController);
+        yesButton.addActionListener(viewController);
+
+        //Create a panel holding the buttons
+        JPanel panelHoldingButtons = new JPanel();
+        panelHoldingButtons.setLayout(new GridLayout(1, 2));
+        panelHoldingButtons.add(yesButton);
+        panelHoldingButtons.add(noButton);
+
+        //Add the components
+        menuPanelOnButton.add(communicateGoalLabel, BorderLayout.NORTH);
+        menuPanelOnButton.add(panelHoldingButtons, BorderLayout.CENTER);
+
+        return menuPanelOnButton;
+    }
+
+    /**
+     * Constructs the pop-up menu which will ask the player whether they want to reveal their goal
+     * @return The JOption representing the pop-up
+     */
+    private JOptionPane constructOptionPane() {
+
+        JButton yesButton = new JButton("Yes");
+        yesButton.setActionCommand("yesCommunicate");
+        yesButton.addActionListener(viewController);
+        yesButton.addActionListener(gameController);
+
+        JButton noButton = new JButton("No");
+        noButton.setActionCommand("noCommunicate");
+        noButton.addActionListener(viewController);
+        noButton.addActionListener(gameController);
+
+        String message = "Would you want to communicate a patch as Goal to your partner?";
+
+        JOptionPane optionPane = new JOptionPane(message, JOptionPane.QUESTION_MESSAGE,
+                JOptionPane.YES_NO_OPTION, null, new Object[]{yesButton, noButton},
+                yesButton);
+        return optionPane;
+    }
+
     private void init() {
         mainPanel.setLayout(new GridLayout(5, 5, 5, 5));
-
+        getNewMenuPanelOnButton();
+        optionPane = constructOptionPane();
         this.setLayout(new BorderLayout());
         this.add(mainPanel);
         this.setPreferredSize(mainPanel.getPreferredSize());
@@ -117,6 +156,12 @@ public class GridPane extends JPanel implements PropertyChangeListener, AllowedT
             case "createdPatches":
                 addButtonsToGrid();
                 break;
+            case "initiatingAnnounceGoal":
+                if(evt.getSource() instanceof HumanPlayer) {
+                    dialog = optionPane.createDialog( this, "Reveal Goal?");
+                    dialog.setVisible(true);
+                }
+                break;
         }
     }
 
@@ -125,9 +170,6 @@ public class GridPane extends JPanel implements PropertyChangeListener, AllowedT
      */
     public Grid getGrid() {
         return grid;
-    }
-    public ArrayList<Boolean> getButtonStates() {
-        return buttonStates;
     }
 
     public ArrayList<JButton> getButtons() {
@@ -139,9 +181,23 @@ public class GridPane extends JPanel implements PropertyChangeListener, AllowedT
     }
 
     public JPanel getMenuPanelOnButton() {
-        return menuPanelOnButton;
+        return getNewMenuPanelOnButton();
     }
 
+    public JDialog getDialog() {
+        return dialog;
+    }
 
+    public JOptionPane getOptionPane() {
+        return optionPane;
+    }
+
+    public boolean isAllowToPickPatch() {
+        return allowToPickPatch;
+    }
+
+    public void setAllowToPickPatch(boolean allowToPickPatch) {
+        this.allowToPickPatch = allowToPickPatch;
+    }
 }
 

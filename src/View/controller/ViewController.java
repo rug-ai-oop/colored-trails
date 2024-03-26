@@ -1,5 +1,6 @@
 package View.controller;
 
+import Model.Grid;
 import Model.HumanPlayer;
 import View.model.GridPane;
 import View.model.OfferPane;
@@ -14,6 +15,8 @@ import java.util.Objects;
 public class ViewController implements ActionListener {
     private GridPane gridPane;
     private OfferPane offerPane;
+    //Hold the last panel on the grid to display the next card
+    private JPanel lastSelectedPatchPanel;
 
     public void setGridPane(GridPane gridPane) {
         this.gridPane = gridPane;
@@ -63,20 +66,56 @@ public class ViewController implements ActionListener {
                 offerPane.setTokenButtonToMove(null);
             }
         } else if (Objects.equals(e.getActionCommand(), "selectPatch")) {
-            if(gridPane.getGrid().getCurrentPlayer() instanceof HumanPlayer) {
-                int buttonIndex = gridPane.getButtons().indexOf((JButton) e.getSource());
-                if(gridPane.getButtonStates().get(buttonIndex) == false) {
-                    JPanel panelToChange = ((JPanel) gridPane.getMainPanel().getComponent(buttonIndex));
-                    gridPane.getMenuPanelOnButton().setBackground(((JButton) e.getSource()).getBackground());
-                    panelToChange.add(gridPane.getMenuPanelOnButton(), BorderLayout.CENTER);
-                    gridPane.getButtonStates().set(buttonIndex, true);
-                } else {
-                    ((JPanel) gridPane.getMainPanel().getComponent(buttonIndex)).remove(gridPane.getMenuPanelOnButton());
-                    gridPane.getButtonStates().set(buttonIndex, false);
+            if (gridPane.getGrid().getGameState() != Grid.STATE.INACTIVE && gridPane.isAllowToPickPatch()) {
+                if (gridPane.getGrid().getCurrentPlayer() instanceof HumanPlayer) {
+                    JButton pressedButton = (JButton) e.getSource();
+                    // The parent of the parent
+                    JPanel panelToChange = (JPanel) (pressedButton.getParent()).getParent();
+                    CardLayout cardLayout = (CardLayout) panelToChange.getLayout();
+
+                    if (lastSelectedPatchPanel != null) {
+                        // Change the appearances of the panel of the last pressed button
+                        CardLayout lastCardLayout = (CardLayout) lastSelectedPatchPanel.getLayout();
+                        lastCardLayout.next(lastSelectedPatchPanel);
+                        lastSelectedPatchPanel.repaint();
+                        lastSelectedPatchPanel.revalidate();
+                    }
+                    // Change the appearances of the selected panel
+                    cardLayout.next(panelToChange);
+
+                    panelToChange.repaint();
+                    panelToChange.revalidate();
+                    gridPane.repaint();
+                    gridPane.revalidate();
+
+                    //Update the lastSelectedPanel
+                    lastSelectedPatchPanel = panelToChange;
                 }
-                gridPane.revalidate();
-                gridPane.repaint();
             }
+        } else if (Objects.equals(e.getActionCommand(), "yes")
+                || Objects.equals(e.getActionCommand(), "no")) {
+            if (lastSelectedPatchPanel != null) {
+                JButton pressedButton = (JButton) ((JPanel) lastSelectedPatchPanel.getComponent(0)).getComponent(0);
+                if (gridPane.isAllowToPickPatch()) {
+                    // Change the appearances of the panel of the last pressed button
+                    CardLayout lastCardLayout = (CardLayout) lastSelectedPatchPanel.getLayout();
+                    lastCardLayout.next(lastSelectedPatchPanel);
+                    if (Objects.equals(e.getActionCommand(), "yes")) {
+                        pressedButton.setText(("Revealed as goal at round " + gridPane.getGrid().getNumberOfTurns()));
+                        gridPane.setAllowToPickPatch(false);
+                        pressedButton.setEnabled(false);
+                    }
+                    lastSelectedPatchPanel.repaint();
+                    lastSelectedPatchPanel.revalidate();
+                }
+                lastSelectedPatchPanel = null;
+            }
+        } else if (Objects.equals(e.getActionCommand(), "yesCommunicate") ||
+                Objects.equals(e.getActionCommand(), "noCommunicate")) {
+            if (Objects.equals(e.getActionCommand(), "yesCommunicate")) {
+                gridPane.setAllowToPickPatch(true);
+            }
+            gridPane.getDialog().dispose();
         }
     }
 }
