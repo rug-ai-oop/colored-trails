@@ -23,7 +23,7 @@ public class GridPane extends JPanel implements PropertyChangeListener {
     private ViewController viewController;
     private JOptionPane optionPane;
     private JDialog dialog;
-    private boolean allowToPickPatch = true;
+    private boolean allowToPickPatch = false;
 
 
     /**
@@ -159,6 +159,7 @@ public class GridPane extends JPanel implements PropertyChangeListener {
             case "initiatingAnnounceGoal":
                 if(evt.getSource() instanceof HumanPlayer) {
                     dialog = optionPane.createDialog( this, "Reveal Goal?");
+                    dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
                     dialog.setVisible(true);
                 }
                 break;
