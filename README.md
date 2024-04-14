@@ -41,7 +41,7 @@ The scores are listed in the table below.
    that Maria likes ice-cream.”, Paul shows first order TOM. On the other 
    hand, in the sentence, ”Paul thinks that Maria thinks that he likes ice-cream.”, Paul shows second order TOM.
   ### Experimental Design
-  The purpose of this project is to stgitudy human behavior in negotiation with self-interested parties, that show 
+  The purpose of this project is to study human behavior in negotiation with self-interested parties, that show 
   different orders of TOM. In this scope, the GUI will be used as an interacting bridge between humans and TOM Colored
   Trails Agents designed by Harmen de Weerd, assistant Professor of the Faculty of Science and Engineering, University 
   of Groningen.
