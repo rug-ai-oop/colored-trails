@@ -617,11 +617,14 @@ public class Grid {
      *        visited, the list of the visited fields while looking for the solution
      * @return finalScore, the score of that player made up of the remaining tokens and its best position
      */
-    public int astarTraverse(ColoredTrailsPlayer player, ArrayList<Token> tokens, int[] visited) {
+    public int[] astarTraverse(ColoredTrailsPlayer player, ArrayList<Token> tokens, int[] visited) {
+        int[] toReturn = new int[2];
+        //0: final score    1: final position
+        toReturn[0] = 0;
+        toReturn[1] = 0;
         int position = 12;
         int finalScore = -1;
 
-        //possibly reverse the signs if the worst option is chosen (no clue)
         ArrayList<Integer> heuristicArray = calculateHeuristicArray(player);
         PriorityQueue<SearchNode> queue = new PriorityQueue<>((node1, node2) -> {
             if (node1.utility < node2.utility) return -1;
@@ -639,7 +642,7 @@ public class Grid {
         int goalX = goalPosition / 5;
 
         while (!queue.isEmpty()) {
-            System.out.println("current best score:" + finalScore);
+            System.out.println("current best score:" + toReturn[0]);
             SearchNode currentNode = queue.poll();
             int currentPosition = currentNode.position;
             int currentUtility = currentNode.utility;
@@ -647,7 +650,8 @@ public class Grid {
             System.out.println("Current position:" + currentPosition);
             if(currentPosition == goalPosition) {
                 System.out.println("Reached goal!");
-                finalScore = tokenScore(currentTokens) + 50;
+                toReturn[0] = tokenScore(currentTokens) + 50;
+                toReturn[1] = goalPosition;
                 int counter = 0;
                 for(Token token : currentTokens) {
                     counter += 1;
@@ -661,13 +665,16 @@ public class Grid {
 
             //calculate the actual utility of the current position
             int playerY = currentPosition % 5;
-            int playerX = currentPosition/ 5;
+            int playerX = currentPosition / 5;
             int positionScore = 50 - 10*((Math.abs(playerX-goalX) + Math.abs(playerY-goalY)));
             int tokenScore = tokenScore(currentTokens);
-            if (finalScore < positionScore + tokenScore) finalScore = positionScore + tokenScore;
+            if (toReturn[0] < positionScore + tokenScore) {
+                toReturn[0] = positionScore + tokenScore;
+                toReturn[1] = currentPosition;
+            }
 
         }
-        return finalScore;
+        return toReturn;
     }
 
     /**
@@ -675,7 +682,7 @@ public class Grid {
      * @param player, the player for whom the score is calculated
      * @return bestScore, the score of that player
      */
-    public int calculateFinalScore(ColoredTrailsPlayer player) {
+    public int[] calculateFinalScore(ColoredTrailsPlayer player) {
         int[] visited = new int[25];
         for(int i = 0; i<25; i++) {
             visited[i] = 0;

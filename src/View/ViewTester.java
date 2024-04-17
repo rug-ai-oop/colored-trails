@@ -52,9 +52,13 @@ public class ViewTester {
             game.start();
             //print score
             System.out.println("player1:");
-            System.out.println(game.calculateFinalScore(firstPlayer));
+            int[] score1 = game.calculateFinalScore(firstPlayer);
+            System.out.println(score1[0]);
+            System.out.println(score1[1]);
             System.out.println("player2:");
-            System.out.println(game.calculateFinalScore(secondPlayer));
+            int[] score2 = game.calculateFinalScore(firstPlayer);
+            System.out.println(score2[0]);
+            System.out.println(score2[1]);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
