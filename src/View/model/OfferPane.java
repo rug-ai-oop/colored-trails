@@ -41,28 +41,6 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
 
 
     /**
-     * Preloads images
-     */
-    public static void loadImages() {
-        try {
-            if (tokenImages.isEmpty()) {
-                for (Model.Color color : Model.Color.values()) {
-                    tokenImages.put(color,
-                            ImageIO.read(OfferPane.class.getResource("/" + color + ".png")));
-                }
-            }
-            if(auxiliaryImages.isEmpty()) {
-                auxiliaryImages.put("redFlag", ImageIO.read(OfferPane.class.getResource("/RED_FLAG.png")));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-    }
-
-
-
-    /**
      * The method sets up the components in the offer panel
      */
     private void setUp() {
@@ -190,7 +168,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
         this.viewController = viewController;
         viewController.setOfferPane(this);
         grid.addListener(this);
-        loadImages();
+        ImageLoader.loadImages();
         setUp();
     }
 
