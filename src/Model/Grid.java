@@ -620,8 +620,8 @@ public class Grid {
     public int[] astarTraverse(ColoredTrailsPlayer player, ArrayList<Token> tokens, int[] visited) {
         int[] toReturn = new int[2];
         //0: final score    1: final position
-        toReturn[0] = 0;
-        toReturn[1] = 0;
+        toReturn[0] = -1;
+        toReturn[1] = -1;
         int position = 12;
         int finalScore = -1;
 
@@ -669,6 +669,7 @@ public class Grid {
             int positionScore = 50 - 10*((Math.abs(playerX-goalX) + Math.abs(playerY-goalY)));
             int tokenScore = tokenScore(currentTokens);
             if (toReturn[0] < positionScore + tokenScore) {
+                System.out.println("New best score:" + positionScore + tokenScore);
                 toReturn[0] = positionScore + tokenScore;
                 toReturn[1] = currentPosition;
             }
