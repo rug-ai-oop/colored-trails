@@ -418,11 +418,17 @@ public class Grid {
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingAnnounceGoal", null,
                     null));
             Patch goalToReveal = currentPlayer.revealGoal();        // Ask the player to reveal its goal
-            if(goalsToAnnounce.get(currentPlayer) != null) {
+            goalsToAnnounce.put(currentPlayer, goalToReveal);       // update the goalsToAnnounce
+            if(goalToReveal != null) {
                 partner.listenToGoal(goalToReveal);
                 notifyListeners(new PropertyChangeEvent(currentPlayer, "announceGoalFinished", null,
                         goalToReveal));
             }
+            if(offers.get(partner) != null) {
+                notifyListeners(new PropertyChangeEvent(partner, "OfferReceivedFromPartner", null,
+                        offers.get(partner)));
+            }
+            // continue here
             setGameState(STATE.WAITING_FOR_OFFER);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
             ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
