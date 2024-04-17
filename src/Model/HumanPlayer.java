@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class HumanPlayer extends ColoredTrailsPlayer{
 
     public enum State {
-        OFFER_COMPLETE, INCOMPLETE, GOAL_COMPLETE
+        OFFER_COMPLETE, INCOMPLETE, GOAL_COMPLETE, DECISION_COMPLETE
     }
     private volatile State state = State.INCOMPLETE;
     private ArrayList<Token> supposedOwnTokens;
@@ -61,7 +61,10 @@ public class HumanPlayer extends ColoredTrailsPlayer{
 
     @Override
     public void receiveOffer(ArrayList<ArrayList<Token>> offer) {
-
+        offerPartner = offer;
+        while (state != State.DECISION_COMPLETE) {
+        }
+        setState(State.INCOMPLETE);
     }
     @Override
     public void listenToGoal(Patch goal) {

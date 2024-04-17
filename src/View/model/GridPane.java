@@ -44,9 +44,10 @@ public class GridPane extends JPanel implements PropertyChangeListener {
                 button.setActionCommand("selectPatch");
                 button.addActionListener(gameController);
                 button.addActionListener(viewController);
+                panelHoldingButton.add(button);
             } else {
-                button.setBackground(java.awt.Color.GRAY);
-                button.setEnabled(false);
+//                button.setBackground(java.awt.Color.GRAY);
+//                button.setEnabled(false);
                 if(i == grid.getStartPatchIndex()) {
                     button.setForeground(java.awt.Color.BLACK);
                     button.setText("START");
@@ -152,7 +153,7 @@ public class GridPane extends JPanel implements PropertyChangeListener {
                 if(evt.getOldValue() instanceof HumanPlayer) {
                     HumanPlayer player = (HumanPlayer) evt.getOldValue();
                     JButton button = buttons.get((Integer) evt.getNewValue());
-                    Image scaledTokenImage =  OfferPane.auxiliaryImages.get("redFlag").getScaledInstance(80
+                    Image scaledTokenImage =  ImageLoader.auxiliaryImages.get("redFlag").getScaledInstance(80
                             , 80, Image.SCALE_SMOOTH);
                     button.setIcon(new ImageIcon(scaledTokenImage));
                     button.setText(player.getName());

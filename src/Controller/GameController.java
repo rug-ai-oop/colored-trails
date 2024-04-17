@@ -3,6 +3,9 @@ package Controller;
 import Model.*;
 import View.model.IndexButton;
 import View.model.TokenButton;
+import View.model.OfferHistoryPane;
+
+import javax.swing.JFrame;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,7 +69,16 @@ public class GameController implements ActionListener {
                 break;
             case "withdrawGame":
                 System.out.printf("A player exited the negotiations");
-                //grid.endGame();
+                grid.endGame();
+                break;
+            case "openOfferHistory":
+                OfferHistoryPane offerHistoryPane = new OfferHistoryPane(grid, (HumanPlayer) currentPlayer);
+                JFrame frame = new JFrame("Offer History");
+                frame.add(offerHistoryPane);
+                frame.setSize(700, 160);
+                frame.pack();
+                frame.setLocationRelativeTo(null); // Center the frame
+                frame.setVisible(true);
                 break;
         }
     }

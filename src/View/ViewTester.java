@@ -17,15 +17,20 @@ public class ViewTester {
         JFrame frame = new JFrame("Colored Trails");
         frame.setSize(1200, 800);
         Grid game = new Grid();
+
         HumanPlayer firstPlayer = new HumanPlayer("Csenge");
         HumanPlayer secondPlayer = new HumanPlayer("Lukasz");
         game.addPlayer(firstPlayer);
         game.addPlayer(secondPlayer);
+
         GameController controller = new GameController(game);
         ViewController viewController = new ViewController();
+
         GridPane gridPane = new GridPane(game, controller, viewController);
         OfferPane offerPane = new OfferPane(game, controller, viewController);
+
         game.setUp();
+
         PlayerPanel playerPanel1 = new PlayerPanel(game, controller, "Csenge", firstPlayer);
         PlayerPanel playerPanel2 = new PlayerPanel(game, controller, "Lukasz", secondPlayer);
 
@@ -50,15 +55,6 @@ public class ViewTester {
 
         try {
             game.start();
-            //print score
-            System.out.println("player1:");
-            int[] score1 = game.calculateFinalScore(firstPlayer);
-            System.out.println(score1[0]);
-            System.out.println(score1[1]);
-            System.out.println("player2:");
-            int[] score2 = game.calculateFinalScore(firstPlayer);
-            System.out.println(score2[0]);
-            System.out.println(score2[1]);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

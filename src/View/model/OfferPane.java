@@ -19,19 +19,24 @@ import java.util.HashMap;
 public class OfferPane  extends JPanel implements PropertyChangeListener {
     public static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
     public static Color defaultButtonColor = new Color(238, 238, 238);
-    protected static final Map<String, BufferedImage> auxiliaryImages = new HashMap<>(5);
+//    protected static final Map<String, BufferedImage> auxiliaryImages = new HashMap<>(5);
     private Grid grid;
     private GameController controller;
     private JButton yourTokensButton;
     private JButton partnerTokensButton;
     private JButton unassignedTokensButton;
     private JButton sendButton;
+    private JButton acceptButton;
+    private JButton rejectButton;
     private TokenButton tokenButtonToMove;
     private JLabel offerPanelLabel;
+    private JLabel receivedOfferMessageLabel;
     private JPanel centerPanel;
     private JPanel leftPanel;
     private JPanel rightPanel;
     private JPanel middlePanel;
+    private JPanel receivedOfferPanel;
+    private JPanel acceptRejectPanel;
     private volatile JPanel yourTokensPanel;
     private volatile JPanel unassignedTokensPanel;
     private volatile JPanel partnerTokensPanel;
@@ -131,6 +136,31 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
         sendButton.setBackground(new Color(0, 200, 0));
         sendButton.setOpaque(true);
         sendButton.setPreferredSize(new Dimension(200, 40));
+
+        // Accept Button
+        acceptButton = new JButton("Accept Offer");
+        acceptButton.setActionCommand("acceptOffer");
+        acceptButton.addActionListener(viewController);
+        acceptButton.addActionListener(controller);
+
+        // Reject Button
+        rejectButton = new JButton("Reject Offer");
+        rejectButton.setActionCommand("rejectOffer");
+        rejectButton.addActionListener(viewController);
+        rejectButton.addActionListener(controller);
+
+        // Accept Reject Panel
+        acceptRejectPanel = new JPanel();
+        acceptRejectPanel.setLayout(new GridLayout(1, 2));
+        acceptRejectPanel.add(rejectButton);
+        acceptRejectPanel.add(acceptButton);
+
+        // Received Offer Message Label
+        receivedOfferMessageLabel = new JLabel("You received the following offer from your partner:");
+
+        // Received Offer Panel
+        receivedOfferPanel = new JPanel();
+        receivedOfferPanel.setLayout(new GridLayout(3, 1));
     }
 
     /**
@@ -142,7 +172,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
             TokenButton tokenButton = new TokenButton(token);
             tokenButton.setActionCommand("selectToken");
             tokenButton.setPreferredSize(new Dimension(40, 40));
-            Image scaledTokenImage =  tokenImages.get(token.getColor()).getScaledInstance(40, 20, Image.SCALE_SMOOTH);
+            Image scaledTokenImage =  ImageLoader.tokenImages.get(token.getColor()).getScaledInstance(40, 20, Image.SCALE_SMOOTH);
             tokenButton.setIcon(new ImageIcon(scaledTokenImage));
             tokenButton.addActionListener(controller);
             tokenButton.addActionListener(viewController);
@@ -188,6 +218,8 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
                 resetOfferPanel();
                 revalidate();
                 break;
+            case "receiveOfferFromPartner":
+//                this.remove(centerPanel);
         }
     }
 

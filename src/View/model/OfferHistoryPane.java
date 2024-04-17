@@ -81,7 +81,7 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
         for(Token token : offer.get(0)) {
             JLabel tokenLabel = new JLabel();
             tokenLabel.setPreferredSize(new Dimension(40, 40));
-            Image scaledTokenImage =  OfferPane.tokenImages.get(token.getColor()).
+            Image scaledTokenImage =  ImageLoader.tokenImages.get(token.getColor()).
                     getScaledInstance(40, 20, Image.SCALE_SMOOTH);
             tokenLabel.setIcon(new ImageIcon(scaledTokenImage));
             leftOfferPanel.add(tokenLabel);
@@ -91,7 +91,7 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
         for(Token token : offer.get(1)) {
             JLabel tokenLabel = new JLabel();
             tokenLabel.setPreferredSize(new Dimension(40, 40));
-            Image scaledTokenImage =  OfferPane.tokenImages.get(token.getColor()).
+            Image scaledTokenImage =  ImageLoader.tokenImages.get(token.getColor()).
                     getScaledInstance(40, 20, Image.SCALE_SMOOTH);
             tokenLabel.setIcon(new ImageIcon(scaledTokenImage));
             rightOfferPanel.add(tokenLabel);

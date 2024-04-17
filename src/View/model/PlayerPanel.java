@@ -21,8 +21,8 @@ import java.util.HashMap;
 //this shit ain't doing anything but yeah
 public class PlayerPanel extends JPanel implements PropertyChangeListener{
     private static Color defaultButtonColor = new Color(26, 194, 26);
-    protected static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
-    protected static final Map<String, BufferedImage> playerImages = new HashMap<>(2);
+//    protected static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
+//    protected static final Map<String, BufferedImage> playerImages = new HashMap<>(2);
     private Grid grid;
     private GameController controller;
     private JButton revealButton;
@@ -30,6 +30,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
     private TokenButton tokenButtonToMove;
     private JPanel centerPanel;
     private JPanel yourTokensPanel;
+    private JButton offerHistoryButton;
  
 
 
@@ -74,7 +75,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         add(playerLabel);
 
         // Player Image
-        Image scaledPlayerImage =  playerImages.get(playerName).getScaledInstance(80
+        Image scaledPlayerImage =  ImageLoader.playerImages.get(playerName).getScaledInstance(80
                 , 120, Image.SCALE_SMOOTH);
         JLabel playerImage = new JLabel(new ImageIcon(scaledPlayerImage));
         playerImage.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -96,7 +97,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         yourTokensPanel.setPreferredSize(new Dimension(100, 100));
         yourTokensPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         for(Token token : grid.getTokens(player)) {
-            Image scaledTokenImage =  tokenImages.get(token.getColor()).getScaledInstance(40, 20, Image.SCALE_SMOOTH);
+            Image scaledTokenImage =  ImageLoader.tokenImages.get(token.getColor()).getScaledInstance(40, 20, Image.SCALE_SMOOTH);
             JLabel tokenImage = new JLabel(new ImageIcon(scaledTokenImage));
             yourTokensPanel.add(tokenImage);
         }
@@ -117,9 +118,19 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         withdrawButton.setActionCommand("withdrawGame");
         withdrawButton.addActionListener(controller);
         withdrawButton.setBackground(new Color(179, 119, 162));
-        withdrawButton.setPreferredSize(new Dimension(100, 50));
+        withdrawButton.setPreferredSize(new Dimension(130, 50));
         withdrawButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(withdrawButton);
+
+        // Displaying offer history
+        offerHistoryButton = new JButton("Offer History");
+        offerHistoryButton.setFont(new Font("Serif", Font.BOLD, 14));
+        offerHistoryButton.setActionCommand("openOfferHistory");
+        offerHistoryButton.addActionListener(controller);
+        offerHistoryButton.setBackground(new Color(179, 119, 162));
+        offerHistoryButton.setPreferredSize(new Dimension(130, 50));
+        offerHistoryButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(offerHistoryButton);
     }
 
 

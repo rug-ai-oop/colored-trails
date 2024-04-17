@@ -87,9 +87,6 @@ public class Grid {
         return patches.get(randomIndex);
     }
 
-    public ArrayList<Token> getTokens(ColoredTrailsPlayer player){
-        return tokens.get(player);
-    }
     /**
      * if the players and patches have been created, assigns 4 tokens randomly to each player
      */
@@ -290,6 +287,12 @@ public class Grid {
     }
 
     /**
+     * ends the game on player request
+     */
+    public void endGame() {
+        this.gameState = STATE.INACTIVE;
+    }
+    /**
      * @return The current player in turn
      */
     public ColoredTrailsPlayer getCurrentPlayer() {
@@ -312,6 +315,13 @@ public class Grid {
     }
 
     /**
+     * @return player tokens
+     */
+    public ArrayList<Token> getTokens(ColoredTrailsPlayer player){
+        return tokens.get(player);
+    }
+
+    /**
      * @return A clone of allTokensInPlay
      */
     public ArrayList<Token> getAllTokensInPlay() {
@@ -324,7 +334,6 @@ public class Grid {
     public STATE getGameState() {
         return gameState;
     }
-
     /**
      * adds a player to the list of players, sets the grid of the player to this grid,
      * and associates null to the player as its supposed goal to be announced
@@ -425,10 +434,11 @@ public class Grid {
                         goalToReveal));
             }
             if(offers.get(partner) != null) {
-                notifyListeners(new PropertyChangeEvent(partner, "OfferReceivedFromPartner", null,
+                notifyListeners(new PropertyChangeEvent(partner, "receiveOfferFromPartner", null,
                         offers.get(partner)));
+                currentPlayer.receiveOffer(offers.get(partner));
             }
-            // continue here
+
             setGameState(STATE.WAITING_FOR_OFFER);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
             ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
@@ -447,13 +457,18 @@ public class Grid {
                                 numberOfTurns < maximumNumberOfTurns));
                         tokens.put(currentPlayer, offers.get(currentPlayer).get(0));
                         tokens.put(partner, offers.get(partner).get(1));
-                        System.out.println(goals.get(currentPlayer).getPatchPosition());
-                        System.out.println(goals.get(partner).getPatchPosition());
                         return true;
                     }
                 }
             }
             numberOfTurns++;
+        }
+
+        for (ColoredTrailsPlayer player: players) {
+            System.out.println("player: " + player);
+            int[] score1 = calculateFinalScore(player);
+            System.out.println(score1[0]);
+            System.out.println(score1[1]);
         }
         return numberOfTurns < maximumNumberOfTurns;
     }
