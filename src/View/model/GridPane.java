@@ -12,7 +12,6 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class GridPane extends JPanel implements PropertyChangeListener {
     private Grid grid;
@@ -21,7 +20,8 @@ public class GridPane extends JPanel implements PropertyChangeListener {
     private JPanel mainPanel = new JPanel();
     private final ArrayList<JButton> buttons = new ArrayList();
     private ViewController viewController;
-    private JOptionPane optionPane;
+    private JOptionPane optionPaneRevealGoal;
+    private JOptionPane optionPaneAcceptOffer;
     private JDialog dialog;
     private boolean allowToPickPatch = false;
 
@@ -102,7 +102,7 @@ public class GridPane extends JPanel implements PropertyChangeListener {
      * Constructs the pop-up menu which will ask the player whether they want to reveal their goal
      * @return The JOption representing the pop-up
      */
-    private JOptionPane constructOptionPane() {
+    private JOptionPane constructRevealGoalOptionPane() {
 
         JButton yesButton = new JButton("Yes");
         yesButton.setActionCommand("yesCommunicate");
@@ -118,14 +118,18 @@ public class GridPane extends JPanel implements PropertyChangeListener {
 
         JOptionPane optionPane = new JOptionPane(message, JOptionPane.QUESTION_MESSAGE,
                 JOptionPane.YES_NO_OPTION, null, new Object[]{yesButton, noButton},
-                yesButton);
+                noButton);
         return optionPane;
+    }
+
+    private JOptionPane constructAcceptOfferOptionPane() {
+        return null;
     }
 
     private void init() {
         mainPanel.setLayout(new GridLayout(5, 5, 5, 5));
         getNewMenuPanelOnButton();
-        optionPane = constructOptionPane();
+        optionPaneRevealGoal = constructRevealGoalOptionPane();
         this.setLayout(new BorderLayout());
         this.add(mainPanel);
         this.setPreferredSize(mainPanel.getPreferredSize());
@@ -160,7 +164,7 @@ public class GridPane extends JPanel implements PropertyChangeListener {
                 break;
             case "initiatingAnnounceGoal":
                 if(evt.getSource() instanceof HumanPlayer) {
-                    dialog = optionPane.createDialog( this, "Reveal Goal?");
+                    dialog = optionPaneRevealGoal.createDialog( this, "Reveal Goal?");
                     dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
                     dialog.setVisible(true);
                 }
@@ -191,8 +195,8 @@ public class GridPane extends JPanel implements PropertyChangeListener {
         return dialog;
     }
 
-    public JOptionPane getOptionPane() {
-        return optionPane;
+    public JOptionPane getOptionPaneRevealGoal() {
+        return optionPaneRevealGoal;
     }
 
     public boolean isAllowToPickPatch() {
