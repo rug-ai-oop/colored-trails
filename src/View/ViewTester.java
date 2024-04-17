@@ -27,7 +27,8 @@ public class ViewTester {
         ViewController viewController = new ViewController();
 
         GridPane gridPane = new GridPane(game, controller, viewController);
-        OfferPane offerPane = new OfferPane(game, controller, viewController);
+        OfferHistoryPane offerHistoryPane = new OfferHistoryPane(game, firstPlayer);
+        OfferPane offerPane = new OfferPane(game, controller, viewController, offerHistoryPane);
 
         game.setUp();
 
@@ -48,7 +49,6 @@ public class ViewTester {
         frameForOffers.setSize(1400, 400);
         frameForOffers.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        OfferHistoryPane offerHistoryPane = new OfferHistoryPane(game, firstPlayer);
         frameForOffers.add(offerHistoryPane);
         frameForOffers.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

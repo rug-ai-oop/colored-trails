@@ -203,17 +203,16 @@ public class Grid {
      *              representing their offered hand
      * @return true if the offer is legal, false otherwise
      */
-    private boolean isOfferLegal(ArrayList<ArrayList<Token>> offer) throws IllegalAccessException {
+    private boolean isOfferLegal(ArrayList<ArrayList<Token>> offer) {
         if(offer.size() != players.size()) {    //check that the players offered something for all players
-            throw new IllegalAccessException("All the players need a hand!");
+            return false;
         }
         ArrayList<Token> allTokensInOffer = new ArrayList<>();
         for(ArrayList<Token> hand : offer) {
             allTokensInOffer.addAll(hand);
         }
         if(allTokensInPlay.size() != allTokensInOffer.size() ) {
-            throw new IllegalAccessException("The number of allTokensInPlay does not match the number of allTokensInOffer" +
-                    " The tokens need to be conserved within the game!");
+            return false;
         }
         for(int i = 0; i < allTokensInPlay.size(); i++) {
             for(int j = 0; j < allTokensInOffer.size(); j++) {
@@ -224,7 +223,7 @@ public class Grid {
             }
         }
         if(!allTokensInOffer.isEmpty()) {
-            throw new IllegalAccessException("The tokens need to be conserved within the game!");
+            return false;
         }
         return true;
     }
@@ -433,7 +432,7 @@ public class Grid {
                 notifyListeners(new PropertyChangeEvent(currentPlayer, "announceGoalFinished", null,
                         goalToReveal));
             }
-            if(offers.get(partner) != null) {
+            if(isOfferLegal(offers.get(partner))) {     // if the partner made a legal offer, announce it
                 notifyListeners(new PropertyChangeEvent(partner, "receiveOfferFromPartner", null,
                         offers.get(partner)));
                 currentPlayer.receiveOffer(offers.get(partner));

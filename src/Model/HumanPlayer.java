@@ -1,11 +1,12 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class HumanPlayer extends ColoredTrailsPlayer{
 
     public enum State {
-        OFFER_COMPLETE, INCOMPLETE, GOAL_COMPLETE, DECISION_COMPLETE
+        OFFER_COMPLETE, INCOMPLETE, GOAL_COMPLETE, OFFER_ACCEPTED, OFFER_REJECTED
     }
     private volatile State state = State.INCOMPLETE;
     private ArrayList<Token> supposedOwnTokens;
@@ -62,9 +63,8 @@ public class HumanPlayer extends ColoredTrailsPlayer{
     @Override
     public void receiveOffer(ArrayList<ArrayList<Token>> offer) {
         offerPartner = offer;
-        while (state != State.DECISION_COMPLETE) {
+        while (state != State.OFFER_ACCEPTED && state != State.OFFER_REJECTED) {
         }
-        setState(State.INCOMPLETE);
     }
     @Override
     public void listenToGoal(Patch goal) {
@@ -101,15 +101,20 @@ public class HumanPlayer extends ColoredTrailsPlayer{
      */
     @Override
     public ArrayList<ArrayList<Token>> makeOffer() {
-        removeAllSupposedTokens();
-        while(state != State.OFFER_COMPLETE) {
-
-        }
         ArrayList<ArrayList<Token>> offer = new ArrayList(2);
-        ArrayList<Token> partnerHand = constructPartnerHand();
-        offer.add(0, supposedOwnTokens);
-        offer.add(1, partnerHand);
-        state = State.INCOMPLETE;
+        if (state != State.OFFER_ACCEPTED) {
+            removeAllSupposedTokens();
+            while (state != State.OFFER_COMPLETE) {
+
+            }
+            ArrayList<Token> partnerHand = constructPartnerHand();
+            offer.add(0, supposedOwnTokens);
+            offer.add(1, partnerHand);
+            state = State.INCOMPLETE;
+        } else {
+            offer = grid.getPartnerOffer();
+            Collections.reverse(offer);
+        }
         return offer;
     }
 

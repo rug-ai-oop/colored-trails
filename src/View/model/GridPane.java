@@ -21,7 +21,6 @@ public class GridPane extends JPanel implements PropertyChangeListener {
     private final ArrayList<JButton> buttons = new ArrayList();
     private ViewController viewController;
     private JOptionPane optionPaneRevealGoal;
-    private JOptionPane optionPaneAcceptOffer;
     private JDialog dialog;
     private boolean allowToPickPatch = false;
 
@@ -135,10 +134,6 @@ public class GridPane extends JPanel implements PropertyChangeListener {
                 JOptionPane.YES_NO_OPTION, null, new Object[]{yesButton, noButton},
                 noButton);
         return optionPane;
-    }
-
-    private JOptionPane constructAcceptOfferOptionPane() {
-        return null;
     }
 
     private void init() {

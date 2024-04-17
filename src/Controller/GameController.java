@@ -67,6 +67,16 @@ public class GameController implements ActionListener {
                     ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.GOAL_COMPLETE);
                 }
                 break;
+            case "accept":
+                if(currentPlayer instanceof HumanPlayer) {
+                    ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.OFFER_ACCEPTED);
+                }
+                break;
+            case "reject":
+                if(currentPlayer instanceof HumanPlayer) {
+                    ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.OFFER_REJECTED);
+                }
+                break;
             case "withdrawGame":
                 System.out.printf("A player exited the negotiations");
                 grid.endGame();

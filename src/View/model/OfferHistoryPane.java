@@ -17,6 +17,7 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
     private JScrollPane scrollPane;
     private JPanel mainPanel = new JPanel();
     private JPanel labelPanel = new JPanel();
+    private JSplitPane lastOfferPanel;
     private JLabel yourTokens = new JLabel("Your tokens");
     private JLabel partnerTokens = new JLabel("Partner's tokens");
     private JPanel middlePanel = new JPanel();
@@ -60,49 +61,91 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
     }
 
     private void addOffer(ArrayList<ArrayList<Token>> offer) {
-        JPanel mainOfferPanel = new JPanel();
-        mainOfferPanel.setLayout(new BorderLayout());
 
         JPanel middlePanel = new JPanel();
+        JPanel lastMiddlePanel = new JPanel();  // mimic
         middlePanel.setPreferredSize(middlePanelDimension);
         middlePanel.setBackground(Color.LIGHT_GRAY);
+        lastMiddlePanel.setPreferredSize(middlePanelDimension); // mimic
+        lastMiddlePanel.setBackground(Color.gray); // set the color of the middle panel to grey
 
         JPanel leftOfferPanel = new JPanel();
+        JPanel lastLeftOfferPanel = new JPanel(); // mimic
         leftOfferPanel.setPreferredSize(sidePanelDimension);
+        lastLeftOfferPanel.setPreferredSize(sidePanelDimension); // mimic
         int numberOfLeftTokens = offer.get(0).size();
         leftOfferPanel.setLayout(new GridLayout(1, numberOfLeftTokens));
+        lastLeftOfferPanel.setLayout(new GridLayout(1, numberOfLeftTokens)); // mimic
 
         JPanel rightOfferPanel = new JPanel();
+        JPanel lastRightOfferPanel = new JPanel(); // mimic
         rightOfferPanel.setPreferredSize(sidePanelDimension);
+        lastRightOfferPanel.setPreferredSize(sidePanelDimension); // mimic
         int numberOfRightTokens = offer.get(1).size();
         rightOfferPanel.setLayout(new GridLayout(1, numberOfRightTokens));
+        lastRightOfferPanel.setLayout(new GridLayout(1, numberOfRightTokens)); // mimic
 
         // Adds the tokens to the left panel of the offer panel
         for(Token token : offer.get(0)) {
             JLabel tokenLabel = new JLabel();
+            JLabel lastTokenLabel = new JLabel(); // mimic
+            tokenLabel.setOpaque(true);
+            lastTokenLabel.setOpaque(true); // mimic
             tokenLabel.setPreferredSize(new Dimension(40, 40));
+            lastTokenLabel.setPreferredSize(new Dimension(40, 40)); // mimic
             Image scaledTokenImage =  ImageLoader.tokenImages.get(token.getColor()).
                     getScaledInstance(40, 20, Image.SCALE_SMOOTH);
             tokenLabel.setIcon(new ImageIcon(scaledTokenImage));
+            lastTokenLabel.setIcon(new ImageIcon(scaledTokenImage)); // mimic
+            tokenLabel.setBackground(OfferPane.defaultButtonColor);
+            lastTokenLabel.setBackground(OfferPane.defaultButtonColor); //mimic
             leftOfferPanel.add(tokenLabel);
+            lastLeftOfferPanel.add(lastTokenLabel); // mimic
         }
 
         // Adds the tokens to the right panel of the offer panel
         for(Token token : offer.get(1)) {
             JLabel tokenLabel = new JLabel();
+            JLabel lastTokenLabel = new JLabel(); // mimic
+            tokenLabel.setOpaque(true);
+            lastTokenLabel.setOpaque(true); // mimic
             tokenLabel.setPreferredSize(new Dimension(40, 40));
+            lastTokenLabel.setPreferredSize(new Dimension(40, 40)); // mimic
             Image scaledTokenImage =  ImageLoader.tokenImages.get(token.getColor()).
                     getScaledInstance(40, 20, Image.SCALE_SMOOTH);
             tokenLabel.setIcon(new ImageIcon(scaledTokenImage));
+            lastTokenLabel.setIcon(new ImageIcon(scaledTokenImage)); // mimic
+            tokenLabel.setBackground(OfferPane.defaultButtonColor);
+            lastTokenLabel.setBackground(OfferPane.defaultButtonColor); //mimic
             rightOfferPanel.add(tokenLabel);
+            lastRightOfferPanel.add(lastTokenLabel); // mimic
         }
 
-        mainOfferPanel.add(leftOfferPanel, BorderLayout.WEST);
-        mainOfferPanel.add(middlePanel, BorderLayout.CENTER);
-        mainOfferPanel.add(rightOfferPanel, BorderLayout.EAST);
+        JSplitPane mainOfferPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftOfferPanel, rightOfferPanel);
+
+        mainOfferPanel.setResizeWeight(0.5); // divides the space between the panels equally
+        mainOfferPanel.setDividerLocation(0.5); // place the divider in the middle
+        mainOfferPanel.setDividerSize(5);;
+        mainOfferPanel.setEnabled(false);
+
+        // mimic but reverse the order, because it needs to be displayed for the partner
+        lastOfferPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, lastRightOfferPanel, lastLeftOfferPanel);
+
+        lastOfferPanel.setResizeWeight(0.5); // divides the space between the panels equally
+        lastOfferPanel.setDividerLocation(0.5); // place the divider in the middle
+        lastOfferPanel.setDividerSize(5);;
+        lastOfferPanel.setEnabled(false);
 
         mainPanel.add(mainOfferPanel);
         revalidate();
+    }
+
+    /**
+     * Intended for displaying the offer in OfferPane
+     * @return last offer panel
+     */
+    public JComponent getLastOfferPanel() {
+        return lastOfferPanel;
     }
 
     @Override
