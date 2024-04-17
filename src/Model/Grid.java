@@ -466,7 +466,7 @@ public class Grid {
      * @return score, the bonus score
      */
 
-    public int tokenScore(ArrayList<Token> tokens){
+    private int tokenScore(ArrayList<Token> tokens){
         int score = 0;
         for(Token token : tokens) {
             score += 5;
@@ -481,7 +481,7 @@ public class Grid {
      * @param player the player for whom the score is calculated
      * @return heuristicArray, the heuristic array of that player
      */
-    public ArrayList<Integer> calculateHeuristicArray(ColoredTrailsPlayer player) {
+    private ArrayList<Integer> calculateHeuristicArray(ColoredTrailsPlayer player) {
         ArrayList<Integer> heuristicArray = new ArrayList<>();
         int goalPosition = goals.get(player).getPatchPosition();
         for (int i=0;i<25;i++) {
@@ -502,7 +502,7 @@ public class Grid {
      *        destination, the destination of the move
      */
 
-    public boolean isTokenAvailable(ArrayList<Token> tokens, Patch destination) {
+    private boolean isTokenAvailable(ArrayList<Token> tokens, Patch destination) {
         for(Token token : tokens) {
             if(token.getColor() == destination.getColor()) {
                 return true;
@@ -517,7 +517,7 @@ public class Grid {
      *        destination, the destination of the move
      * @return modified token list
      */
-    public ArrayList<Token> spendToken(ArrayList<Token> tokens, Patch destination) {
+    private ArrayList<Token> spendToken(ArrayList<Token> tokens, Patch destination) {
         for(Token token : tokens) {
             if(token.getColor() == destination.getColor()) {
                 tokens.remove(token);
@@ -534,7 +534,7 @@ public class Grid {
      * @param heuristicArray, the heuristic array of that player
      * @return tileScore, the combined token and
      * */
-    public int getTileUtility(int position, ArrayList<Token> tokens, ArrayList<Integer> heuristicArray) {
+    private int getTileUtility(int position, ArrayList<Token> tokens, ArrayList<Integer> heuristicArray) {
         int tileScore = tokenScore(tokens) -5; //-5 as one token has to be spent to move
         tileScore = tileScore + heuristicArray.get(position);
         return tileScore;
@@ -547,7 +547,7 @@ public class Grid {
      * @param currentCost, the utility before moving to a tile
      * @return tileScore, the combined token and
      * */
-    public int compareUtilities(int tileUtility, int currentCost) {
+    private int compareUtilities(int tileUtility, int currentCost) {
         if (tileUtility >= currentCost) {
             return tileUtility + 10;
         }
@@ -556,7 +556,7 @@ public class Grid {
         }
     }
 
-    public boolean indexInRange(int index){
+    private boolean indexInRange(int index){
         return index >= 0 && index < 25;
     }
 
@@ -569,7 +569,7 @@ public class Grid {
      * @param heuristicArray, the heuristic array of that player
      * @return updated queue
      */
-    public PriorityQueue<SearchNode> addNeighborsToQueue(PriorityQueue<SearchNode> queue, int position, int[] visited, ArrayList<Token> tokens, ArrayList<Integer> heuristicArray, int currentCost) {
+    private PriorityQueue<SearchNode> addNeighborsToQueue(PriorityQueue<SearchNode> queue, int position, int[] visited, ArrayList<Token> tokens, ArrayList<Integer> heuristicArray, int currentCost) {
         if (indexInRange(position + 1)) {
             if  (visited[position + 1] == 0) {
                 if  (isTokenAvailable(tokens, patches.get(position + 1))) {
@@ -615,13 +615,16 @@ public class Grid {
      * @param player, the player for whom the score is calculated
      *        tokens, the list of the tokens that a player can spend
      *        visited, the list of the visited fields while looking for the solution
-     * @return finalScore, the score of that player made up of the remaining tokens and its best position
+     * @return final postion and score of a player, made up of its remaining tokens and its best position
      */
-    public int astarTraverse(ColoredTrailsPlayer player, ArrayList<Token> tokens, int[] visited) {
+    private int[] astarTraverse(ColoredTrailsPlayer player, ArrayList<Token> tokens, int[] visited) {
+        int[] toReturn = new int[2];
+        //0: final score    1: final position
+        toReturn[0] = -1;
+        toReturn[1] = -1;
         int position = 12;
         int finalScore = -1;
 
-        //possibly reverse the signs if the worst option is chosen (no clue)
         ArrayList<Integer> heuristicArray = calculateHeuristicArray(player);
         PriorityQueue<SearchNode> queue = new PriorityQueue<>((node1, node2) -> {
             if (node1.utility < node2.utility) return -1;
@@ -639,7 +642,7 @@ public class Grid {
         int goalX = goalPosition / 5;
 
         while (!queue.isEmpty()) {
-            System.out.println("current best score:" + finalScore);
+            System.out.println("current best score:" + toReturn[0]);
             SearchNode currentNode = queue.poll();
             int currentPosition = currentNode.position;
             int currentUtility = currentNode.utility;
@@ -647,7 +650,8 @@ public class Grid {
             System.out.println("Current position:" + currentPosition);
             if(currentPosition == goalPosition) {
                 System.out.println("Reached goal!");
-                finalScore = tokenScore(currentTokens) + 50;
+                toReturn[0] = tokenScore(currentTokens) + 50;
+                toReturn[1] = goalPosition;
                 int counter = 0;
                 for(Token token : currentTokens) {
                     counter += 1;
@@ -661,13 +665,17 @@ public class Grid {
 
             //calculate the actual utility of the current position
             int playerY = currentPosition % 5;
-            int playerX = currentPosition/ 5;
+            int playerX = currentPosition / 5;
             int positionScore = 50 - 10*((Math.abs(playerX-goalX) + Math.abs(playerY-goalY)));
             int tokenScore = tokenScore(currentTokens);
-            if (finalScore < positionScore + tokenScore) finalScore = positionScore + tokenScore;
+            if (toReturn[0] < positionScore + tokenScore) {
+                System.out.println("New best score:" + positionScore + tokenScore);
+                toReturn[0] = positionScore + tokenScore;
+                toReturn[1] = currentPosition;
+            }
 
         }
-        return finalScore;
+        return toReturn;
     }
 
     /**
@@ -675,7 +683,7 @@ public class Grid {
      * @param player, the player for whom the score is calculated
      * @return bestScore, the score of that player
      */
-    public int calculateFinalScore(ColoredTrailsPlayer player) {
+    public int[] calculateFinalScore(ColoredTrailsPlayer player) {
         int[] visited = new int[25];
         for(int i = 0; i<25; i++) {
             visited[i] = 0;
