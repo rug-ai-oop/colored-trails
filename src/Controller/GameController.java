@@ -63,7 +63,11 @@ public class GameController implements ActionListener {
                     currentPlayer.setGoalToCommunicate(null);
                     ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.GOAL_COMPLETE);
                 }
+                break;
+            case "withdrawGame":
+                System.out.printf("A player exited the negotiations");
+                //grid.endGame();
+                break;
         }
-
     }
 }

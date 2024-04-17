@@ -26,6 +26,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
     private Grid grid;
     private GameController controller;
     private JButton revealButton;
+    private JButton withdrawButton;
     private TokenButton tokenButtonToMove;
     private JPanel centerPanel;
     private JPanel yourTokensPanel;
@@ -128,6 +129,15 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
 //        revealButton.setPreferredSize(new Dimension(100, 50));
 //        revealButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 //        add(revealButton);
+
+        withdrawButton = new JButton("Withdraw");
+        withdrawButton.setFont(new Font("Serif", Font.BOLD, 14));
+        withdrawButton.setActionCommand("withdrawGame");
+        withdrawButton.addActionListener(controller);
+        withdrawButton.setBackground(new Color(179, 119, 162));
+        withdrawButton.setPreferredSize(new Dimension(100, 50));
+        withdrawButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(withdrawButton);
     }
 
 

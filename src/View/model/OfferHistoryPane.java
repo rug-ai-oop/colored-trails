@@ -27,7 +27,7 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         scrollPane = new JScrollPane(mainPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS
                 , JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        OfferPane.loadImages();
+        ImageLoader.loadImages();
         mainPanel.setBackground(OfferPane.defaultButtonColor);
         scrollPane.setPreferredSize(new Dimension(740, 160));
         scrollPane.setBackground(OfferPane.defaultButtonColor);
