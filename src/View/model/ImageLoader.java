@@ -31,8 +31,21 @@ public class ImageLoader {
         }
     }
 
-    public static enum ImageNames {
-
+    public static enum ImageIconNames {
+        BLUE,
+        CSENGE,
+        Green_gamer,
+        HARMEN,
+        LUKASZ,
+        Matei,
+        Orange_catgirl,
+        Orange_catgirl2,
+        Orange_coolgirl,
+        Orange_creepy2,
+        Orange_girl,
+        pink_creepy,
+        Pink_elegant,
+        Yellow_elegant2;
     }
 
 }
