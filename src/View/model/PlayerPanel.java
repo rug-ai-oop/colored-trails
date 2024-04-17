@@ -67,6 +67,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
             }
             playerImages.put("Lukasz", ImageIO.read(PlayerPanel.class.getResource("/PLAYER_LUKASZ.png")));
             playerImages.put("Csenge", ImageIO.read(PlayerPanel.class.getResource("/PLAYER_CSENGE.png")));
+            playerImages.put("Matei", ImageIO.read(PlayerPanel.class.getResource("/PLAYER_Matei.png")));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -119,14 +120,14 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         add(yourTokensPanel);
 
         // Send Button
-        revealButton = new JButton("Reveal Goal");
-        revealButton.setFont(new Font("Serif", Font.BOLD, 14));
-        revealButton.setActionCommand("reveal goal");
-        revealButton.addActionListener(controller);
-        revealButton.setBackground(new Color(179, 119, 162));
-        revealButton.setPreferredSize(new Dimension(100, 50));
-        revealButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(revealButton);
+//        revealButton = new JButton("Reveal Goal");
+//        revealButton.setFont(new Font("Serif", Font.BOLD, 14));
+//        revealButton.setActionCommand("reveal goal");
+//        revealButton.addActionListener(controller);
+//        revealButton.setBackground(new Color(179, 119, 162));
+//        revealButton.setPreferredSize(new Dimension(100, 50));
+//        revealButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+//        add(revealButton);
     }
 
 

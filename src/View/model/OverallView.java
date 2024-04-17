@@ -43,8 +43,8 @@ public class OverallView extends AbstractView {
     public static void main(String[] args) {
         Grid game = new Grid();
         GameController controller = new GameController(game);
-        HumanPlayer player1 = new HumanPlayer();
-        HumanPlayer player2 = new HumanPlayer();
+        HumanPlayer player1 = new HumanPlayer("Csenge");
+        HumanPlayer player2 = new HumanPlayer("Lukasz");
         game.addPlayer(player1);
         game.addPlayer(player2);
         game.setUp();

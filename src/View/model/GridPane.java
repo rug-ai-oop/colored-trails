@@ -146,10 +146,12 @@ public class GridPane extends JPanel implements PropertyChangeListener {
         switch (evt.getPropertyName()) {
             case "assignedGoalsIndex":
                 if(evt.getOldValue() instanceof HumanPlayer) {
+                    HumanPlayer player = (HumanPlayer) evt.getOldValue();
                     JButton button = buttons.get((Integer) evt.getNewValue());
                     Image scaledTokenImage =  OfferPane.auxiliaryImages.get("redFlag").getScaledInstance(80
                             , 80, Image.SCALE_SMOOTH);
                     button.setIcon(new ImageIcon(scaledTokenImage));
+                    button.setText(player.getName());
                     humanPlayers.add((HumanPlayer) evt.getOldValue());
                 }
                 break;

@@ -7,17 +7,18 @@ import View.controller.ViewController;
 import View.model.GridPane;
 import View.model.OfferHistoryPane;
 import View.model.OfferPane;
+import View.model.PlayerPanel;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ViewTester {
     public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setSize(800, 800);
+        JFrame frame = new JFrame("Colored Trails");
+        frame.setSize(1200, 800);
         Grid game = new Grid();
-        HumanPlayer firstPlayer = new HumanPlayer();
-        HumanPlayer secondPlayer = new HumanPlayer();
+        HumanPlayer firstPlayer = new HumanPlayer("Csenge");
+        HumanPlayer secondPlayer = new HumanPlayer("Lukasz");
         game.addPlayer(firstPlayer);
         game.addPlayer(secondPlayer);
         GameController controller = new GameController(game);
@@ -25,15 +26,21 @@ public class ViewTester {
         GridPane gridPane = new GridPane(game, controller, viewController);
         OfferPane offerPane = new OfferPane(game, controller, viewController);
         game.setUp();
+        PlayerPanel playerPanel1 = new PlayerPanel(game, controller, "Csenge", firstPlayer);
+        PlayerPanel playerPanel2 = new PlayerPanel(game, controller, "Lukasz", secondPlayer);
+
         frame.setLayout(new BorderLayout());
         frame.add(offerPane, BorderLayout.SOUTH);
-        frame.add(gridPane);
+        frame.add(gridPane, BorderLayout.CENTER);
+        frame.add(playerPanel1, BorderLayout.WEST);
+        frame.add(playerPanel2, BorderLayout.EAST);
+
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
 
         JFrame frameForOffers = new JFrame("Offers");
         frameForOffers.setLayout(new BorderLayout());
-        frameForOffers.setSize(800, 400);
+        frameForOffers.setSize(1400, 400);
         frameForOffers.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         OfferHistoryPane offerHistoryPane = new OfferHistoryPane(game, firstPlayer);
