@@ -37,7 +37,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         this.grid = grid;
         grid.addListener(this);
         this.controller = controller;
-        loadImages();
+        ImageLoader.loadImages();
         setUp(playerName, player);
     }
     /**
@@ -56,24 +56,6 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         }
     };
 
-
-    /**
-     * Preloads images
-     */
-    protected static void loadImages() {
-        try {
-            for (Model.Color color : Model.Color.values()) {
-                tokenImages.put(color,
-                        ImageIO.read(PlayerPanel.class.getResource("/" + color + ".png")));
-            }
-            playerImages.put("Lukasz", ImageIO.read(PlayerPanel.class.getResource("/PLAYER_LUKASZ.png")));
-            playerImages.put("Csenge", ImageIO.read(PlayerPanel.class.getResource("/PLAYER_CSENGE.png")));
-            playerImages.put("Matei", ImageIO.read(PlayerPanel.class.getResource("/PLAYER_Matei.png")));
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-    }
 
     /**
      * The method sets up the components in the player panel
