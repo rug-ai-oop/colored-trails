@@ -49,12 +49,26 @@ public class GridPane extends JPanel implements PropertyChangeListener {
 //                button.setBackground(java.awt.Color.GRAY);
 //                button.setEnabled(false);
                 if(i == grid.getStartPatchIndex()) {
-                    button.setForeground(java.awt.Color.BLACK);
-                    button.setText("START");
-                }
-            }
-            panelHoldingButton.add(button);
+//                    button.setForeground(java.awt.Color.BLACK);
+//                    button.setText("START");
+
+                    //add player icons to the center
+                    boolean isPlayerOne = true;
+                    for (HumanPlayer player : humanPlayers) {
+                        Image image = ImageLoader.playerImages.get(player.getName());
+                        if (isPlayerOne) {
+                            panelHoldingButton.add(new JLabel(new ImageIcon(image)), BorderLayout.WEST);
+                            isPlayerOne = false;
+                        } else {
+                            panelHoldingButton.add(new JLabel(new ImageIcon(image)), BorderLayout.EAST);
+                        }
+                    }
+                }}
+
+
             buttons.add(button);
+
+
             mainPanelInGridSlot.add(panelHoldingButton, "button");
             mainPanelInGridSlot.add(menuPanel, "menu");
             mainPanel.add(mainPanelInGridSlot);
