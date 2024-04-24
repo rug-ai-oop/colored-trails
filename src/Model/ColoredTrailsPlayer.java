@@ -47,7 +47,11 @@ public abstract class ColoredTrailsPlayer {
         return hash;
     }
 
-
+    public String getName() {
+        if (name == null)
+            return "Player " + hash;
+        return name;
+    }
 
     public abstract Patch revealGoal();
     public abstract void listenToGoal(Patch goal);
