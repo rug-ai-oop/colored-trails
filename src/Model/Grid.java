@@ -418,6 +418,7 @@ public class Grid {
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
     public boolean start() throws IllegalAccessException {
+        boolean agreementReached = false;
         setGameState(STATE.ACTIVE);
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
@@ -455,8 +456,8 @@ public class Grid {
                         notifyListeners(new PropertyChangeEvent(this, "gameOver", null,
                                 numberOfTurns < maximumNumberOfTurns));
                         tokens.put(currentPlayer, offers.get(currentPlayer).get(0));
-                        tokens.put(partner, offers.get(partner).get(1));
-                        return true;
+                        tokens.put(partner, offers.get(partner).get(0));
+                        agreementReached = true;
                     }
                 }
             }
@@ -464,12 +465,13 @@ public class Grid {
         }
 
         for (ColoredTrailsPlayer player: players) {
-            System.out.println("player: " + player);
+            System.out.println("player: " + player.getName());
             int[] score1 = calculateFinalScore(player);
             System.out.println(score1[0]);
             System.out.println(score1[1]);
         }
-        return numberOfTurns < maximumNumberOfTurns;
+
+        return agreementReached;
     }
 
     /**
@@ -595,7 +597,8 @@ public class Grid {
                 if  (isTokenAvailable(tokens, patches.get(position + 1))) {
                     int tileUtility =  getTileUtility(position + 1, tokens, heuristicArray);
                     tileUtility = compareUtilities(tileUtility, currentCost);
-                    queue.add(new SearchNode(position+1, spendToken(tokens, patches.get(position+1)), tileUtility));
+                    ArrayList<Token> tokenCopy = (ArrayList<Token>) tokens.clone();
+                    queue.add(new SearchNode(position+1, spendToken(tokenCopy, patches.get(position+1)), tileUtility));
                 }
             }
         }
@@ -604,7 +607,8 @@ public class Grid {
                 if (isTokenAvailable(tokens, patches.get(position - 1))) {
                     int tileUtility =  getTileUtility(position - 1, tokens, heuristicArray);
                     tileUtility = compareUtilities(tileUtility, currentCost);
-                    queue.add(new SearchNode(position - 1, spendToken(tokens, patches.get(position-1)), tileUtility));
+                    ArrayList<Token> tokenCopy = (ArrayList<Token>) tokens.clone();
+                    queue.add(new SearchNode(position - 1, spendToken(tokenCopy, patches.get(position-1)), tileUtility));
                 }
             }
         }
@@ -613,7 +617,8 @@ public class Grid {
                 if (isTokenAvailable(tokens, patches.get(position + 5))) {
                     int tileUtility =  getTileUtility(position + 5, tokens, heuristicArray);
                     tileUtility = compareUtilities(tileUtility, currentCost);
-                    queue.add(new SearchNode(position + 5, spendToken(tokens, patches.get(position+5)), tileUtility));
+                    ArrayList<Token> tokenCopy = (ArrayList<Token>) tokens.clone();
+                    queue.add(new SearchNode(position + 5, spendToken(tokenCopy, patches.get(position+5)), tileUtility));
                 }
             }
         }
@@ -622,7 +627,8 @@ public class Grid {
                 if (isTokenAvailable(tokens, patches.get(position - 5))) {
                     int tileUtility =  getTileUtility(position - 5, tokens, heuristicArray);
                     tileUtility = compareUtilities(tileUtility, currentCost);
-                    queue.add(new SearchNode(position - 5, spendToken(tokens, patches.get(position-5)), tileUtility));
+                    ArrayList<Token> tokenCopy = (ArrayList<Token>) tokens.clone();
+                    queue.add(new SearchNode(position - 5, spendToken(tokenCopy, patches.get(position-5)), tileUtility));
                 }
             }
         }
