@@ -4,6 +4,7 @@ import Controller.GameController;
 import Model.Grid;
 import Model.HumanPlayer;
 import Model.Token;
+import View.controller.ViewController;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -25,6 +26,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
 //    protected static final Map<String, BufferedImage> playerImages = new HashMap<>(2);
     private Grid grid;
     private GameController controller;
+    private ViewController viewController;
     private JButton revealButton;
     private JButton withdrawButton;
     private TokenButton tokenButtonToMove;
@@ -34,7 +36,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
  
 
 
-    public PlayerPanel(Grid grid, GameController controller, String playerName, HumanPlayer player) {
+    public PlayerPanel(Grid grid, GameController controller,String playerName, HumanPlayer player) {
         this.grid = grid;
         grid.addListener(this);
         this.controller = controller;

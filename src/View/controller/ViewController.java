@@ -4,6 +4,7 @@ import Model.Grid;
 import Model.HumanPlayer;
 import View.model.GridPane;
 import View.model.OfferPane;
+import View.model.OfferHistoryPane;
 import View.model.TokenButton;
 
 import javax.swing.*;
@@ -15,15 +16,18 @@ import java.util.Objects;
 public class ViewController implements ActionListener {
     private GridPane gridPane;
     private OfferPane offerPane;
+    private OfferHistoryPane offerHistoryPane;
     //Hold the last panel on the grid to display the next card
     private JPanel lastSelectedPatchPanel;
 
     public void setGridPane(GridPane gridPane) {
         this.gridPane = gridPane;
     }
-
     public void setOfferPane(OfferPane offerPane) {
         this.offerPane = offerPane;
+    }
+    public void setOfferHistoryPane(OfferHistoryPane offerHistoryPane) {
+        this.offerHistoryPane = offerHistoryPane;
     }
 
     @Override

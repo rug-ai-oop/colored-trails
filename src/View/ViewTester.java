@@ -27,7 +27,7 @@ public class ViewTester {
         ViewController viewController = new ViewController();
 
         GridPane gridPane = new GridPane(game, controller, viewController);
-        OfferHistoryPane offerHistoryPane = new OfferHistoryPane(game, firstPlayer);
+        OfferHistoryPane offerHistoryPane = new OfferHistoryPane(viewController, game, firstPlayer);
         OfferPane offerPane = new OfferPane(game, controller, viewController, offerHistoryPane);
 
         game.setUp();

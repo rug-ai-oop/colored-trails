@@ -3,6 +3,7 @@ package View.model;
 import Model.Grid;
 import Model.HumanPlayer;
 import Model.Token;
+import View.controller.ViewController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +14,7 @@ import java.util.Collections;
 
 public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
     private Grid grid;
+    private ViewController viewController;
     private HumanPlayer playerToDisplayOnTheLeft;
     private JScrollPane scrollPane;
     private JPanel mainPanel = new JPanel();
@@ -53,10 +55,12 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
         this.setBackground(OfferPane.defaultButtonColor);
     }
 
-    public OfferHistoryPane(Grid grid, HumanPlayer playerToDisplayOnTheLeft) {
+    public OfferHistoryPane(ViewController viewController, Grid grid, HumanPlayer playerToDisplayOnTheLeft) {
+        this.viewController = viewController;
         this.grid = grid;
         grid.addListener(this);
         this.playerToDisplayOnTheLeft = playerToDisplayOnTheLeft;
+        viewController.setOfferHistoryPane(this);
         setUp();
     }
 

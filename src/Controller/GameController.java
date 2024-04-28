@@ -81,15 +81,6 @@ public class GameController implements ActionListener {
                 System.out.printf("A player exited the negotiations");
                 grid.endGame();
                 break;
-            case "openOfferHistory":
-                OfferHistoryPane offerHistoryPane = new OfferHistoryPane(grid, (HumanPlayer) currentPlayer);
-                JFrame frame = new JFrame("Offer History");
-                frame.add(offerHistoryPane);
-                frame.setSize(700, 160);
-                frame.pack();
-                frame.setLocationRelativeTo(null); // Center the frame
-                frame.setVisible(true);
-                break;
         }
     }
 }
