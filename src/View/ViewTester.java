@@ -28,12 +28,13 @@ public class ViewTester {
 
         GridPane gridPane = new GridPane(game, controller, viewController);
         OfferHistoryPane offerHistoryPane = new OfferHistoryPane(viewController, game, firstPlayer);
+        viewController.setOfferHistoryPane(offerHistoryPane);
         OfferPane offerPane = new OfferPane(game, controller, viewController, offerHistoryPane);
 
         game.setUp();
 
-        PlayerPanel playerPanel1 = new PlayerPanel(game, controller, "Csenge", firstPlayer);
-        PlayerPanel playerPanel2 = new PlayerPanel(game, controller, "Lukasz", secondPlayer);
+        PlayerPanel playerPanel1 = new PlayerPanel(game, controller, "Csenge", firstPlayer, new ViewController());
+        PlayerPanel playerPanel2 = new PlayerPanel(game, controller, "Lukasz", secondPlayer, new ViewController());
 
         frame.setLayout(new BorderLayout());
         frame.add(offerPane, BorderLayout.SOUTH);

@@ -36,10 +36,11 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
  
 
 
-    public PlayerPanel(Grid grid, GameController controller,String playerName, HumanPlayer player) {
+    public PlayerPanel(Grid grid, GameController controller,String playerName, HumanPlayer player, ViewController viewController) {
         this.grid = grid;
         grid.addListener(this);
         this.controller = controller;
+        this.viewController = viewController;
         ImageLoader.loadImages();
         setUp(playerName, player);
     }
@@ -128,7 +129,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         offerHistoryButton = new JButton("Offer History");
         offerHistoryButton.setFont(new Font("Serif", Font.BOLD, 14));
         offerHistoryButton.setActionCommand("openOfferHistory");
-        offerHistoryButton.addActionListener(controller);
+        offerHistoryButton.addActionListener(viewController);
         offerHistoryButton.setBackground(new Color(179, 119, 162));
         offerHistoryButton.setPreferredSize(new Dimension(130, 50));
         offerHistoryButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -146,7 +147,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         game.addPlayer(firstPlayer);
         game.addPlayer(secondPlayer);
         game.setUp();
-        PlayerPanel playerPanel = new PlayerPanel(game, new GameController(game), "Lukasz", firstPlayer);
+        PlayerPanel playerPanel = new PlayerPanel(game, new GameController(game), "Lukasz", firstPlayer, new ViewController());
         frame.add(playerPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);

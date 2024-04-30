@@ -120,6 +120,10 @@ public class ViewController implements ActionListener {
                 gridPane.setAllowToPickPatch(true);
             }
             gridPane.getDialog().dispose();
+        } else if (Objects.equals(e.getActionCommand(), "openOfferHistory")) {
+            if (offerHistoryPane != null) {
+                offerHistoryPane.setVisible(!offerHistoryPane.isVisible());
+            }
         }
     }
 }
