@@ -676,7 +676,7 @@ public class Grid {
             System.out.println("Current position:" + currentPosition);
             if(currentPosition == goalPosition) {
                 System.out.println("Reached goal!");
-                toReturn[0] = tokenScore(currentTokens) + 50;
+                toReturn[0] = tokenScore(currentTokens) + 100;
                 toReturn[1] = goalPosition;
                 int counter = 0;
                 for(Token token : currentTokens) {
