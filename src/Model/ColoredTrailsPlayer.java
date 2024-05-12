@@ -1,10 +1,6 @@
 package Model;
 
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
 public abstract class ColoredTrailsPlayer {

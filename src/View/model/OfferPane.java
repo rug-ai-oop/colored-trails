@@ -6,15 +6,11 @@ import Model.HumanPlayer;
 import Model.Token;
 import View.controller.ViewController;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
+
 
 public class OfferPane  extends JPanel implements PropertyChangeListener {
 

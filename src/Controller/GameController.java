@@ -78,7 +78,7 @@ public class GameController implements ActionListener {
                 }
                 break;
             case "withdrawGame":
-                System.out.printf("A player exited the negotiations");
+                System.out.println("A player exited the negotiations");
                 grid.endGame();
                 break;
         }

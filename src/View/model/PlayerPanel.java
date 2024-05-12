@@ -5,19 +5,11 @@ import Model.Grid;
 import Model.HumanPlayer;
 import Model.Token;
 import View.controller.ViewController;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
+
 
 
 public class PlayerPanel extends JPanel implements PropertyChangeListener{

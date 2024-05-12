@@ -8,6 +8,7 @@ import View.model.GridPane;
 import View.model.OfferHistoryPane;
 import View.model.OfferPane;
 import View.model.PlayerPanel;
+import javax.swing.JOptionPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,7 +56,14 @@ public class ViewTester {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         try {
-            game.start();
+            int [] finishArray = game.start();
+            if (finishArray[0] == 1) {
+                JOptionPane.showMessageDialog(null, "Agreement reached!\nPlayer 1 score: " + finishArray[1] + "\nPlayer 2 score: " + finishArray[2]);
+            } else {
+                JOptionPane.showMessageDialog(null, "Agreement not reached!\nPlayer 1 score: " + finishArray[1] + "\nPlayer 2 score: " + finishArray[2]);
+            }
+            System.exit(0);
+
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

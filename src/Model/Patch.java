@@ -1,8 +1,6 @@
 package Model;
-import java.util.ArrayList;
-import java.lang.Math;
-
-public class Patch {
+import java.io.Serializable;
+public class Patch implements Serializable{
     private final int position;    // make this actually useful and not just a ghost variable
 
     private final Color color;

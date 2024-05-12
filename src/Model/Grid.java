@@ -14,7 +14,7 @@ public class Grid {
      *      4) Set up the grid
      *      5) Start the grid
      */
-    private int maximumNumberOfTurns;
+    private int maximumNumberOfTurns ;
     private int numberOfTurns;
     private int startPatchIndex;
     private ArrayList<Patch> patches = new ArrayList();
@@ -157,27 +157,6 @@ public class Grid {
         }
     }
 
-    /**
-     * The method lets the playerToBeAnnounced that the goal of its partner is goalOfPartner
-     * @param playerToBeAnnounced: The player which is announced
-     * @param goalOfPartner: The goal of the partner
-     */
-    private void announceGoal(ColoredTrailsPlayer playerToBeAnnounced, Patch goalOfPartner) {
-        playerToBeAnnounced.listenToGoal(goalOfPartner);
-    }
-
-    /**
-     * The method sends the offer of the playerToOffer to playerToReceive
-     * @param playerToOffer: The player which made the offer
-     * @param playerToReceive: The player receiving the offer
-     */
-    private void makeOffer(ColoredTrailsPlayer playerToOffer, ColoredTrailsPlayer playerToReceive) {
-        // Clone the offer of the playerToOffer
-        ArrayList<ArrayList<Token>> offer = (ArrayList<ArrayList<Token>>) offers.get(playerToOffer).clone();
-        // Reverse the offer, so that the playerToReceive receives it with its offered hand at index 0
-        Collections.reverse(offer);
-        playerToReceive.receiveOffer(offer);
-    }
 
     /**
      * Prints the colours of the tokens in the offers
@@ -400,30 +379,22 @@ public class Grid {
         offers.put(player, offer);
     }
 
-    /**
-     * The method assumes that the player can only reveal its goal once. This needs to be discussed.
-     * Associates the goalToAnnounce to the player as the goal the player wants to communicate to its partner
-     * @param player The player communicating the supposed goal
-     * @param goalToAnnounce The goal the player wants the partner
-     */
-    public void setGoalToAnnounce(ColoredTrailsPlayer player, Patch goalToAnnounce) {
-        if (goalsToAnnounce.get(player) == null) {
-            this.goalsToAnnounce.put(player, goalToAnnounce);
-        }
-    }
 
     /**
      * Starts the negotiations. Ends when both players sent the same offer or the number of turns has reached the
      * maximumNumberOfTurns, initially set to 40
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
-    public boolean start() throws IllegalAccessException {
-        boolean agreementReached = false;
+    public int [] start() throws IllegalAccessException {
+        int agreementReached = 0;
         setGameState(STATE.ACTIVE);
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
             ColoredTrailsPlayer partner = getPlayer(numberOfTurns + 1);
-            setGameState(STATE.WAITING_FOR_GOAL);
+            if(gameState != STATE.INACTIVE)
+            {
+                setGameState(STATE.WAITING_FOR_GOAL);
+            }
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingAnnounceGoal", null,
                     null));
             Patch goalToReveal = currentPlayer.revealGoal();        // Ask the player to reveal its goal
@@ -438,7 +409,9 @@ public class Grid {
                         offers.get(partner)));
                 currentPlayer.receiveOffer(offers.get(partner));
             }
-
+            if(gameState == STATE.INACTIVE){
+               break;
+            }
             setGameState(STATE.WAITING_FOR_OFFER);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
             ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
@@ -457,30 +430,27 @@ public class Grid {
                                 numberOfTurns < maximumNumberOfTurns));
                         tokens.put(currentPlayer, offers.get(currentPlayer).get(0));
                         tokens.put(partner, offers.get(partner).get(0));
-                        agreementReached = true;
+                        agreementReached = 1;
                     }
                 }
             }
             numberOfTurns++;
         }
 
+        int[] toReturn = new int[3];
+        toReturn[0] = agreementReached;
+        int iterator = 0;
         for (ColoredTrailsPlayer player: players) {
+            iterator += 1;
             System.out.println("player: " + player.getName());
-            int[] score1 = calculateFinalScore(player);
-            System.out.println(score1[0]);
-            System.out.println(score1[1]);
+            int[] score = calculateFinalScore(player);
+            System.out.println("points obtained: " + score[0]);
+            System.out.println("position reached: " + score[1]);
+            toReturn[iterator] = score[0];
         }
-
-        return agreementReached;
+        return toReturn;
     }
 
-    /**
-     * @param player to be checked
-     * @return true if it is player's turn
-     */
-    public boolean isPlayerActive(ColoredTrailsPlayer player) {
-        return getCurrentPlayer() == player;
-    }
 
     /**
      * Calculating the bonus score from unspent tokens
@@ -645,11 +615,9 @@ public class Grid {
      */
     private int[] astarTraverse(ColoredTrailsPlayer player, ArrayList<Token> tokens, int[] visited) {
         int[] toReturn = new int[2];
-        //0: final score    1: final position
         toReturn[0] = -1;
         toReturn[1] = -1;
         int position = 12;
-        int finalScore = -1;
 
         ArrayList<Integer> heuristicArray = calculateHeuristicArray(player);
         PriorityQueue<SearchNode> queue = new PriorityQueue<>((node1, node2) -> {
@@ -668,21 +636,14 @@ public class Grid {
         int goalX = goalPosition / 5;
 
         while (!queue.isEmpty()) {
-            System.out.println("current best score:" + toReturn[0]);
             SearchNode currentNode = queue.poll();
             int currentPosition = currentNode.position;
             int currentUtility = currentNode.utility;
             ArrayList<Token> currentTokens =  currentNode.tokens;
-            System.out.println("Current position:" + currentPosition);
             if(currentPosition == goalPosition) {
                 System.out.println("Reached goal!");
                 toReturn[0] = tokenScore(currentTokens) + 100;
                 toReturn[1] = goalPosition;
-                int counter = 0;
-                for(Token token : currentTokens) {
-                    counter += 1;
-                }
-                System.out.println("Token list size: " + counter);
                 break;
             }
 
@@ -695,7 +656,6 @@ public class Grid {
             int positionScore = 50 - 10*((Math.abs(playerX-goalX) + Math.abs(playerY-goalY)));
             int tokenScore = tokenScore(currentTokens);
             if (toReturn[0] < positionScore + tokenScore) {
-                System.out.println("New best score:" + positionScore + tokenScore);
                 toReturn[0] = positionScore + tokenScore;
                 toReturn[1] = currentPosition;
             }
@@ -742,18 +702,6 @@ public class Grid {
      * sets the wayOfAssigningGoals to the given string
      * @param wayOfAssigningGoals a string between "randDif" or "randSame"
      */
-    public void setWayOfAssigningGoals(String wayOfAssigningGoals) {
-        this.wayOfAssigningGoals = wayOfAssigningGoals;
-    }
-
-    /**
-     * Sets maximumNumberOfTurns to the given value
-     * @param maximumNumberOfTurns
-     */
-    public void setMaximumNumberOfTurns(int maximumNumberOfTurns) {
-        this.maximumNumberOfTurns = maximumNumberOfTurns;
-    }
-
 
 
 }
