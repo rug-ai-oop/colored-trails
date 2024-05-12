@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
-//this shit ain't doing anything but yeah
+
 public class PlayerPanel extends JPanel implements PropertyChangeListener{
     private static Color defaultButtonColor = new Color(26, 194, 26);
 //    protected static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
@@ -44,22 +44,6 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         ImageLoader.loadImages();
         setUp(playerName, player);
     }
-    /**
-     * Inner ActionListener, not yet necessary
-     */
-    private ActionListener viewModifier = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand() == "selectToken") {
-                if (tokenButtonToMove != null) {
-                    tokenButtonToMove.setBackground(defaultButtonColor);
-                }
-                tokenButtonToMove = (TokenButton) e.getSource();
-                tokenButtonToMove.setBackground(new Color(30, 38, 200));
-            }
-        }
-    };
-
 
     /**
      * The method sets up the components in the player panel
@@ -106,16 +90,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         }
         add(yourTokensPanel);
 
-        // Send Button
-//        revealButton = new JButton("Reveal Goal");
-//        revealButton.setFont(new Font("Serif", Font.BOLD, 14));
-//        revealButton.setActionCommand("reveal goal");
-//        revealButton.addActionListener(controller);
-//        revealButton.setBackground(new Color(179, 119, 162));
-//        revealButton.setPreferredSize(new Dimension(100, 50));
-//        revealButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        add(revealButton);
-
+        //Withdraw Button
         withdrawButton = new JButton("Withdraw");
         withdrawButton.setFont(new Font("Serif", Font.BOLD, 14));
         withdrawButton.setActionCommand("withdrawGame");

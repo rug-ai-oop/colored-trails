@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class OfferPane  extends JPanel implements PropertyChangeListener {
-    public static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
+
     public static Color defaultButtonColor = new Color(238, 238, 238);
     private Grid grid;
     private GameController controller;
@@ -262,9 +262,6 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
      */
     public TokenButton getTokenButtonToMove() {
         return tokenButtonToMove;
-    }
-    public JButton getUnassignedTokensButton() {
-        return unassignedTokensButton;
     }
     public JButton getSendButton() {
         return sendButton;
