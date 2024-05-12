@@ -1,6 +1,5 @@
 package View.model;
 
-import Model.Color;
 import Model.Token;
 
 import javax.swing.*;
