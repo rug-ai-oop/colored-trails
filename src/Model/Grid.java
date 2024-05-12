@@ -2,6 +2,10 @@ package Model;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.*;
 import java.lang.Math;
 
@@ -115,15 +119,31 @@ public class Grid {
     }
 
     /**
-     * creates 25 patches with the colors from generateRandomColorFiveByFive()
+     * creates 25 patches with the colors from generateRandomColorFiveByFive() or map generated before
      */
-    private void generatePatchesFiveByFive() {
+    private void generatePatchesFiveByFive(int mapNumber) {
         patches = new ArrayList<>();
-        ArrayList<Color> colors = generateRandomColorFiveByFive();
-        for(int i = 0; i < 25; i++) {
-            patches.add(new Patch(colors.get(i), i));
-            patches.get(i).setState(Patch.State.ACTIVE);
+        if (mapNumber != 0) {
+            String fileName = "patches_map_" + mapNumber + ".ser";
+            try {
+                FileInputStream fileIn = new FileInputStream(fileName);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                patches = (ArrayList) in.readObject();
+                in.close();
+                fileIn.close();
+                System.out.println("Serialized data is loaded from " + fileName);
+            } catch (ClassNotFoundException | IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+        else {
+            ArrayList<Color> colors = generateRandomColorFiveByFive();
+            for(int i = 0; i < 25; i++) {
+                patches.add(new Patch(colors.get(i), i));
+                patches.get(i).setState(Patch.State.ACTIVE);
+            }
+        }
+
         patches.get(startPatchIndex).setState(Patch.State.INACTIVE);
         notifyListeners(new PropertyChangeEvent(this, "createdPatches", null, null));
     }
@@ -360,8 +380,8 @@ public class Grid {
     /**
      * sets up the game by distributing the tokens to players and assigning goals to players
      */
-    public void setUp() {
-        generatePatchesFiveByFive();
+    public void setUp(int loadMap) {
+        generatePatchesFiveByFive(loadMap);
         try {
             distributeTokensToPlayers();
         } catch (IllegalAccessException e) {
@@ -380,12 +400,13 @@ public class Grid {
     }
 
 
+
     /**
      * Starts the negotiations. Ends when both players sent the same offer or the number of turns has reached the
      * maximumNumberOfTurns, initially set to 40
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
-    public int [] start() throws IllegalAccessException {
+    public int [] start(boolean saveMap) throws IllegalAccessException {
         int agreementReached = 0;
         setGameState(STATE.ACTIVE);
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
@@ -409,10 +430,9 @@ public class Grid {
                         offers.get(partner)));
                 currentPlayer.receiveOffer(offers.get(partner));
             }
-            if(gameState == STATE.INACTIVE){
-               break;
+            if(gameState != STATE.INACTIVE){
+                setGameState(STATE.WAITING_FOR_OFFER);
             }
-            setGameState(STATE.WAITING_FOR_OFFER);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
             ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
             setOffer(currentPlayer, offer);
@@ -437,6 +457,13 @@ public class Grid {
             numberOfTurns++;
         }
 
+        //save maps
+        if(saveMap) {
+            MapSaver mapSaver = new MapSaver(patches);
+            mapSaver.saveMap();
+        }
+
+        //return values
         int[] toReturn = new int[3];
         toReturn[0] = agreementReached;
         int iterator = 0;

@@ -73,7 +73,9 @@ public class MainPanel extends JPanel {
             Grid game = new Grid();
             game.addPlayer(new HumanPlayer());
             game.addPlayer(new HumanPlayer());
-            game.setUp();
+            //0 - no map loaded, x - patches_map_x will be loaded
+            int loadMap = 0;
+            game.setUp(loadMap);
 
             // Show a specific card initially
             mainPanel.showCard("GameOptions");

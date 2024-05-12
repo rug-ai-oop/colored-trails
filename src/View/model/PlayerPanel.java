@@ -113,7 +113,9 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         HumanPlayer secondPlayer = new HumanPlayer();
         game.addPlayer(firstPlayer);
         game.addPlayer(secondPlayer);
-        game.setUp();
+        //0 - no map loaded, x - patches_map_x will be loaded
+        int loadMap = 0;
+        game.setUp(loadMap);
         PlayerPanel playerPanel = new PlayerPanel(game, new GameController(game), "Lukasz", firstPlayer, new ViewController());
         frame.add(playerPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

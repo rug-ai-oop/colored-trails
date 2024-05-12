@@ -47,7 +47,9 @@ public class OverallView extends AbstractView {
         HumanPlayer player2 = new HumanPlayer("Lukasz");
         game.addPlayer(player1);
         game.addPlayer(player2);
-        game.setUp();
+        //0 - no map loaded, x - patches_map_x will be loaded
+        int loadMap = 0;
+        game.setUp(loadMap);
         new OverallView(game, controller, player1, player2);
     }
 }
