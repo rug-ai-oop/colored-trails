@@ -1,9 +1,12 @@
 package View.model;
 
+import Controller.GameController;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class GameOptionsPanel extends JPanel {
+    private GameController controller;
     private String selectedOption; // Store the selected game option
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
@@ -12,8 +15,9 @@ public class GameOptionsPanel extends JPanel {
     private JLabel gameOptionsLabel;
     private MainPanel mainPanel; // Reference to the main panel
 
-    public GameOptionsPanel(MainPanel mainPanel) {
+    public GameOptionsPanel(MainPanel mainPanel, GameController controller) {
         this.mainPanel = mainPanel;
+        this.controller = controller;
         // Setting layout
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(250, 300));
@@ -24,44 +28,23 @@ public class GameOptionsPanel extends JPanel {
 
         humanVsHumanButton = new JButton("Human vs. Human");
         humanVsHumanButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        humanVsHumanButton.setActionCommand("Human vs. Human");
+        humanVsHumanButton.addActionListener(controller);
 
         humanVsAgentButton = new JButton("Human vs. Agent");
         humanVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        humanVsAgentButton.setActionCommand("Human vs. Agent");
+        humanVsAgentButton.addActionListener(controller);
 
         agentVsAgentButton = new JButton("Agent vs. Agent");
         agentVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        agentVsAgentButton.setActionCommand("Agent vs. Agent");
+        agentVsAgentButton.addActionListener(controller);
 
         humanVsHumanLikeAgent = new JButton("Human vs. HumanAgent");
         humanVsHumanLikeAgent.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Adding action listeners to the buttons
-        humanVsHumanButton.addActionListener(e -> {
-            printGameOption("Human vs. Human");
-            selectedOption = "Human vs. Human";
-            mainPanel.setGameOption(selectedOption);
-            ((MainPanel) getParent()).showCard("DummyOptions");
-        });
-
-        humanVsAgentButton.addActionListener(e -> {
-            printGameOption("Human vs. Agent");
-            selectedOption = "Human vs. Agent";
-            mainPanel.setGameOption(selectedOption);
-            ((MainPanel) getParent()).showCard("TomSelection");
-        });
-
-        agentVsAgentButton.addActionListener(e -> {
-            printGameOption("Agent vs. Agent");
-            selectedOption = "Agent vs. Agent";
-            mainPanel.setGameOption(selectedOption);
-            ((MainPanel) getParent()).showCard("TomSelection");
-        });
-
-        humanVsHumanLikeAgent.addActionListener(e -> {
-            printGameOption("Human vs. Human like Agent");
-            selectedOption = "Human vs. Human like Agent";
-            mainPanel.setGameOption(selectedOption);
-            ((MainPanel) getParent()).showCard("TomSelection");
-        });
+        humanVsHumanLikeAgent.setActionCommand("Human vs. Human like agent");
+        humanVsHumanLikeAgent.addActionListener(controller);
 
         // Adding components to panel
         add(Box.createVerticalGlue());

@@ -1,9 +1,12 @@
 package View.model;
 
+import Controller.GameController;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class DummyOptionsPanel extends JPanel {
+    private GameController controller;
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
     private JButton agentVsAgentButton;
@@ -11,53 +14,34 @@ public class DummyOptionsPanel extends JPanel {
     private JLabel subGameOptionsLabel;
     private MainPanel mainPanel; // Reference to the main panel
 
-    public DummyOptionsPanel(MainPanel mainPanel) {
+    public DummyOptionsPanel(MainPanel mainPanel, GameController controller) {
+        this.controller = controller;
         this.mainPanel = mainPanel;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(250, 300));
 
-        subGameOptionsLabel = new JLabel("Game Options");
+        JLabel subGameOptionsLabel = new JLabel("Game Options");
         subGameOptionsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        humanVsHumanButton = new JButton("Human vs. Human");
+        JButton humanVsHumanButton = new JButton("Human vs. Human");
         humanVsHumanButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        humanVsHumanButton.setActionCommand("dummy1");
+        humanVsHumanButton.addActionListener(controller);
 
-        humanVsAgentButton = new JButton("Human vs. Agent");
+        JButton humanVsAgentButton = new JButton("Human vs. Agent");
         humanVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        humanVsAgentButton.setActionCommand("dummy2");
+        humanVsAgentButton.addActionListener(controller);
 
-        agentVsAgentButton = new JButton("Agent vs. Agent");
+        JButton agentVsAgentButton = new JButton("Agent vs. Agent");
         agentVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        agentVsAgentButton.setActionCommand("dummy3");
+        agentVsAgentButton.addActionListener(controller);
 
-        backButton = new JButton("Back");
-
-        // Add action listeners to the buttons
-        humanVsHumanButton.addActionListener(e -> {
-            printGameOption("Human vs. Human");
-            mainPanel.initializeGame();
-        });
-
-        humanVsAgentButton.addActionListener(e -> {
-            printGameOption("Human vs. Agent");
-            mainPanel.initializeGame();
-        });
-
-        agentVsAgentButton.addActionListener(e -> {
-            printGameOption("Agent vs. Agent");
-            mainPanel.initializeGame();
-        });
-
-        backButton.addActionListener(e -> {
-            String previousPanel;
-            switch (mainPanel.getSelectedOption()) {
-                case "Human vs. Human":
-                    previousPanel = "GameOptions";
-                    break;
-                default:
-                    previousPanel = "TomSelection";
-                    break;
-            }
-            mainPanel.showCard(previousPanel);
-        });
+        JButton backButton = new JButton("Back");
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backButton.setActionCommand("BackFromDummy");
+        backButton.addActionListener(controller);
 
         add(Box.createVerticalGlue());
         add(subGameOptionsLabel);
@@ -73,14 +57,4 @@ public class DummyOptionsPanel extends JPanel {
 
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        // Set the bounds of the backButton after the panel has been displayed
-        backButton.setBounds(10, getHeight() - backButton.getHeight() - 10, 100, 30);
-    }
-
-    private void printGameOption(String option) {
-        System.out.println("Game option selected by participant: " + option);
-    }
 }

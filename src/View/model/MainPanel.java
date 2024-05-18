@@ -2,12 +2,15 @@ package View.model;
 
 import Model.Grid;
 import Model.HumanPlayer;
+import Controller.GameController;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class MainPanel extends JPanel {
     private String selectedOption; // Store the selected game option
+
+    private int selectedTom; // Store the selected tom level
     private CardLayout cardLayout;
     private JFrame frame; // Reference to the main JFrame
 
@@ -18,9 +21,9 @@ public class MainPanel extends JPanel {
         setPreferredSize(new Dimension(250, 250));
 
         // Create instances of panels (cards)
-        GameOptionsPanel gameOptionsPanel = new GameOptionsPanel(this);
-        DummyOptionsPanel dummyOptionsPanel = new DummyOptionsPanel(this);
-        TomSelectionPanel tomSelectionPanel = new TomSelectionPanel();
+        GameOptionsPanel gameOptionsPanel = new GameOptionsPanel(this, new GameController(new Grid(), this));
+        DummyOptionsPanel dummyOptionsPanel = new DummyOptionsPanel(this, new GameController(new Grid(), this));
+        TomSelectionPanel tomSelectionPanel = new TomSelectionPanel(this, new GameController(new Grid(), this));
 
         // Add panels to this main panel
         add(gameOptionsPanel, "GameOptions");
@@ -42,25 +45,14 @@ public class MainPanel extends JPanel {
         return selectedOption;
     }
 
-    public void initializeGame() {
-        // Initialize the game based on the selected option
-        System.out.println(selectedOption);
-        if (selectedOption != null) {
-            switch (selectedOption) {
-                case "Human vs. Human":
-                    // Initialize game with 2 human players
-                    break;
-                case "Human vs. Agent":
-                    // Initialize game with 1 human player and 1 agent
-                    break;
-                case "Agent vs. Agent":
-                    // Initialize game with 2 agents
-                    break;
-                default:
-                    break;
-            }
-        }
+    public void setSelectedTom(int tom) {
+        selectedTom = tom;
     }
+
+    public int getSelectedTom() {
+        return selectedTom;
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

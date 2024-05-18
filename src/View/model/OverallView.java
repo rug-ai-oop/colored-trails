@@ -6,6 +6,7 @@ import View.controller.ViewController;
 import Controller.GameController;
 import Model.Grid;
 import Model.HumanPlayer;
+import View.model.MainPanel;
 
 public class OverallView extends AbstractView {
     private GridPane gridPane;
@@ -42,7 +43,7 @@ public class OverallView extends AbstractView {
 
     public static void main(String[] args) {
         Grid game = new Grid();
-        GameController controller = new GameController(game);
+        GameController controller = new GameController(game, new MainPanel(new JFrame()));
         HumanPlayer player1 = new HumanPlayer("Csenge");
         HumanPlayer player2 = new HumanPlayer("Lukasz");
         game.addPlayer(player1);
