@@ -18,8 +18,8 @@ public class OverallView extends AbstractView {
 
         gridPane = new GridPane(grid, gameController, new ViewController());
 
-        playerPanelLeft = new PlayerPanel(grid, gameController, "Player 1", player1, new ViewController());
-        playerPanelRight = new PlayerPanel(grid, gameController, "Player 2", player2, new ViewController());
+        playerPanelLeft = new PlayerPanel(grid, gameController, player1, new ViewController());
+        playerPanelRight = new PlayerPanel(grid, gameController, player2, new ViewController());
         // buttonPanel = new
 
         // Create container panel for the west side

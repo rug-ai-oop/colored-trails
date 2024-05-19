@@ -20,12 +20,14 @@ public class Grid {
     private ArrayList<Patch> patches = new ArrayList();
     private ArrayList<ColoredTrailsPlayer> players = new ArrayList(2);
     private ArrayList<PropertyChangeListener> listeners = new ArrayList();
+    private ArrayList<PropertyChangeListener> temoporaryListeners = new ArrayList();
     private ArrayList<Token> allTokensInPlay = new ArrayList();
     private HashMap<ColoredTrailsPlayer, ArrayList<Token>> tokens = new HashMap();
     private HashMap<ColoredTrailsPlayer, ArrayList<ArrayList<Token>>> offers = new HashMap();
     private HashMap<ColoredTrailsPlayer, Patch> goals = new HashMap();
     private HashMap<ColoredTrailsPlayer, Patch> goalsToAnnounce = new HashMap();
     private String wayOfAssigningGoals;
+    private boolean isNotifyingListeners = false;
 
     public enum STATE {
         INACTIVE, ACTIVE, WAITING_FOR_OFFER, WAITING_FOR_GOAL
@@ -305,19 +307,13 @@ public class Grid {
         return (ArrayList<ArrayList<Token>>) offers.get(getPlayer(numberOfTurns + 1)).clone();
     }
 
+
     /**
      * @param player: The player which the tokens belong to
      * @return A clone of tokens of the player
      */
-    public ArrayList<Token> getTokensOfPlayer(ColoredTrailsPlayer player) {
-        return (ArrayList) tokens.get(player).clone();
-    }
-
-    /**
-     * @return player tokens
-     */
     public ArrayList<Token> getTokens(ColoredTrailsPlayer player){
-        return tokens.get(player);
+        return (ArrayList) tokens.get(player).clone();
     }
 
     /**
@@ -351,7 +347,11 @@ public class Grid {
      * @param listener PropertyChangeListener which is added to the listeners of the grid
      */
     public void addListener(PropertyChangeListener listener) {
-        listeners.add(listener);
+        if (isNotifyingListeners) {
+            temoporaryListeners.add(listener);
+        } else {
+            listeners.add(listener);
+        }
     }
 
     /**
@@ -359,9 +359,13 @@ public class Grid {
      * @param evt PropertyChangeEvent passed in the propertyChange()
      */
     public void notifyListeners(PropertyChangeEvent evt) {
+        isNotifyingListeners = true;
         for(PropertyChangeListener listener : listeners) {
             listener.propertyChange(evt);
         }
+        isNotifyingListeners = false;
+        listeners.addAll(temoporaryListeners);
+        temoporaryListeners.removeAll(temoporaryListeners);
     }
 
     /**
@@ -401,7 +405,6 @@ public class Grid {
     }
 
     /**
-     * The method assumes that the player can only reveal its goal once. This needs to be discussed.
      * Associates the goalToAnnounce to the player as the goal the player wants to communicate to its partner
      * @param player The player communicating the supposed goal
      * @param goalToAnnounce The goal the player wants the partner
@@ -423,6 +426,8 @@ public class Grid {
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
             ColoredTrailsPlayer partner = getPlayer(numberOfTurns + 1);
+            notifyListeners(new PropertyChangeEvent(this, "newTurn", null,
+                    currentPlayer));
             setGameState(STATE.WAITING_FOR_GOAL);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingAnnounceGoal", null,
                     null));
@@ -434,8 +439,8 @@ public class Grid {
                         goalToReveal));
             }
             if(isOfferLegal(offers.get(partner))) {     // if the partner made a legal offer, announce it
-                notifyListeners(new PropertyChangeEvent(partner, "receiveOfferFromPartner", null,
-                        offers.get(partner)));
+                notifyListeners(new PropertyChangeEvent(partner, "receiveOfferFromPartner", currentPlayer,
+                        offers.get(partner))); // Use the oldValue to pass the current player
                 currentPlayer.receiveOffer(offers.get(partner));
             }
 
@@ -716,6 +721,7 @@ public class Grid {
         }
         return astarTraverse(player,tokens.get(player),visited);
     }
+
 
     /**
      * @return The index of the starting patch in patches
