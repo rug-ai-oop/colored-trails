@@ -3,7 +3,6 @@ package Model;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.*;
@@ -331,7 +330,7 @@ public class Grid {
      * @param player: The player which the tokens belong to
      * @return A clone of tokens of the player
      */
-    public ArrayList<Token> getTokensOfPlayer(ColoredTrailsPlayer player) {
+    public ArrayList<Token> getTokens(ColoredTrailsPlayer player) {
         return (ArrayList) tokens.get(player).clone();
     }
 
@@ -438,10 +437,11 @@ public class Grid {
     /**
      * Starts the negotiations. Ends when both players sent the same offer or the number of turns has reached the
      * maximumNumberOfTurns, initially set to 40
+     *
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
-    public boolean start() throws IllegalAccessException {
-        boolean agreementReached = false;
+    public int[] start(boolean saveMap) throws IllegalAccessException {
+        int agreementReached = 0;
         setGameState(STATE.ACTIVE);
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);

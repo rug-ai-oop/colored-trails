@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class OfferPane  extends JPanel implements PropertyChangeListener {
-    public static final Map<Model.Color, BufferedImage> tokenImages = new HashMap<>(5);
     public static HashMap<ColoredTrailsPlayer, OfferHistoryPane> offerHistoryPanes = new HashMap<>(2);
     public static Color defaultButtonColor = new Color(238, 238, 238);
     private Grid grid;

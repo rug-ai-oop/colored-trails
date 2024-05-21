@@ -31,7 +31,7 @@ public class ViewTester {
         OfferPane offerPane = new OfferPane(game, controller, viewController);
 
         //0 - no map loaded, x - patches_map_x will be loaded
-        int loadMap = 3;
+        int loadMap = 0;
         game.setUp(loadMap);
 
         PlayerPanel playerPanel1 = new PlayerPanel(game, controller, firstPlayer, viewController);

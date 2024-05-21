@@ -129,24 +129,9 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
     }
 
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setSize(200, 350);
-        Grid game = new Grid();
-        HumanPlayer firstPlayer = new HumanPlayer();
-        HumanPlayer secondPlayer = new HumanPlayer();
-        game.addPlayer(firstPlayer);
-        game.addPlayer(secondPlayer);
-        game.setUp();
-        PlayerPanel playerPanel = new PlayerPanel(game, new GameController(game), firstPlayer, new ViewController());
-        frame.add(playerPanel);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setVisible(true);
-    }
 
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName() == "newTurn") {
-            System.out.println(((ColoredTrailsPlayer) evt.getNewValue()).getName());
             if (evt.getNewValue() == player) {
                 withdrawButton.setEnabled(true);
                 offerHistoryButton.setEnabled(true);
