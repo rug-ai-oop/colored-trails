@@ -113,13 +113,14 @@ public class GameController implements ActionListener {
             case "dummy2":
             case "dummy3":
                 //actually start the game based on game option and the tom if there is an agent
+                mainPanel.startGame(mainPanel.getSelectedOption(), mainPanel.getSelectedTom(), grid,this);
                 break;
             case "BackFromDummy":
                 String previousPanel = mainPanel.getSelectedOption().equals("Human vs. Human") ? "GameOptions" : "TomSelection";
-                mainPanel.showCard(previousPanel);;
+                mainPanel.showCard(previousPanel);
                 break;
             case "BackFromTom":
-                mainPanel.showCard("GameOptions");;
+                mainPanel.showCard("GameOptions");
                 break;
             case "0":
                 mainPanel.setSelectedTom(0);
