@@ -3,6 +3,7 @@ package View;
 import Controller.GameController;
 import Model.Grid;
 import Model.HumanPlayer;
+import View.controller.SetUpGameOptionsController;
 import View.controller.ViewController;
 import View.model.GridPane;
 import View.model.OfferHistoryPane;
@@ -21,11 +22,7 @@ public class ViewTester {
         optionFrame.setSize(250, 250);
         optionFrame.setLocationRelativeTo(null);
 
-        Grid game = new Grid();
-
-        GameController controller = new GameController(game, new MainPanel(new JFrame()));
-
-        MainPanel mainPanel = new MainPanel(optionFrame);
+        MainPanel mainPanel = new MainPanel();
 
         optionFrame.add(mainPanel);
         optionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

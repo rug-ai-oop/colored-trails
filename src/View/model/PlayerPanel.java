@@ -117,7 +117,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         //0 - no map loaded, x - patches_map_x will be loaded
         int loadMap = 0;
         game.setUp(loadMap);
-        PlayerPanel playerPanel = new PlayerPanel(game, new GameController(game, new MainPanel(new JFrame())), "Lukasz", firstPlayer, new ViewController());
+        PlayerPanel playerPanel = new PlayerPanel(game, new GameController(game), "Lukasz", firstPlayer, new ViewController());
         frame.add(playerPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);

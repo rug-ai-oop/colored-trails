@@ -13,13 +13,11 @@ import java.awt.event.ActionListener;
 
 public class GameController implements ActionListener {
     private Grid grid;
-    private MainPanel mainPanel;
     private Token selectedToken;
 
 
-    public GameController(Grid grid, MainPanel mainPanel) {
+    public GameController(Grid grid) {
         this.grid = grid;
-        this.mainPanel = mainPanel;
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -93,48 +91,6 @@ public class GameController implements ActionListener {
                 System.out.println("A player exited the negotiations");
                 grid.endGame();
                 break;
-            case "Human vs. Human":
-                mainPanel.setGameOption("Human vs. Human");
-                mainPanel.showCard("DummyOptions");
-                break;
-            case "Human vs. Agent":
-                mainPanel.setGameOption("Human vs. Agent");
-                mainPanel.showCard("TomSelection");
-                break;
-            case "Agent vs. Agent":
-                mainPanel.setGameOption("Agent vs. Agent");
-                mainPanel.showCard("TomSelection");
-                break;
-            case "Human vs. Human like agent":
-                mainPanel.setGameOption("Human vs. Human like agent");
-                mainPanel.showCard("TomSelection");
-                break;
-            case "dummy1":
-            case "dummy2":
-            case "dummy3":
-                //actually start the game based on game option and the tom if there is an agent
-                mainPanel.startGame(mainPanel.getSelectedOption(), mainPanel.getSelectedTom(), grid,this);
-                break;
-            case "BackFromDummy":
-                String previousPanel = mainPanel.getSelectedOption().equals("Human vs. Human") ? "GameOptions" : "TomSelection";
-                mainPanel.showCard(previousPanel);
-                break;
-            case "BackFromTom":
-                mainPanel.showCard("GameOptions");
-                break;
-            case "0":
-                mainPanel.setSelectedTom(0);
-                mainPanel.showCard("DummyOptions");
-                break;
-            case "1":
-                mainPanel.setSelectedTom(1);
-                mainPanel.showCard("DummyOptions");
-                break;
-            case "2":
-                mainPanel.setSelectedTom(2);
-                mainPanel.showCard("DummyOptions");
-                break;
-
         }
     }
 }

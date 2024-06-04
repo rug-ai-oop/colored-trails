@@ -1,12 +1,13 @@
 package View.model;
 
 import Controller.GameController;
+import View.controller.SetUpGameOptionsController;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class GameOptionsPanel extends JPanel {
-    private GameController controller;
+    private SetUpGameOptionsController controller;
     private String selectedOption; // Store the selected game option
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
@@ -15,7 +16,7 @@ public class GameOptionsPanel extends JPanel {
     private JLabel gameOptionsLabel;
     private MainPanel mainPanel; // Reference to the main panel
 
-    public GameOptionsPanel(MainPanel mainPanel, GameController controller) {
+    public GameOptionsPanel(MainPanel mainPanel, SetUpGameOptionsController controller) {
         this.mainPanel = mainPanel;
         this.controller = controller;
         // Setting layout

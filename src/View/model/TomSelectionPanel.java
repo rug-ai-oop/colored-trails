@@ -1,6 +1,8 @@
 package View.model;
 
 import Controller.GameController;
+import View.controller.SetUpGameOptionsController;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -12,9 +14,9 @@ public class TomSelectionPanel extends JPanel {
     private JLabel tomLabel;
 
     private MainPanel mainPanel; // Reference to the main panel
-    private GameController controller;
+    private SetUpGameOptionsController controller;
 
-    public TomSelectionPanel(MainPanel mainPanel, GameController controller) {
+    public TomSelectionPanel(MainPanel mainPanel, SetUpGameOptionsController controller) {
         this.controller = controller;
         this.mainPanel = mainPanel;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

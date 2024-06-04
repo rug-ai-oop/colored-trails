@@ -1,12 +1,13 @@
 package View.model;
 
 import Controller.GameController;
+import View.controller.SetUpGameOptionsController;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class DummyOptionsPanel extends JPanel {
-    private GameController controller;
+    private SetUpGameOptionsController controller;
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
     private JButton agentVsAgentButton;
@@ -14,7 +15,7 @@ public class DummyOptionsPanel extends JPanel {
     private JLabel subGameOptionsLabel;
     private MainPanel mainPanel; // Reference to the main panel
 
-    public DummyOptionsPanel(MainPanel mainPanel, GameController controller) {
+    public DummyOptionsPanel(MainPanel mainPanel, SetUpGameOptionsController controller) {
         this.controller = controller;
         this.mainPanel = mainPanel;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
