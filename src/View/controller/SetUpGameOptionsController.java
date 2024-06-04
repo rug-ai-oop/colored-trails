@@ -20,13 +20,12 @@ public class SetUpGameOptionsController implements ActionListener {
         this.mainPanel = mainPanel;
     }
 
-    public void startGame(String gameOption, int tomLevel) {
+    private void startGame(String gameOption, int tomLevel) {
 
         JFrame frame = new JFrame("Colored Trails");
         frame.setSize(1200, 800);
 
         Grid game = new Grid();
-        GameController gameController = new GameController(game);
         ColoredTrailsPlayer firstPlayer;
         ColoredTrailsPlayer secondPlayer;
 
@@ -52,6 +51,7 @@ public class SetUpGameOptionsController implements ActionListener {
         game.addPlayer(firstPlayer);
         game.addPlayer(secondPlayer);
 
+        GameController gameController = new GameController(game);
         ViewController viewController = new ViewController();
 
         GridPane gridPane = new GridPane(game, gameController, viewController);
@@ -63,8 +63,8 @@ public class SetUpGameOptionsController implements ActionListener {
         int loadMap = 0;
         game.setUp(loadMap);
 
-        PlayerPanel playerPanel1 = new PlayerPanel(game, gameController, "Csenge", firstPlayer, new ViewController());
-        PlayerPanel playerPanel2 = new PlayerPanel(game, gameController, "Lukasz", secondPlayer, new ViewController());
+        PlayerPanel playerPanel1 = new PlayerPanel(game, gameController, "Csenge", firstPlayer, viewController);
+        PlayerPanel playerPanel2 = new PlayerPanel(game, gameController, "Lukasz", secondPlayer, viewController);
 
         frame.setLayout(new BorderLayout());
         frame.add(offerPane, BorderLayout.SOUTH);
@@ -76,7 +76,7 @@ public class SetUpGameOptionsController implements ActionListener {
         frame.setVisible(true);
 
         try {
-            boolean saveMap = true;
+            boolean saveMap = false;
             int [] finishArray = game.start(saveMap);
             if (finishArray[0] == 1) {
                 JOptionPane.showMessageDialog(null, "Agreement reached!\nPlayer 1 score: " + finishArray[1] + "\nPlayer 2 score: " + finishArray[2]);

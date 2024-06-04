@@ -106,23 +106,6 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
 
 
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setSize(200, 350);
-        Grid game = new Grid();
-        HumanPlayer firstPlayer = new HumanPlayer();
-        HumanPlayer secondPlayer = new HumanPlayer();
-        game.addPlayer(firstPlayer);
-        game.addPlayer(secondPlayer);
-        //0 - no map loaded, x - patches_map_x will be loaded
-        int loadMap = 0;
-        game.setUp(loadMap);
-        PlayerPanel playerPanel = new PlayerPanel(game, new GameController(game), "Lukasz", firstPlayer, new ViewController());
-        frame.add(playerPanel);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setVisible(true);
-    }
-
     public void propertyChange(PropertyChangeEvent evt) {
     }
 }
