@@ -14,11 +14,12 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
 
 public class OfferPane  extends JPanel implements PropertyChangeListener {
-    public static HashMap<ColoredTrailsPlayer, OfferHistoryPane> offerHistoryPanes = new HashMap<>(2);
     public static Color defaultButtonColor = new Color(238, 238, 238);
     private Grid grid;
     private GameController controller;
@@ -225,15 +226,14 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         switch (evt.getPropertyName()) {
-            case "assignedGoalsIndex":
+            case "assignedGoalsIndex" -> {
                 if (evt.getSource() instanceof HumanPlayer) {
                     HumanPlayer player = (HumanPlayer) evt.getSource();
-                    offerHistoryPanes.put(player, new OfferHistoryPane(viewController, grid, player));
                 }
-                break;
-            case "initiatingOffer":
-                if(grid.getCurrentPlayer() instanceof HumanPlayer) {
-                    if(receivedOfferPanel.getParent() == this) {
+            }
+            case "initiatingOffer" -> {
+                if (grid.getCurrentPlayer() instanceof HumanPlayer) {
+                    if (receivedOfferPanel.getParent() == this) {
                         this.remove(receivedOfferPanel);
                         revalidate();
                     }
@@ -241,27 +241,27 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
                     addButtonsToUnassignedTokensPanel();
                     revalidate();
                 }
-                break;
-            case "offerFinished":
+            }
+            case "offerFinished" -> {
                 this.remove(centerPanel);
                 resetOfferPanel();
                 revalidate();
-                break;
-            case "receiveOfferFromPartner":
+            }
+            case "receiveOfferFromPartner" -> {
                 if (evt.getOldValue() instanceof HumanPlayer) {
-                    HumanPlayer player =  (HumanPlayer) evt.getOldValue();
-                    OfferHistoryPane offerHistoryPane = offerHistoryPanes.get(player);
-                    if (offerHistoryPane.getLastOfferPanel() != null) {
-                        receivedOfferPanel.removeAll();
-                        receivedOfferPanel.add(receivedOfferMessageLabel);
-                        receivedOfferPanel.add(yourTokensPartnerTokens);
-                        receivedOfferPanel.add(offerHistoryPane.getLastOfferPanel());
-                        receivedOfferPanel.add(acceptRejectPanel);
-                        this.add(receivedOfferPanel, BorderLayout.CENTER);
-                        revalidate();
-                    }
+                    HumanPlayer player = (HumanPlayer) evt.getOldValue();
+                    ArrayList<ArrayList<Token>> offer = (ArrayList<ArrayList<Token>>) evt.getNewValue();
+                    Collections.reverse(offer);
+                    JSplitPane offerPanel = OfferHistoryPane.constructOfferPanel(offer);
+                    receivedOfferPanel.removeAll();
+                    receivedOfferPanel.add(receivedOfferMessageLabel);
+                    receivedOfferPanel.add(yourTokensPartnerTokens);
+                    receivedOfferPanel.add(offerPanel);
+                    receivedOfferPanel.add(acceptRejectPanel);
+                    this.add(receivedOfferPanel, BorderLayout.CENTER);
+                    revalidate();
                 }
-                break;
+            }
         }
     }
 

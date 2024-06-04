@@ -203,7 +203,7 @@ public class Grid {
     /**
      * Prints the colours of the tokens in the offers
      */
-    private void printOffer(ArrayList<ArrayList<Token>> offer) {
+    public static void printOffer(ArrayList<ArrayList<Token>> offer) {
         for(ArrayList<Token> hand : offer) {
             String offerAsString = "";
             for(Token token : hand) {
@@ -464,7 +464,7 @@ public class Grid {
             }
             if(isOfferLegal(offers.get(partner))) {     // if the partner made a legal offer, announce it
                 notifyListeners(new PropertyChangeEvent(partner, "receiveOfferFromPartner", currentPlayer,
-                        offers.get(partner)));// Use the oldValue to pass the current player
+                        offers.get(partner).clone()));// Use the oldValue to pass the current player
                 currentPlayer.receiveOffer(offers.get(partner));
             }
             if(gameState != STATE.INACTIVE){
@@ -473,7 +473,6 @@ public class Grid {
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
             ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
             setOffer(currentPlayer, offer);
-            printOffer(offer);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "offerFinished", null, null));
             if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
                 offers.put(currentPlayer, null);

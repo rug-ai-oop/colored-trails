@@ -17,8 +17,6 @@ import java.util.HashMap;
 
 
 public class PlayerPanel extends JPanel implements PropertyChangeListener{
-    public static HashMap<PlayerPanel, JFrame> offerHistoryFrames = new HashMap<>(2);
-    public static JFrame lastOpenFrame;
     private static Color defaultButtonColor = new Color(26, 194, 26);
     private Grid grid;
     private GameController controller;
@@ -26,29 +24,16 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
     private JButton withdrawButton;
     private JPanel yourTokensPanel;
     private JButton offerHistoryButton;
-    private OfferHistoryPane offerHistoryPane;
-    private HumanPlayer player;
+    private ColoredTrailsPlayer player;
 
 
-    private void setUpFrame() {
-        if (offerHistoryFrames.get(this) == null) {
-            offerHistoryFrames.put(this, new JFrame("Offer History"));
-            offerHistoryFrames.get(this).setLayout(new BorderLayout());
-            offerHistoryFrames.get(this).setSize(1000, 500);
-            offerHistoryFrames.get(this).setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        }
-        offerHistoryFrames.get(this).add(offerHistoryPane);
-    }
-
-    public PlayerPanel(Grid grid, GameController controller, HumanPlayer player, ViewController viewController) {
+    public PlayerPanel(Grid grid, GameController controller, ColoredTrailsPlayer player, ViewController viewController) {
         this.grid = grid;
         grid.addListener(this);
         this.controller = controller;
         this.viewController = viewController;
         ImageLoader.loadImages();
         this.player = player;
-        offerHistoryPane = OfferPane.offerHistoryPanes.get(player);
-        setUpFrame();
         setUp();
     }
 
@@ -104,7 +89,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         withdrawButton.setFont(new Font("Serif", Font.BOLD, 14));
         withdrawButton.setActionCommand("withdrawGame");
         withdrawButton.addActionListener(controller);
-        withdrawButton.setBackground(new Color(179, 119, 162));
+        withdrawButton.setBackground(Color.lightGray);
         withdrawButton.setPreferredSize(new Dimension(130, 50));
         withdrawButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(withdrawButton);
@@ -113,16 +98,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         offerHistoryButton = new JButton("Offer History");
         offerHistoryButton.setFont(new Font("Serif", Font.BOLD, 14));
         offerHistoryButton.setActionCommand("openOfferHistory");
-        offerHistoryButton.addActionListener(e -> {
-            if (lastOpenFrame != offerHistoryFrames.get(this)) {
-                if (lastOpenFrame != null) {
-                    lastOpenFrame.setVisible(false);
-                }
-                lastOpenFrame = offerHistoryFrames.get(this);
-            }
-            offerHistoryFrames.get(this).setVisible(!offerHistoryFrames.get(this).isVisible());
-        });
-        offerHistoryButton.setBackground(new Color(179, 119, 162));
+        offerHistoryButton.setBackground(Color.lightGray);
         offerHistoryButton.setPreferredSize(new Dimension(130, 50));
         offerHistoryButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(offerHistoryButton);

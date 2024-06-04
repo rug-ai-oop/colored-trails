@@ -16,16 +16,55 @@ import java.util.Collections;
 public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
     private Grid grid;
     private ViewController viewController;
-    private HumanPlayer playerToDisplayOnTheLeft;
+    private final ColoredTrailsPlayer playerToDisplayOnTheLeft;
     private JScrollPane scrollPane;
     private JPanel mainPanel = new JPanel();
-    private JPanel labelPanel = new JPanel();
+    private final JPanel labelPanel = new JPanel();
     private JSplitPane lastOfferPanel;
-    private JLabel yourTokens = new JLabel("Your tokens");
-    private JLabel partnerTokens = new JLabel("Partner's tokens");
-    private JPanel middlePanel = new JPanel();
-    private Dimension middlePanelDimension = new Dimension(80, 40);
-    private Dimension sidePanelDimension = new Dimension(320, 40);
+    private final JLabel yourTokens = new JLabel("Your tokens");
+    private final JLabel partnerTokens = new JLabel("Partner's tokens");
+    private final JPanel middlePanel = new JPanel();
+    private static final Dimension sidePanelDimension = new Dimension(320, 40);
+
+    /**
+     * Constructs the panel to add on one side of the history
+     * @param hand the offered tokens of a player
+     * @return The panel with the hand
+     */
+    private static JPanel constructPlayerHandPanel(ArrayList<Token> hand) {
+        int tokensInHand = hand.size();
+        JPanel handPanel = new JPanel();
+        handPanel.setPreferredSize(sidePanelDimension);
+        handPanel.setLayout(new GridLayout(1, tokensInHand));
+
+        for(Token token : hand) {
+            JLabel tokenLabel = new JLabel();
+            tokenLabel.setOpaque(true);
+            tokenLabel.setPreferredSize(new Dimension(40, 40));
+            Image scaledTokenImage =  ImageLoader.tokenImages.get(token.getColor()).
+                    getScaledInstance(40, 20, Image.SCALE_SMOOTH);
+            tokenLabel.setIcon(new ImageIcon(scaledTokenImage));
+            tokenLabel.setBackground(OfferPane.defaultButtonColor);
+            handPanel.add(tokenLabel);
+        }
+        return handPanel;
+    }
+
+    /**
+     * @param offer The offer
+     * @return A JsplitPanel that represents an offer.
+     */
+    public static JSplitPane constructOfferPanel(ArrayList<ArrayList<Token>> offer) {
+        JPanel leftPanel = constructPlayerHandPanel(offer.get(0));
+        JPanel rightPanel = constructPlayerHandPanel(offer.get(1));
+
+        JSplitPane offerPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
+        offerPanel.setResizeWeight(0.5); // divides the space between the panels equally
+        offerPanel.setDividerLocation(0.5); // place the divider in the middle
+        offerPanel.setDividerSize(5);;
+        offerPanel.setEnabled(false);
+        return offerPanel;
+    }
 
     private void setUp() {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -56,89 +95,22 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
         this.setBackground(OfferPane.defaultButtonColor);
     }
 
-    public OfferHistoryPane(ViewController viewController, Grid grid, HumanPlayer playerToDisplayOnTheLeft) {
+    public OfferHistoryPane(ViewController viewController, Grid grid, ColoredTrailsPlayer playerToDisplayOnTheLeft) {
         this.viewController = viewController;
         this.grid = grid;
-        grid.addListener(this);
         this.playerToDisplayOnTheLeft = playerToDisplayOnTheLeft;
+        grid.addListener(this);
         setUp();
     }
 
+
+    /**
+     * Adds a panel containing the offer to the mainPanel & updates the lastOfferPanel accordingly
+     * @param offer
+     */
     private void addOffer(ArrayList<ArrayList<Token>> offer) {
-
-        JPanel middlePanel = new JPanel();
-        JPanel lastMiddlePanel = new JPanel();  // mimic
-        middlePanel.setPreferredSize(middlePanelDimension);
-        middlePanel.setBackground(Color.LIGHT_GRAY);
-        lastMiddlePanel.setPreferredSize(middlePanelDimension); // mimic
-        lastMiddlePanel.setBackground(Color.gray); // set the color of the middle panel to grey
-
-        JPanel leftOfferPanel = new JPanel();
-        JPanel lastLeftOfferPanel = new JPanel(); // mimic
-        leftOfferPanel.setPreferredSize(sidePanelDimension);
-        lastLeftOfferPanel.setPreferredSize(sidePanelDimension); // mimic
-        int numberOfLeftTokens = offer.get(0).size();
-        leftOfferPanel.setLayout(new GridLayout(1, numberOfLeftTokens));
-        lastLeftOfferPanel.setLayout(new GridLayout(1, numberOfLeftTokens)); // mimic
-
-        JPanel rightOfferPanel = new JPanel();
-        JPanel lastRightOfferPanel = new JPanel(); // mimic
-        rightOfferPanel.setPreferredSize(sidePanelDimension);
-        lastRightOfferPanel.setPreferredSize(sidePanelDimension); // mimic
-        int numberOfRightTokens = offer.get(1).size();
-        rightOfferPanel.setLayout(new GridLayout(1, numberOfRightTokens));
-        lastRightOfferPanel.setLayout(new GridLayout(1, numberOfRightTokens)); // mimic
-
-        // Adds the tokens to the left panel of the offer panel
-        for(Token token : offer.get(0)) {
-            JLabel tokenLabel = new JLabel();
-            JLabel lastTokenLabel = new JLabel(); // mimic
-            tokenLabel.setOpaque(true);
-            lastTokenLabel.setOpaque(true); // mimic
-            tokenLabel.setPreferredSize(new Dimension(40, 40));
-            lastTokenLabel.setPreferredSize(new Dimension(40, 40)); // mimic
-            Image scaledTokenImage =  ImageLoader.tokenImages.get(token.getColor()).
-                    getScaledInstance(40, 20, Image.SCALE_SMOOTH);
-            tokenLabel.setIcon(new ImageIcon(scaledTokenImage));
-            lastTokenLabel.setIcon(new ImageIcon(scaledTokenImage)); // mimic
-            tokenLabel.setBackground(OfferPane.defaultButtonColor);
-            lastTokenLabel.setBackground(OfferPane.defaultButtonColor); //mimic
-            leftOfferPanel.add(tokenLabel);
-            lastLeftOfferPanel.add(lastTokenLabel); // mimic
-        }
-
-        // Adds the tokens to the right panel of the offer panel
-        for(Token token : offer.get(1)) {
-            JLabel tokenLabel = new JLabel();
-            JLabel lastTokenLabel = new JLabel(); // mimic
-            tokenLabel.setOpaque(true);
-            lastTokenLabel.setOpaque(true); // mimic
-            tokenLabel.setPreferredSize(new Dimension(40, 40));
-            lastTokenLabel.setPreferredSize(new Dimension(40, 40)); // mimic
-            Image scaledTokenImage =  ImageLoader.tokenImages.get(token.getColor()).
-                    getScaledInstance(40, 20, Image.SCALE_SMOOTH);
-            tokenLabel.setIcon(new ImageIcon(scaledTokenImage));
-            lastTokenLabel.setIcon(new ImageIcon(scaledTokenImage)); // mimic
-            tokenLabel.setBackground(OfferPane.defaultButtonColor);
-            lastTokenLabel.setBackground(OfferPane.defaultButtonColor); //mimic
-            rightOfferPanel.add(tokenLabel);
-            lastRightOfferPanel.add(lastTokenLabel); // mimic
-        }
-
-        JSplitPane mainOfferPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftOfferPanel, rightOfferPanel);
-
-        mainOfferPanel.setResizeWeight(0.5); // divides the space between the panels equally
-        mainOfferPanel.setDividerLocation(0.5); // place the divider in the middle
-        mainOfferPanel.setDividerSize(5);;
-        mainOfferPanel.setEnabled(false);
-
-        // mimic
-        lastOfferPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, lastLeftOfferPanel, lastRightOfferPanel);
-
-        lastOfferPanel.setResizeWeight(0.5); // divides the space between the panels equally
-        lastOfferPanel.setDividerLocation(0.5); // place the divider in the middle
-        lastOfferPanel.setDividerSize(5);;
-        lastOfferPanel.setEnabled(false);
+        JSplitPane mainOfferPanel = constructOfferPanel(offer);
+        lastOfferPanel = constructOfferPanel(offer);
 
         mainPanel.add(mainOfferPanel);
         revalidate();
@@ -156,7 +128,7 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
      * Intended for being used in ViewController to know the history of which player to display
      * @return playerToDisplayOnTheLeft
      */
-    public HumanPlayer getPlayerToDisplayOnTheLeft() {
+    public ColoredTrailsPlayer getPlayerToDisplayOnTheLeft() {
         return playerToDisplayOnTheLeft;
     }
 
@@ -166,10 +138,11 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
             ColoredTrailsPlayer playerMakingTheOffer = (ColoredTrailsPlayer) evt.getSource();
             ArrayList<ArrayList<Token>> offer = (ArrayList<ArrayList<Token>>) evt.getNewValue();
             if(playerMakingTheOffer != playerToDisplayOnTheLeft) {
+                Grid.printOffer(offer);
                 Collections.reverse(offer);
             }
-            System.out.println("playerMakingTheOffer = " + playerMakingTheOffer.getName());
-            System.out.println("playerToDisplayOnTheLeft = " + playerToDisplayOnTheLeft.getName());
+//            System.out.println("playerMakingTheOffer = " + playerMakingTheOffer.getName());
+//            System.out.println("playerToDisplayOnTheLeft = " + playerToDisplayOnTheLeft.getName());
             addOffer(offer);
         }
     }
