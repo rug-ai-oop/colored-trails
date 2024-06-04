@@ -1,15 +1,6 @@
 package View;
 
-import Controller.GameController;
-import Model.Grid;
-import Model.HumanPlayer;
-import View.controller.SetUpGameOptionsController;
-import View.controller.ViewController;
-import View.model.GridPane;
-import View.model.OfferHistoryPane;
-import View.model.OfferPane;
-import View.model.PlayerPanel;
-import javax.swing.JOptionPane;
+
 import View.model.MainPanel;
 
 import javax.swing.*;
@@ -20,7 +11,6 @@ public class ViewTester {
 
         JFrame optionFrame = new JFrame("Colored Trails");
         optionFrame.setSize(250, 250);
-        optionFrame.setLocationRelativeTo(null);
 
         MainPanel mainPanel = new MainPanel();
 

@@ -441,7 +441,7 @@ public class Grid {
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
     public int[] start(boolean saveMap) throws IllegalAccessException {
-        System.out.println("Started the game");
+//        System.out.println("Started the game");
         int agreementReached = 0;
         setGameState(STATE.ACTIVE);
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {

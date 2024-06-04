@@ -55,9 +55,9 @@ public class SetUpGameOptionsController implements ActionListener {
         ViewController viewController = new ViewController();
 
         GridPane gridPane = new GridPane(game, gameController, viewController);
-        OfferHistoryPane offerHistoryPane = new OfferHistoryPane(viewController, game, firstPlayer);
-        viewController.setOfferHistoryPane(offerHistoryPane);
-        OfferPane offerPane = new OfferPane(game, gameController, viewController, offerHistoryPane);
+//        OfferHistoryPane offerHistoryPane = new OfferHistoryPane(viewController, game, firstPlayer);
+//        viewController.setOfferHistoryPane(offerHistoryPane);
+        OfferPane offerPane = new OfferPane(game, gameController, viewController);
 
         //0 - no map loaded, x - patches_map_x will be loaded
         int loadMap = 0;

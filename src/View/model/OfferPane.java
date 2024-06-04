@@ -1,19 +1,25 @@
 package View.model;
 
 import Controller.GameController;
+import Model.ColoredTrailsPlayer;
 import Model.Grid;
 import Model.HumanPlayer;
 import Model.Token;
 import View.controller.ViewController;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+import java.util.HashMap;
 
 public class OfferPane  extends JPanel implements PropertyChangeListener {
-
     public static Color defaultButtonColor = new Color(238, 238, 238);
     private Grid grid;
     private GameController controller;
@@ -38,7 +44,6 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
     private volatile JPanel partnerTokensPanel;
     private boolean isSendButtonOnScreen = false;
     private ViewController viewController;
-    private OfferHistoryPane offerHistoryPane;
 
 
 
@@ -207,12 +212,10 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
         isSendButtonOnScreen = false;
     }
 
-    public OfferPane(Grid grid, GameController controller, ViewController viewController,
-                     OfferHistoryPane offerHistoryPane) {
+    public OfferPane(Grid grid, GameController controller, ViewController viewController) {
         this.grid = grid;
         this.controller = controller;
         this.viewController = viewController;
-        this.offerHistoryPane = offerHistoryPane;
         viewController.setOfferPane(this);
         grid.addListener(this);
         ImageLoader.loadImages();
@@ -223,9 +226,14 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         switch (evt.getPropertyName()) {
-            case "initiatingOffer":
-                if(grid.getCurrentPlayer() instanceof HumanPlayer) {
-                    if(receivedOfferPanel.getParent() == this) {
+            case "assignedGoalsIndex" -> {
+                if (evt.getSource() instanceof HumanPlayer) {
+                    HumanPlayer player = (HumanPlayer) evt.getSource();
+                }
+            }
+            case "initiatingOffer" -> {
+                if (grid.getCurrentPlayer() instanceof HumanPlayer) {
+                    if (receivedOfferPanel.getParent() == this) {
                         this.remove(receivedOfferPanel);
                         revalidate();
                     }
@@ -233,23 +241,27 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
                     addButtonsToUnassignedTokensPanel();
                     revalidate();
                 }
-                break;
-            case "offerFinished":
+            }
+            case "offerFinished" -> {
                 this.remove(centerPanel);
                 resetOfferPanel();
                 revalidate();
-                break;
-            case "receiveOfferFromPartner":
-                if (offerHistoryPane.getLastOfferPanel() != null) {
-                    receivedOfferPanel.removeAll();
-                    receivedOfferPanel.add(receivedOfferMessageLabel);
-                    receivedOfferPanel.add(yourTokensPartnerTokens);
-                    receivedOfferPanel.add(offerHistoryPane.getLastOfferPanel());
-                    receivedOfferPanel.add(acceptRejectPanel);
-                    this.add(receivedOfferPanel, BorderLayout.CENTER);
-                    revalidate();
+            }
+            case "receiveOfferFromPartner" -> {
+                if (evt.getOldValue() instanceof HumanPlayer) {
+//                    HumanPlayer player = (HumanPlayer) evt.getOldValue();
+//                    ArrayList<ArrayList<Token>> offer = (ArrayList<ArrayList<Token>>) evt.getNewValue();
+//                    Collections.reverse(offer);
+////                    JSplitPane offerPanel = OfferHistoryPane.constructOfferPanel(offer);
+//                    receivedOfferPanel.removeAll();
+//                    receivedOfferPanel.add(receivedOfferMessageLabel);
+//                    receivedOfferPanel.add(yourTokensPartnerTokens);
+////                    receivedOfferPanel.add(offerPanel);
+//                    receivedOfferPanel.add(acceptRejectPanel);
+//                    this.add(receivedOfferPanel, BorderLayout.CENTER);
+//                    revalidate();
                 }
-                break;
+            }
         }
     }
 
@@ -258,6 +270,9 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
      */
     public TokenButton getTokenButtonToMove() {
         return tokenButtonToMove;
+    }
+    public JButton getUnassignedTokensButton() {
+        return unassignedTokensButton;
     }
     public JButton getSendButton() {
         return sendButton;
