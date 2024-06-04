@@ -3,7 +3,6 @@ package Model;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.*;
@@ -18,18 +17,20 @@ public class Grid {
      *      4) Set up the grid
      *      5) Start the grid
      */
-    private int maximumNumberOfTurns ;
+    private int maximumNumberOfTurns;
     private int numberOfTurns;
     private int startPatchIndex;
     private ArrayList<Patch> patches = new ArrayList();
     private ArrayList<ColoredTrailsPlayer> players = new ArrayList(2);
     private ArrayList<PropertyChangeListener> listeners = new ArrayList();
+    private ArrayList<PropertyChangeListener> temoporaryListeners = new ArrayList();
     private ArrayList<Token> allTokensInPlay = new ArrayList();
     private HashMap<ColoredTrailsPlayer, ArrayList<Token>> tokens = new HashMap();
     private HashMap<ColoredTrailsPlayer, ArrayList<ArrayList<Token>>> offers = new HashMap();
     private HashMap<ColoredTrailsPlayer, Patch> goals = new HashMap();
     private HashMap<ColoredTrailsPlayer, Patch> goalsToAnnounce = new HashMap();
     private String wayOfAssigningGoals;
+    private boolean isNotifyingListeners = false;
 
     public enum STATE {
         INACTIVE, ACTIVE, WAITING_FOR_OFFER, WAITING_FOR_GOAL
@@ -177,11 +178,32 @@ public class Grid {
         }
     }
 
+    /**
+     * The method lets the playerToBeAnnounced that the goal of its partner is goalOfPartner
+     * @param playerToBeAnnounced: The player which is announced
+     * @param goalOfPartner: The goal of the partner
+     */
+    private void announceGoal(ColoredTrailsPlayer playerToBeAnnounced, Patch goalOfPartner) {
+        playerToBeAnnounced.listenToGoal(goalOfPartner);
+    }
+
+    /**
+     * The method sends the offer of the playerToOffer to playerToReceive
+     * @param playerToOffer: The player which made the offer
+     * @param playerToReceive: The player receiving the offer
+     */
+    private void makeOffer(ColoredTrailsPlayer playerToOffer, ColoredTrailsPlayer playerToReceive) {
+        // Clone the offer of the playerToOffer
+        ArrayList<ArrayList<Token>> offer = (ArrayList<ArrayList<Token>>) offers.get(playerToOffer).clone();
+        // Reverse the offer, so that the playerToReceive receives it with its offered hand at index 0
+        Collections.reverse(offer);
+        playerToReceive.receiveOffer(offer);
+    }
 
     /**
      * Prints the colours of the tokens in the offers
      */
-    private void printOffer(ArrayList<ArrayList<Token>> offer) {
+    public static void printOffer(ArrayList<ArrayList<Token>> offer) {
         for(ArrayList<Token> hand : offer) {
             String offerAsString = "";
             for(Token token : hand) {
@@ -308,16 +330,10 @@ public class Grid {
      * @param player: The player which the tokens belong to
      * @return A clone of tokens of the player
      */
-    public ArrayList<Token> getTokensOfPlayer(ColoredTrailsPlayer player) {
+    public ArrayList<Token> getTokens(ColoredTrailsPlayer player) {
         return (ArrayList) tokens.get(player).clone();
     }
 
-    /**
-     * @return player tokens
-     */
-    public ArrayList<Token> getTokens(ColoredTrailsPlayer player){
-        return tokens.get(player);
-    }
 
     /**
      * @return A clone of allTokensInPlay
@@ -350,7 +366,11 @@ public class Grid {
      * @param listener PropertyChangeListener which is added to the listeners of the grid
      */
     public void addListener(PropertyChangeListener listener) {
-        listeners.add(listener);
+        if (isNotifyingListeners) {
+            temoporaryListeners.add(listener);
+        } else {
+            listeners.add(listener);
+        }
     }
 
     /**
@@ -358,11 +378,14 @@ public class Grid {
      * @param evt PropertyChangeEvent passed in the propertyChange()
      */
     public void notifyListeners(PropertyChangeEvent evt) {
+        isNotifyingListeners = true;
         for(PropertyChangeListener listener : listeners) {
             listener.propertyChange(evt);
         }
+        isNotifyingListeners = false;
+        listeners.addAll(temoporaryListeners);
+        temoporaryListeners.removeAll(temoporaryListeners);
     }
-
     /**
      * assigns the goals according to the wayOfAssigningGoals
      */
@@ -399,14 +422,26 @@ public class Grid {
         offers.put(player, offer);
     }
 
-
+    /**
+     * The method assumes that the player can only reveal its goal once. This needs to be discussed.
+     * Associates the goalToAnnounce to the player as the goal the player wants to communicate to its partner
+     * @param player The player communicating the supposed goal
+     * @param goalToAnnounce The goal the player wants the partner
+     */
+    public void setGoalToAnnounce(ColoredTrailsPlayer player, Patch goalToAnnounce) {
+        if (goalsToAnnounce.get(player) == null) {
+            this.goalsToAnnounce.put(player, goalToAnnounce);
+        }
+    }
 
     /**
      * Starts the negotiations. Ends when both players sent the same offer or the number of turns has reached the
      * maximumNumberOfTurns, initially set to 40
+     *
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
-    public int [] start(boolean saveMap) throws IllegalAccessException {
+    public int[] start(boolean saveMap) throws IllegalAccessException {
+        System.out.println("Started the game");
         int agreementReached = 0;
         setGameState(STATE.ACTIVE);
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
@@ -416,6 +451,9 @@ public class Grid {
             {
                 setGameState(STATE.WAITING_FOR_GOAL);
             }
+            notifyListeners(new PropertyChangeEvent(this, "newTurn", null,
+                    currentPlayer));
+            setGameState(STATE.WAITING_FOR_GOAL);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingAnnounceGoal", null,
                     null));
             Patch goalToReveal = currentPlayer.revealGoal();        // Ask the player to reveal its goal
@@ -426,8 +464,8 @@ public class Grid {
                         goalToReveal));
             }
             if(isOfferLegal(offers.get(partner))) {     // if the partner made a legal offer, announce it
-                notifyListeners(new PropertyChangeEvent(partner, "receiveOfferFromPartner", null,
-                        offers.get(partner)));
+                notifyListeners(new PropertyChangeEvent(partner, "receiveOfferFromPartner", currentPlayer,
+                        offers.get(partner).clone()));// Use the oldValue to pass the current player
                 currentPlayer.receiveOffer(offers.get(partner));
             }
             if(gameState != STATE.INACTIVE){
@@ -436,7 +474,6 @@ public class Grid {
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
             ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
             setOffer(currentPlayer, offer);
-            printOffer(offer);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "offerFinished", null, null));
             if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
                 offers.put(currentPlayer, null);
@@ -478,6 +515,13 @@ public class Grid {
         return toReturn;
     }
 
+    /**
+     * @param player to be checked
+     * @return true if it is player's turn
+     */
+    public boolean isPlayerActive(ColoredTrailsPlayer player) {
+        return getCurrentPlayer() == player;
+    }
 
     /**
      * Calculating the bonus score from unspent tokens
@@ -729,6 +773,18 @@ public class Grid {
      * sets the wayOfAssigningGoals to the given string
      * @param wayOfAssigningGoals a string between "randDif" or "randSame"
      */
+    public void setWayOfAssigningGoals(String wayOfAssigningGoals) {
+        this.wayOfAssigningGoals = wayOfAssigningGoals;
+    }
+
+    /**
+     * Sets maximumNumberOfTurns to the given value
+     * @param maximumNumberOfTurns
+     */
+    public void setMaximumNumberOfTurns(int maximumNumberOfTurns) {
+        this.maximumNumberOfTurns = maximumNumberOfTurns;
+    }
+
 
 
 }
