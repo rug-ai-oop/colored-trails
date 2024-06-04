@@ -1,6 +1,7 @@
 package View.model;
 
 import Controller.GameController;
+import Model.ColoredTrailsPlayer;
 import Model.Grid;
 import Model.HumanPlayer;
 import Model.Token;
@@ -28,7 +29,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
  
 
 
-    public PlayerPanel(Grid grid, GameController controller,String playerName, HumanPlayer player, ViewController viewController) {
+    public PlayerPanel(Grid grid, GameController controller, String playerName, ColoredTrailsPlayer player, ViewController viewController) {
         this.grid = grid;
         grid.addListener(this);
         this.controller = controller;
@@ -40,7 +41,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
     /**
      * The method sets up the components in the player panel
      */
-    private void setUp(String playerName, HumanPlayer player) {
+    private void setUp(String playerName, ColoredTrailsPlayer player) {
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setBackground(new Color(51, 51, 52));

@@ -1,5 +1,6 @@
 package View.model;
 
+import Model.ColoredTrailsPlayer;
 import Model.Grid;
 import Model.HumanPlayer;
 import Controller.GameController;
@@ -40,8 +41,8 @@ public class MainPanel extends JPanel {
         JFrame frame = new JFrame("Colored Trails");
         frame.setSize(1200, 800);
 
-        HumanPlayer firstPlayer;
-        HumanPlayer secondPlayer;
+        ColoredTrailsPlayer firstPlayer;
+        ColoredTrailsPlayer secondPlayer;
 
         if (gameOption.equals("Human vs. Human")) {
             firstPlayer = new HumanPlayer("Csenge");
@@ -89,17 +90,8 @@ public class MainPanel extends JPanel {
         frame.add(playerPanel1, BorderLayout.WEST);
         frame.add(playerPanel2, BorderLayout.EAST);
 
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setVisible(true);
-
-        JFrame frameForOffers = new JFrame("Offers");
-        frameForOffers.setLayout(new BorderLayout());
-        frameForOffers.setSize(1400, 400);
-        frameForOffers.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        frameForOffers.add(offerHistoryPane);
-        frameForOffers.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
 
         try {
             boolean saveMap = true;

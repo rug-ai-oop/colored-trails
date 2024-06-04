@@ -28,7 +28,7 @@ public class ViewTester {
         MainPanel mainPanel = new MainPanel(optionFrame);
 
         optionFrame.add(mainPanel);
-        optionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        optionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         optionFrame.setVisible(true);
     }
 }
