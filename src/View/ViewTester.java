@@ -47,7 +47,7 @@ public class ViewTester {
         frame.setVisible(true);
 
         try {
-            boolean saveMap = true;
+            boolean saveMap = false;
             int [] finishArray = game.start(saveMap);
             if (finishArray[0] == 1) {
                 JOptionPane.showMessageDialog(null, "Agreement reached!\nPlayer 1 score: " + finishArray[1] + "\nPlayer 2 score: " + finishArray[2]);
