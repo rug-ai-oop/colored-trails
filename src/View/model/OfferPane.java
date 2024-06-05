@@ -51,6 +51,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
      * The method sets up the components in the offer panel
      */
     private void setUp() {
+        System.out.println("OfferPane/setUp start");
 
         int labelHeight = 50;
         int labelWidth = 100;
@@ -181,6 +182,9 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
         partnerTokensLabel.setBackground(Color.lightGray);
         yourTokensPartnerTokens.add(yourTokensLabel);
         yourTokensPartnerTokens.add(partnerTokensLabel);
+
+        System.out.println("OfferPane/setUp end");
+
     }
 
     /**
@@ -189,6 +193,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
      */
     private void addButtonsToUnassignedTokensPanel() {
         System.out.println("In OfferPane/addButtonsToUnassignedTokensPanel");
+        System.out.println("grid.getAllTokensInPlay().size() " + grid.getAllTokensInPlay().size());
         for(Token token : grid.getAllTokensInPlay()) {
             TokenButton tokenButton = new TokenButton(token);
             tokenButton.setActionCommand("selectToken");
@@ -198,9 +203,12 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
             tokenButton.addActionListener(controller);
             tokenButton.addActionListener(viewController);
             unassignedTokensPanel.add(tokenButton);
+            System.out.println(tokenButton);
+            System.out.println("unassignedTokensButton.getComponentCount() " + unassignedTokensButton.getComponentCount());
         }
         this.repaint();
         this.revalidate();
+        System.out.println("unassignedTokensButton.getComponentCount() " + unassignedTokensButton.getComponentCount());
     }
 
     /**
@@ -233,7 +241,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
                 }
             }
             case "initiatingOffer" -> {
-                System.out.println("In OfferPane/PropertyChange/initiatingOffer");
+                System.out.println("In OfferPane/PropertyChange/initiatingOffer start");
                 if (grid.getCurrentPlayer() instanceof HumanPlayer) {
                     System.out.println("In OfferPane/PropertyChange/initiatingOffer/first if");
                     if (receivedOfferPanel.getParent() == this) {
@@ -245,6 +253,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
                     addButtonsToUnassignedTokensPanel();
                     revalidate();
                 }
+                System.out.println("In OfferPane/PropertyChange/initiatingOffer end");
             }
             case "offerFinished" -> {
                 this.remove(centerPanel);

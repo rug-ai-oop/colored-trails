@@ -12,9 +12,11 @@ import java.awt.*;
 
 public class MainPanel extends JPanel {
     private CardLayout cardLayout;
+    private JFrame frame;
     private SetUpGameOptionsController controller = new SetUpGameOptionsController(this);
 
-    public MainPanel() {
+    public MainPanel(JFrame frame) {
+        this.frame = frame;
 
         cardLayout = new CardLayout();
         setLayout(cardLayout);
@@ -37,5 +39,7 @@ public class MainPanel extends JPanel {
         cardLayout.show(this, cardName);
     }
 
-
+    public JFrame getFrame() {
+        return frame;
+    }
 }

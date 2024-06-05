@@ -13,7 +13,7 @@ public class ViewTester {
         optionFrame.setSize(250, 250);
         optionFrame.setLocationRelativeTo(null);
 
-        MainPanel mainPanel = new MainPanel();
+        MainPanel mainPanel = new MainPanel(optionFrame);
 
         optionFrame.add(mainPanel);
         optionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
