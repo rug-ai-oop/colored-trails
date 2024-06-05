@@ -23,8 +23,11 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
     private ViewController viewController;
     private JButton withdrawButton;
     private JPanel yourTokensPanel;
+    private JPanel panelWithButtons;
     private JButton offerHistoryButton;
     private ColoredTrailsPlayer player;
+    private JFrame historyFrame;
+    private OfferHistoryPane offerHistoryPane;
 
 
     public PlayerPanel(Grid grid, GameController controller, ColoredTrailsPlayer player, ViewController viewController) {
@@ -34,7 +37,19 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         this.viewController = viewController;
         ImageLoader.loadImages();
         this.player = player;
+        offerHistoryPane = new OfferHistoryPane(viewController, grid, player);
+        setUpHistoryFrame();
         setUp();
+    }
+
+    /**
+     * Creates the frame and adds the offerHistoryPane
+     */
+    private void setUpHistoryFrame() {
+        historyFrame = new JFrame("Offers History");
+        historyFrame.setSize(1000, 300);
+        historyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        historyFrame.add(offerHistoryPane);
     }
 
 
@@ -101,7 +116,17 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         offerHistoryButton.setBackground(Color.lightGray);
         offerHistoryButton.setPreferredSize(new Dimension(130, 50));
         offerHistoryButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(offerHistoryButton);
+        offerHistoryButton.addActionListener(e -> {
+            historyFrame.setVisible(!historyFrame.isVisible());
+
+        });
+
+        panelWithButtons = new JPanel();
+        panelWithButtons.setLayout(new GridLayout(2,1));
+        panelWithButtons.setPreferredSize(new Dimension(100, 50));
+        panelWithButtons.add(withdrawButton);
+        panelWithButtons.add(offerHistoryButton);
+
     }
 
 
@@ -109,11 +134,14 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName() == "newTurn") {
             if (evt.getNewValue() == player) {
-                withdrawButton.setEnabled(true);
-                offerHistoryButton.setEnabled(true);
+                add(panelWithButtons);
+                if (historyFrame.isVisible()) {
+                    historyFrame.setVisible(false);
+                }
+                revalidate();
             } else {
-                withdrawButton.setEnabled(false);
-                offerHistoryButton.setEnabled(false);
+                remove(panelWithButtons);
+                revalidate();
             }
         }
     }

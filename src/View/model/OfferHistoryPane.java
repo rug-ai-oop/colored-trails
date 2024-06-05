@@ -32,10 +32,10 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
      * @return The panel with the hand
      */
     private static JPanel constructPlayerHandPanel(ArrayList<Token> hand) {
-        int tokensInHand = hand.size();
+//        int tokensInHand = hand.size();
         JPanel handPanel = new JPanel();
         handPanel.setPreferredSize(sidePanelDimension);
-        handPanel.setLayout(new GridLayout(1, tokensInHand));
+        handPanel.setLayout(new GridLayout(1, 8));
 
         for(Token token : hand) {
             JLabel tokenLabel = new JLabel();
@@ -134,15 +134,22 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if(evt.getPropertyName() == "offer") {
-            ColoredTrailsPlayer playerMakingTheOffer = (ColoredTrailsPlayer) evt.getSource();
+        if (evt.getPropertyName().equals("offer")) {
             ArrayList<ArrayList<Token>> offer = (ArrayList<ArrayList<Token>>) evt.getNewValue();
-            if(playerMakingTheOffer != playerToDisplayOnTheLeft) {
-                Grid.printOffer(offer);
+            offer = (ArrayList<ArrayList<Token>>) offer.clone();
+            ColoredTrailsPlayer playerMakingTheOffer = (ColoredTrailsPlayer) evt.getSource();
+            System.out.println("Original offer: ");
+            Grid.printOffer(offer);
+
+            // Reverse the offer if the current player is not the playerToDisplayOnTheLeft
+            if (playerMakingTheOffer != playerToDisplayOnTheLeft) {
                 Collections.reverse(offer);
+                System.out.println("Reversed offer: ");
+                Grid.printOffer(offer);
             }
-//            System.out.println("playerMakingTheOffer = " + playerMakingTheOffer.getName());
-//            System.out.println("playerToDisplayOnTheLeft = " + playerToDisplayOnTheLeft.getName());
+
+            System.out.println("playerMakingTheOffer = " + playerMakingTheOffer.getName());
+            System.out.println("playerToDisplayOnTheLeft = " + playerToDisplayOnTheLeft.getName());
             addOffer(offer);
         }
     }

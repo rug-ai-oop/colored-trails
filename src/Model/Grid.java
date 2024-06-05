@@ -475,7 +475,7 @@ public class Grid {
             setOffer(currentPlayer, offer);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "offerFinished", null, null));
             if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
-                offers.put(currentPlayer, null);
+                setOffer(currentPlayer, null);
             } else {
                 if(offers.get(partner) != null) {
                     notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
@@ -513,6 +513,7 @@ public class Grid {
         }
         return toReturn;
     }
+
 
     /**
      * @param player to be checked
@@ -782,6 +783,14 @@ public class Grid {
      */
     public void setMaximumNumberOfTurns(int maximumNumberOfTurns) {
         this.maximumNumberOfTurns = maximumNumberOfTurns;
+    }
+
+    /**
+     * @param player
+     * @return The index on the grid of the player
+     */
+    public int getGoalIndex(ColoredTrailsPlayer player) {
+        return patches.indexOf(goals.get(player));
     }
 
 

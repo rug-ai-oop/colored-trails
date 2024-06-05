@@ -251,6 +251,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
                 if (evt.getOldValue() instanceof HumanPlayer) {
                     HumanPlayer player = (HumanPlayer) evt.getOldValue();
                     ArrayList<ArrayList<Token>> offer = (ArrayList<ArrayList<Token>>) evt.getNewValue();
+                    offer = (ArrayList<ArrayList<Token>>) offer.clone();
                     Collections.reverse(offer);
                     JSplitPane offerPanel = OfferHistoryPane.constructOfferPanel(offer);
                     receivedOfferPanel.removeAll();
