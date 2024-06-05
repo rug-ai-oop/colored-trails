@@ -4,16 +4,25 @@ import Controller.GameController;
 import Model.Grid;
 import Model.HumanPlayer;
 import View.controller.ViewController;
-import View.model.GridPane;
-import View.model.OfferHistoryPane;
-import View.model.OfferPane;
-import View.model.PlayerPanel;
+import View.model.*;
+
 import javax.swing.JOptionPane;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ViewTester {
+
+    private void mainFromTestingBranch() {
+        JFrame optionFrame = new JFrame("Colored Trails");
+        optionFrame.setSize(250, 250);
+        optionFrame.setLocationRelativeTo(null);
+
+        MainPanel mainPanel = new MainPanel(optionFrame);
+        optionFrame.add(mainPanel);
+        optionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        optionFrame.setVisible(true);
+    }
     public static void main(String[] args) {
         JFrame frame = new JFrame("Colored Trails");
         frame.setSize(1200, 800);

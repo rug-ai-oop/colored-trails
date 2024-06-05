@@ -1,5 +1,8 @@
 package View.model;
 
+import Controller.GameController;
+import View.controller.SetUpGameOptionsController;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,9 +13,10 @@ public class TomSelectionPanel extends JPanel {
     private JButton backButton;
     private JLabel tomLabel;
 
-    private MainPanel mainPanel; // Reference to the main panel
+    private SetUpGameOptionsController controller;
 
-    public TomSelectionPanel() {
+    public TomSelectionPanel( SetUpGameOptionsController controller) {
+        this.controller = controller;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(250, 300));
 
@@ -21,34 +25,23 @@ public class TomSelectionPanel extends JPanel {
 
         levelZeroButton = new JButton("0");
         levelZeroButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        levelZeroButton.setActionCommand("0");
+        levelZeroButton.addActionListener(controller);
 
         levelOneButton = new JButton("1");
         levelOneButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        levelOneButton.setActionCommand("1");
+        levelOneButton.addActionListener(controller);
 
         levelTwoButton = new JButton("2");
         levelTwoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        levelTwoButton.setActionCommand("2");
+        levelTwoButton.addActionListener(controller);
 
         backButton = new JButton("Back");
-
-        // Add action listeners to the buttons
-        levelZeroButton.addActionListener(e -> {
-            printButtonNumber("0");
-            ((MainPanel) getParent()).showCard("DummyOptions");
-        });
-
-        levelOneButton.addActionListener(e -> {
-            printButtonNumber("1");
-            ((MainPanel) getParent()).showCard("DummyOptions");
-        });
-
-        levelTwoButton.addActionListener(e -> {
-            printButtonNumber("2");
-            ((MainPanel) getParent()).showCard("DummyOptions");
-        });
-
-        backButton.addActionListener(e -> {
-            ((MainPanel) getParent()).showCard("GameOptions");
-        });
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backButton.setActionCommand("BackFromTom");
+        backButton.addActionListener(controller);
 
         add(Box.createVerticalGlue());
         add(tomLabel);
@@ -62,17 +55,6 @@ public class TomSelectionPanel extends JPanel {
         add(backButton);
         add(Box.createVerticalGlue());
 
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        // Set the bounds of the backButton after the panel has been displayed
-        backButton.setBounds(10, getHeight() - backButton.getHeight() - 10, 100, 30);
-    }
-
-    private void printButtonNumber(String number) {
-        System.out.println("Agent ToM level is set to" + number);
     }
 
 }
