@@ -188,6 +188,7 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
      * corresponding to all the grid's tokens in play
      */
     private void addButtonsToUnassignedTokensPanel() {
+        System.out.println("In OfferPane/addButtonsToUnassignedTokensPanel");
         for(Token token : grid.getAllTokensInPlay()) {
             TokenButton tokenButton = new TokenButton(token);
             tokenButton.setActionCommand("selectToken");
@@ -232,8 +233,11 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
                 }
             }
             case "initiatingOffer" -> {
+                System.out.println("In OfferPane/PropertyChange/initiatingOffer");
                 if (grid.getCurrentPlayer() instanceof HumanPlayer) {
+                    System.out.println("In OfferPane/PropertyChange/initiatingOffer/first if");
                     if (receivedOfferPanel.getParent() == this) {
+                        System.out.println("In OfferPane/PropertyChange/initiatingOffer/first if/second if");
                         this.remove(receivedOfferPanel);
                         revalidate();
                     }
@@ -251,12 +255,13 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
                 if (evt.getOldValue() instanceof HumanPlayer) {
 //                    HumanPlayer player = (HumanPlayer) evt.getOldValue();
 //                    ArrayList<ArrayList<Token>> offer = (ArrayList<ArrayList<Token>>) evt.getNewValue();
+//                    offer = (ArrayList<ArrayList<Token>>) offer.clone();
 //                    Collections.reverse(offer);
-////                    JSplitPane offerPanel = OfferHistoryPane.constructOfferPanel(offer);
+//                    JSplitPane offerPanel = OfferHistoryPane.constructOfferPanel(offer);
 //                    receivedOfferPanel.removeAll();
 //                    receivedOfferPanel.add(receivedOfferMessageLabel);
 //                    receivedOfferPanel.add(yourTokensPartnerTokens);
-////                    receivedOfferPanel.add(offerPanel);
+//                    receivedOfferPanel.add(offerPanel);
 //                    receivedOfferPanel.add(acceptRejectPanel);
 //                    this.add(receivedOfferPanel, BorderLayout.CENTER);
 //                    revalidate();
