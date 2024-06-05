@@ -5,6 +5,7 @@ import View.controller.SetUpGameOptionsController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class TomSelectionPanel extends JPanel {
     private JButton levelZeroButton;
@@ -13,7 +14,7 @@ public class TomSelectionPanel extends JPanel {
     private JButton backButton;
     private JLabel tomLabel;
 
-    private SetUpGameOptionsController controller;
+    private ActionListener controller;
 
     public TomSelectionPanel( SetUpGameOptionsController controller) {
         this.controller = controller;
