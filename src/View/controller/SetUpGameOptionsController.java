@@ -55,8 +55,6 @@ public class SetUpGameOptionsController implements ActionListener {
         ViewController viewController = new ViewController();
 
         GridPane gridPane = new GridPane(game, gameController, viewController);
-//        OfferHistoryPane offerHistoryPane = new OfferHistoryPane(viewController, game, firstPlayer);
-//        viewController.setOfferHistoryPane(offerHistoryPane);
         OfferPane offerPane = new OfferPane(game, gameController, viewController);
 
         //0 - no map loaded, x - patches_map_x will be loaded
@@ -93,7 +91,6 @@ public class SetUpGameOptionsController implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-
         switch (e.getActionCommand()) {
             case "Human vs. Human":
                 selectedOption = e.getActionCommand();
@@ -105,10 +102,10 @@ public class SetUpGameOptionsController implements ActionListener {
                 break;
             case "dummy1", "dummy2", "dummy3":
                 //actually start the game based on game option and the tom if there is an agent
+                System.out.println(selectedOption + " + " + selectedTom);
                 startGame(selectedOption, selectedTom);
                 break;
             case "BackFromDummy":
-                System.out.println(selectedOption);
                 String previousPanel = selectedOption.equals("Human vs. Human") ? "GameOptions" : "TomSelection";
                 mainPanel.showCard(previousPanel);
                 break;

@@ -11,6 +11,7 @@ public class ViewTester {
 
         JFrame optionFrame = new JFrame("Colored Trails");
         optionFrame.setSize(250, 250);
+        optionFrame.setLocationRelativeTo(null);
 
         MainPanel mainPanel = new MainPanel();
 
