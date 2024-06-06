@@ -21,70 +21,62 @@ public class GameController implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
+        ColoredTrailsPlayer currentPlayer = grid.getCurrentPlayer();
         switch (e.getActionCommand()) {
             case "selectToken":
                 selectedToken = (((TokenButton) e.getSource()).getToken());
                 break;
             case "moveToYours":
-                ColoredTrailsPlayer currentPlayer0 = grid.getCurrentPlayer();
-                if(currentPlayer0 instanceof HumanPlayer && selectedToken != null) {
-                    ((HumanPlayer) currentPlayer0).addTokenToSupposedOwnTokens(selectedToken);
+                if(currentPlayer instanceof HumanPlayer && selectedToken != null) {
+                    ((HumanPlayer) currentPlayer).addTokenToSupposedOwnTokens(selectedToken);
                 }
                 selectedToken = null;
                 break;
             case "moveToPartner", "moveTo":
-                ColoredTrailsPlayer currentPlayer1 = grid.getCurrentPlayer();
-                if(currentPlayer1 instanceof HumanPlayer && selectedToken != null) {
-                    ((HumanPlayer) currentPlayer1).removeFromSupposedOwnTokens(selectedToken);
+                if(currentPlayer instanceof HumanPlayer && selectedToken != null) {
+                    ((HumanPlayer) currentPlayer).removeFromSupposedOwnTokens(selectedToken);
                 }
                 selectedToken = null;
                 break;
             case "send":
-                ColoredTrailsPlayer currentPlayer2 = grid.getCurrentPlayer();
-                if(currentPlayer2 instanceof HumanPlayer) {
-                    ((HumanPlayer) currentPlayer2).setState(HumanPlayer.State.OFFER_COMPLETE);
+                if(currentPlayer instanceof HumanPlayer) {
+                    ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.OFFER_COMPLETE);
                 }
                 selectedToken = null;
                 break;
             case "selectPatch":
-                ColoredTrailsPlayer currentPlayer3 = grid.getCurrentPlayer();
-                if (currentPlayer3 instanceof HumanPlayer) {
+                if (currentPlayer instanceof HumanPlayer) {
                     int buttonIndex = ((IndexButton) e.getSource()).getIndex();
-                    ((HumanPlayer) currentPlayer3).setState(HumanPlayer.State.INCOMPLETE);
-                    currentPlayer3.setGoalToCommunicate(grid.getPatches().get(buttonIndex));
+                    ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.INCOMPLETE);
+                    currentPlayer.setGoalToCommunicate(grid.getPatches().get(buttonIndex));
                 }
                 break;
             case "yes":
-                ColoredTrailsPlayer currentPlayer4 = grid.getCurrentPlayer();
-                if(currentPlayer4 instanceof HumanPlayer) {
-                    if (currentPlayer4.getGoalToCommunicate() != null) {
-                        ((HumanPlayer) currentPlayer4).setState(HumanPlayer.State.GOAL_COMPLETE);
+                if(currentPlayer instanceof HumanPlayer) {
+                    if (currentPlayer.getGoalToCommunicate() != null) {
+                        ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.GOAL_COMPLETE);
                     }
                 }
                 break;
             case "no":
-                ColoredTrailsPlayer currentPlayer5 = grid.getCurrentPlayer();
-                currentPlayer5.setGoalToCommunicate(null);
+                currentPlayer.setGoalToCommunicate(null);
                 break;
             case "yesCommunicate":
                 break;
             case "noCommunicate":
-                ColoredTrailsPlayer currentPlayer6 = grid.getCurrentPlayer();
-                if(currentPlayer6 instanceof HumanPlayer) {
-                    currentPlayer6.setGoalToCommunicate(null);
-                    ((HumanPlayer) currentPlayer6).setState(HumanPlayer.State.GOAL_COMPLETE);
+                if(currentPlayer instanceof HumanPlayer) {
+                    currentPlayer.setGoalToCommunicate(null);
+                    ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.GOAL_COMPLETE);
                 }
                 break;
             case "accept":
-                ColoredTrailsPlayer currentPlayer7 = grid.getCurrentPlayer();
-                if(currentPlayer7 instanceof HumanPlayer) {
-                    ((HumanPlayer) currentPlayer7).setState(HumanPlayer.State.OFFER_ACCEPTED);
+                if(currentPlayer instanceof HumanPlayer) {
+                    ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.OFFER_ACCEPTED);
                 }
                 break;
             case "reject":
-                ColoredTrailsPlayer currentPlayer8 = grid.getCurrentPlayer();
-                if(currentPlayer8 instanceof HumanPlayer) {
-                    ((HumanPlayer) currentPlayer8).setState(HumanPlayer.State.OFFER_REJECTED);
+                if(currentPlayer instanceof HumanPlayer) {
+                    ((HumanPlayer) currentPlayer).setState(HumanPlayer.State.OFFER_REJECTED);
                 }
                 break;
             case "withdrawGame":
