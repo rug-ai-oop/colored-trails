@@ -61,8 +61,13 @@ public class GridPane extends JPanel implements PropertyChangeListener {
                         } else {
                             panelHoldingButton.add(new JLabel(new ImageIcon(image)), BorderLayout.EAST);
                         }
+                        System.out.println(humanPlayers);
+                        System.out.println(player.getName());
+                        System.out.println("ohio");
                     }
-                }}
+                    System.out.println("aaaaa");
+                }
+            }
 
 
             buttons.add(button);

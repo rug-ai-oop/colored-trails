@@ -3,7 +3,6 @@ package Model;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.*;
@@ -204,7 +203,7 @@ public class Grid {
     /**
      * Prints the colours of the tokens in the offers
      */
-    private void printOffer(ArrayList<ArrayList<Token>> offer) {
+    public static void printOffer(ArrayList<ArrayList<Token>> offer) {
         for(ArrayList<Token> hand : offer) {
             String offerAsString = "";
             for(Token token : hand) {
@@ -331,7 +330,7 @@ public class Grid {
      * @param player: The player which the tokens belong to
      * @return A clone of tokens of the player
      */
-    public ArrayList<Token> getTokensOfPlayer(ColoredTrailsPlayer player) {
+    public ArrayList<Token> getTokens(ColoredTrailsPlayer player) {
         return (ArrayList) tokens.get(player).clone();
     }
 
@@ -438,10 +437,11 @@ public class Grid {
     /**
      * Starts the negotiations. Ends when both players sent the same offer or the number of turns has reached the
      * maximumNumberOfTurns, initially set to 40
+     *
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
-    public boolean start() throws IllegalAccessException {
-        boolean agreementReached = false;
+    public int[] start(boolean saveMap) throws IllegalAccessException {
+        int agreementReached = 0;
         setGameState(STATE.ACTIVE);
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
@@ -464,7 +464,7 @@ public class Grid {
             }
             if(isOfferLegal(offers.get(partner))) {     // if the partner made a legal offer, announce it
                 notifyListeners(new PropertyChangeEvent(partner, "receiveOfferFromPartner", currentPlayer,
-                        offers.get(partner)));// Use the oldValue to pass the current player
+                        offers.get(partner).clone()));// Use the oldValue to pass the current player
                 currentPlayer.receiveOffer(offers.get(partner));
             }
             if(gameState != STATE.INACTIVE){
@@ -473,10 +473,9 @@ public class Grid {
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
             ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
             setOffer(currentPlayer, offer);
-            printOffer(offer);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "offerFinished", null, null));
             if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
-                offers.put(currentPlayer, null);
+                setOffer(currentPlayer, null);
             } else {
                 if(offers.get(partner) != null) {
                     notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
@@ -514,6 +513,7 @@ public class Grid {
         }
         return toReturn;
     }
+
 
     /**
      * @param player to be checked
@@ -783,6 +783,14 @@ public class Grid {
      */
     public void setMaximumNumberOfTurns(int maximumNumberOfTurns) {
         this.maximumNumberOfTurns = maximumNumberOfTurns;
+    }
+
+    /**
+     * @param player
+     * @return The index on the grid of the player
+     */
+    public int getGoalIndex(ColoredTrailsPlayer player) {
+        return patches.indexOf(goals.get(player));
     }
 
 

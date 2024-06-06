@@ -20,7 +20,6 @@ public class ViewController implements ActionListener {
     private GridPane gridPane;
     private OfferPane offerPane;
     private HashMap<ColoredTrailsPlayer, OfferHistoryPane> offerHistoryPanes = new HashMap<>();
-    private JFrame offerHistoryFrame = new JFrame("Offer History");
 
     //Hold the last panel on the grid to display the next card
     private JPanel lastSelectedPatchPanel;
@@ -31,13 +30,9 @@ public class ViewController implements ActionListener {
     public void setOfferPane(OfferPane offerPane) {
         this.offerPane = offerPane;
     }
-    public void addOfferHistoryPane(OfferHistoryPane offerHistoryPane) {
-        offerHistoryPanes.put(offerHistoryPane.getPlayerToDisplayOnTheLeft(), offerHistoryPane);
-        offerHistoryFrame.add(offerHistoryPane, offerHistoryPane.getPlayerToDisplayOnTheLeft().getName());
-    }
 
     public ViewController() {
-        offerHistoryFrame.setLayout(new CardLayout());
+
     }
 
     @Override
@@ -130,11 +125,6 @@ public class ViewController implements ActionListener {
                 gridPane.setAllowToPickPatch(true);
             }
             gridPane.getDialog().dispose();
-        } else if (Objects.equals(e.getActionCommand(), "openOfferHistory")) {
-            if (!offerHistoryFrame.isVisible()) {
-                //TODO: Move the frame as an attribute of the player panel and add a lambda listener to the button +
-                // a static variable if a frame is visible
-            }
         }
     }
 }

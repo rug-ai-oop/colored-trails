@@ -17,39 +17,39 @@ import java.util.HashMap;
 
 
 public class PlayerPanel extends JPanel implements PropertyChangeListener{
-    public static HashMap<PlayerPanel, JFrame> offerHistoryFrames = new HashMap<>(2);
-    public static JFrame lastOpenFrame;
     private static Color defaultButtonColor = new Color(26, 194, 26);
     private Grid grid;
     private GameController controller;
     private ViewController viewController;
     private JButton withdrawButton;
     private JPanel yourTokensPanel;
+    private JPanel panelWithButtons;
     private JButton offerHistoryButton;
+    private ColoredTrailsPlayer player;
+    private JFrame historyFrame;
     private OfferHistoryPane offerHistoryPane;
-    private HumanPlayer player;
 
 
-    private void setUpFrame() {
-        if (offerHistoryFrames.get(this) == null) {
-            offerHistoryFrames.put(this, new JFrame("Offer History"));
-            offerHistoryFrames.get(this).setLayout(new BorderLayout());
-            offerHistoryFrames.get(this).setSize(1000, 500);
-            offerHistoryFrames.get(this).setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        }
-        offerHistoryFrames.get(this).add(offerHistoryPane);
-    }
-
-    public PlayerPanel(Grid grid, GameController controller, HumanPlayer player, ViewController viewController) {
+    public PlayerPanel(Grid grid, GameController controller, ColoredTrailsPlayer player, ViewController viewController) {
         this.grid = grid;
         grid.addListener(this);
         this.controller = controller;
         this.viewController = viewController;
         ImageLoader.loadImages();
         this.player = player;
-        offerHistoryPane = OfferPane.offerHistoryPanes.get(player);
-        setUpFrame();
+        offerHistoryPane = new OfferHistoryPane(viewController, grid, player);
+        setUpHistoryFrame();
         setUp();
+    }
+
+    /**
+     * Creates the frame and adds the offerHistoryPane
+     */
+    private void setUpHistoryFrame() {
+        historyFrame = new JFrame("Offers History");
+        historyFrame.setSize(1000, 300);
+        historyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        historyFrame.add(offerHistoryPane);
     }
 
 
@@ -104,7 +104,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         withdrawButton.setFont(new Font("Serif", Font.BOLD, 14));
         withdrawButton.setActionCommand("withdrawGame");
         withdrawButton.addActionListener(controller);
-        withdrawButton.setBackground(new Color(179, 119, 162));
+        withdrawButton.setBackground(Color.lightGray);
         withdrawButton.setPreferredSize(new Dimension(130, 50));
         withdrawButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(withdrawButton);
@@ -113,46 +113,35 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         offerHistoryButton = new JButton("Offer History");
         offerHistoryButton.setFont(new Font("Serif", Font.BOLD, 14));
         offerHistoryButton.setActionCommand("openOfferHistory");
-        offerHistoryButton.addActionListener(e -> {
-            if (lastOpenFrame != offerHistoryFrames.get(this)) {
-                if (lastOpenFrame != null) {
-                    lastOpenFrame.setVisible(false);
-                }
-                lastOpenFrame = offerHistoryFrames.get(this);
-            }
-            offerHistoryFrames.get(this).setVisible(!offerHistoryFrames.get(this).isVisible());
-        });
-        offerHistoryButton.setBackground(new Color(179, 119, 162));
+        offerHistoryButton.setBackground(Color.lightGray);
         offerHistoryButton.setPreferredSize(new Dimension(130, 50));
         offerHistoryButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(offerHistoryButton);
+        offerHistoryButton.addActionListener(e -> {
+            historyFrame.setVisible(!historyFrame.isVisible());
+
+        });
+
+        panelWithButtons = new JPanel();
+        panelWithButtons.setLayout(new GridLayout(2,1));
+        panelWithButtons.setPreferredSize(new Dimension(100, 50));
+        panelWithButtons.add(withdrawButton);
+        panelWithButtons.add(offerHistoryButton);
+
     }
 
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setSize(200, 350);
-        Grid game = new Grid();
-        HumanPlayer firstPlayer = new HumanPlayer();
-        HumanPlayer secondPlayer = new HumanPlayer();
-        game.addPlayer(firstPlayer);
-        game.addPlayer(secondPlayer);
-        game.setUp();
-        PlayerPanel playerPanel = new PlayerPanel(game, new GameController(game), firstPlayer, new ViewController());
-        frame.add(playerPanel);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setVisible(true);
-    }
 
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName() == "newTurn") {
-            System.out.println(((ColoredTrailsPlayer) evt.getNewValue()).getName());
             if (evt.getNewValue() == player) {
-                withdrawButton.setEnabled(true);
-                offerHistoryButton.setEnabled(true);
+                add(panelWithButtons);
+                if (historyFrame.isVisible()) {
+                    historyFrame.setVisible(false);
+                }
+                revalidate();
             } else {
-                withdrawButton.setEnabled(false);
-                offerHistoryButton.setEnabled(false);
+                remove(panelWithButtons);
+                revalidate();
             }
         }
     }
