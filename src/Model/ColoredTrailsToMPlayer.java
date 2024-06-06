@@ -21,10 +21,12 @@ public class ColoredTrailsToMPlayer extends ColoredTrailsPlayer {
 	@Override
 	public void setGrid(Grid grid) {
 		super.setGrid(grid);
+	}
+
+	public void init() {
 		proxySetting.loadGrid(grid);
-		// TODO: I need some way of getting my goal
 		int playerID = 0;
-		proxyPlayer.init(proxySetting.getChipSet(playerID), proxySetting.getChipSet(1 - playerID), new int[]{1,2}/*How do I get the utility function? */);
+		proxyPlayer.init(proxySetting.getChipSet(playerID), proxySetting.getChipSet(1 - playerID), proxySetting.getUtilityFunction((new int[]{0,1,1,2,3,4,4,4,4,5,5,5,5,5,5,6,6,6,6,7,8,9,10,10,11,12})[grid.getGoalIndex(this)]));
 		receivedOffer = proxySetting.getChipSet(playerID);
 	}
 
@@ -67,5 +69,24 @@ public class ColoredTrailsToMPlayer extends ColoredTrailsPlayer {
 			bins[Chips.getTokenColor(token)]++;
 		}
 		receivedOffer = Chips.convert(bins, proxySetting.getBinMax());
+	}
+
+
+	public static void main(String[] args) {
+		Grid grid = new Grid();
+		ColoredTrailsToMPlayer[] players = new ColoredTrailsToMPlayer[2];
+		players[0] = new ColoredTrailsToMPlayer("Alpha", 0);
+		players[1] = new ColoredTrailsToMPlayer("Beta", 0);
+		grid.addPlayer(players[0]);
+		grid.addPlayer(players[1]);
+		grid.setUp(0);
+		players[0].init();
+		players[1].init();
+		try {
+			grid.start(false);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+
 	}
 }
