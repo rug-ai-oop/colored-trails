@@ -5,10 +5,13 @@ import java.beans.PropertyChangeListener;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.*;
 import java.lang.Math;
 
-public class Grid {
+import static java.lang.Math.abs;
+
+public class Grid implements Serializable {
     /**
      * The order of using the grid is:
      *      1) Create the grid
@@ -29,6 +32,7 @@ public class Grid {
     private HashMap<ColoredTrailsPlayer, ArrayList<ArrayList<Token>>> offers = new HashMap();
     private HashMap<ColoredTrailsPlayer, Patch> goals = new HashMap();
     private HashMap<ColoredTrailsPlayer, Patch> goalsToAnnounce = new HashMap();
+    private ArrayList<Patch> goalsToSave = new ArrayList();
     private String wayOfAssigningGoals;
     private boolean isNotifyingListeners = false;
 
@@ -93,23 +97,50 @@ public class Grid {
     }
 
     /**
-     * if the players and patches have been created, assigns 4 tokens randomly to each player
+     * if the players and patches have been created, assigns 4 tokens randomly to each player, OR
+     * if the mapNumber is not 0, loads the tokens from the file grid_mapNumber.ser
      */
-    private void distributeTokensToPlayers() throws IllegalAccessException {
+    private void distributeTokensToPlayers(Grid savedGrid) throws IllegalAccessException {
         if(players != null && patches != null) {
-            ArrayList<Patch> patchesCopy = (ArrayList<Patch>) patches.clone();
-            Collections.shuffle(patchesCopy);
-            for(Patch patchToBeReceived : patchesCopy) {
-                int numberOfDistributedTokens = patchesCopy.indexOf(patchToBeReceived);
-                if(numberOfDistributedTokens < 4 * players.size()) {
-                    ColoredTrailsPlayer playerToReceiveToken = players.get(numberOfDistributedTokens % players.size());
-                    Token tokenToBeReceived = new Token(patchToBeReceived.getColor());
-                    if(tokens.get(playerToReceiveToken) == null) {
-                        // Initialize the ArrayList of tokens for the player
-                        tokens.put(playerToReceiveToken, new ArrayList());
+            if (savedGrid != null) {
+                int playerToSkip = 1;
+                int playerIndex;
+                for(Token tokenToBeReceived : savedGrid.allTokensInPlay) {
+                    //add 1 token to a player (back-and-forth)
+                    playerIndex = 0;
+                    for (ColoredTrailsPlayer playerToReceiveToken: this.players) {
+                        if (playerToSkip == playerIndex){
+                        } else {
+                            // Initialize the ArrayList of tokens for the player
+                            if (tokens.get(playerToReceiveToken) == null) {
+                                tokens.put(playerToReceiveToken, new ArrayList());
+                            }
+
+                            //add tokens
+                            System.out.println("adding token " + tokenToBeReceived.getColor() +  " to player: " + playerToReceiveToken.name);
+                            tokens.get(playerToReceiveToken).add(tokenToBeReceived);
+                            allTokensInPlay.add(tokenToBeReceived);
+                        }
+                        playerIndex++;
                     }
-                    tokens.get(playerToReceiveToken).add(tokenToBeReceived);
-                    allTokensInPlay.add(tokenToBeReceived);
+                    playerToSkip = 1 - playerToSkip;
+                }
+            }
+            else {
+                ArrayList<Patch> patchesCopy = (ArrayList<Patch>) patches.clone();
+                Collections.shuffle(patchesCopy);
+                for(Patch patchToBeReceived : patchesCopy) {
+                    int numberOfDistributedTokens = patchesCopy.indexOf(patchToBeReceived);
+                    if(numberOfDistributedTokens < 4 * players.size()) {
+                        ColoredTrailsPlayer playerToReceiveToken = players.get(numberOfDistributedTokens % players.size());
+                        Token tokenToBeReceived = new Token(patchToBeReceived.getColor());
+                        if(tokens.get(playerToReceiveToken) == null) {
+                            // Initialize the ArrayList of tokens for the player
+                            tokens.put(playerToReceiveToken, new ArrayList());
+                        }
+                        tokens.get(playerToReceiveToken).add(tokenToBeReceived);
+                        allTokensInPlay.add(tokenToBeReceived);
+                    }
                 }
             }
             notifyListeners(new PropertyChangeEvent(this, "tokensDistributed",
@@ -122,20 +153,10 @@ public class Grid {
     /**
      * creates 25 patches with the colors from generateRandomColorFiveByFive() or map generated before
      */
-    private void generatePatchesFiveByFive(int mapNumber) {
+    private void generatePatchesFiveByFive(Grid savedGrid) {
         patches = new ArrayList<>();
-        if (mapNumber != 0) {
-            String fileName = "patches_map_" + mapNumber + ".ser";
-            try {
-                FileInputStream fileIn = new FileInputStream(fileName);
-                ObjectInputStream in = new ObjectInputStream(fileIn);
-                patches = (ArrayList) in.readObject();
-                in.close();
-                fileIn.close();
-                System.out.println("Serialized data is loaded from " + fileName);
-            } catch (ClassNotFoundException | IOException e) {
-                throw new RuntimeException(e);
-            }
+        if (savedGrid != null) {
+            patches = savedGrid.patches;
         }
         else {
             ArrayList<Color> colors = generateRandomColorFiveByFive();
@@ -387,7 +408,7 @@ public class Grid {
         temoporaryListeners.removeAll(temoporaryListeners);
     }
     /**
-     * assigns the goals according to the wayOfAssigningGoals
+     * assigns the goals according to the wayOfAssigningGoals (only for generating new goals)
      */
     public void assignGoalsToPlayers() {
         switch (wayOfAssigningGoals) {
@@ -401,17 +422,58 @@ public class Grid {
     }
 
     /**
+     * Assigns the players just as in the saved grid and notifies listeners about it
+     * @param savedGoals, goals saved from the previous games
+     */
+    private void reassignSavedGoals(ArrayList<Patch> savedGoals){
+        int goalToTake = 0;
+        for(ColoredTrailsPlayer player : players) {
+            setGoal(player, savedGoals.get(goalToTake));
+            notifyListeners(new PropertyChangeEvent(player, "assignedGoalsIndex",
+                    player, patches.indexOf(savedGoals.get(goalToTake))));
+            goalToTake++;
+        }
+    }
+
+    /**
      * sets up the game by distributing the tokens to players and assigning goals to players
      */
-    public void setUp(int loadMap) {
-        generatePatchesFiveByFive(loadMap);
+    public void setUp(int mapNumber) {
+        Grid savedGrid =  null;
+        ArrayList<Patch> savedGoals = null;
+        //read grid from file
+        if (mapNumber != 0) {
+            String fileName = "grid_" + mapNumber + ".ser";
+            try {
+                FileInputStream fileIn = new FileInputStream(fileName);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                savedGrid = (Grid) in.readObject();
+                savedGoals = savedGrid.goalsToSave;
+                in.close();
+                fileIn.close();
+                System.out.println("Serialized data is loaded from " + fileName);
+            } catch (ClassNotFoundException | IOException e) {
+                System.out.println("FILE NOT FOUND FATAL ERROR");
+                throw new RuntimeException(e);
+            }
+        }
+
+        generatePatchesFiveByFive(savedGrid);
         try {
-            distributeTokensToPlayers();
+            distributeTokensToPlayers(savedGrid);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        assignGoalsToPlayers();
+
+        //way of going around the hashing + file errors
+        if (savedGoals != null) {
+            reassignSavedGoals(savedGoals);
+        }  else  {
+            //DO NOT ADD ARGUMENTS TO THIS FUNCTION
+            assignGoalsToPlayers();
+        }
     }
+
 
     /**
      * The method updates the offer associated to the player, according to the parameter offer.
@@ -493,11 +555,6 @@ public class Grid {
             numberOfTurns++;
         }
 
-        //save maps
-        if(saveMap) {
-            MapSaver mapSaver = new MapSaver(patches);
-            mapSaver.saveMap();
-        }
 
         //return values
         int[] toReturn = new int[3];
@@ -511,6 +568,20 @@ public class Grid {
             System.out.println("position reached: " + score[1]);
             toReturn[iterator] = score[0];
         }
+
+        //POTENTIALLY ADD MORE CONDITIONS TO SAVE MAPS
+        if(abs(toReturn[1]-toReturn[2]) > 80){
+            System.out.println("Saving map: point difference larger than 80");
+            saveMap = true;
+        }
+
+        //save maps
+        if(saveMap) {
+            this.saveGoalPositions();
+            MapSaver mapSaver = new MapSaver(this);
+            mapSaver.saveMap();
+        }
+
         return toReturn;
     }
 
@@ -552,7 +623,7 @@ public class Grid {
             int x = i / 5;
             int goalY = goalPosition % 5;
             int goalX = goalPosition / 5;
-            int distance = Math.abs(x-goalX) + Math.abs(y-goalY);
+            int distance = abs(x-goalX) + abs(y-goalY);
             heuristicArray.add(Math.max(0,50 - 5*distance));
 
         }
@@ -724,7 +795,7 @@ public class Grid {
             //calculate the actual utility of the current position
             int playerY = currentPosition % 5;
             int playerX = currentPosition / 5;
-            int positionScore = 50 - 10*((Math.abs(playerX-goalX) + Math.abs(playerY-goalY)));
+            int positionScore = 50 - 10*((abs(playerX-goalX) + abs(playerY-goalY)));
             int tokenScore = tokenScore(currentTokens);
             if (toReturn[0] < positionScore + tokenScore) {
                 toReturn[0] = positionScore + tokenScore;
@@ -793,6 +864,20 @@ public class Grid {
         return patches.indexOf(goals.get(player));
     }
 
+    /**
+     * Saves the goal positions of the players after the game is done
+     */
+    public void saveGoalPositions()
+    {
+        if (gameState == STATE.INACTIVE){
+            for (ColoredTrailsPlayer player : players) {
+                goalsToSave.add(goals.get(player));
+            }
+        }
+        else {
+            System.out.println("Cannot save goal positions while game is active");
+        }
 
+    }
 
 }

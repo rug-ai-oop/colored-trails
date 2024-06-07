@@ -30,8 +30,9 @@ public class ViewTester {
         GridPane gridPane = new GridPane(game, controller, viewController);
         OfferPane offerPane = new OfferPane(game, controller, viewController);
 
-        //0 - no map loaded, x - patches_map_x will be loaded
+        //0 - new map generated, x - grid_x will be loaded from savefile
         int loadMap = 0;
+        // IMPORTANT !!!!!!!! ALWAYS SET AT 0 WHEN SAVING NEW MAPS
         game.setUp(loadMap);
 
         PlayerPanel playerPanel1 = new PlayerPanel(game, controller, firstPlayer, viewController);
@@ -47,7 +48,9 @@ public class ViewTester {
         frame.setVisible(true);
 
         try {
+            //true - save map, false - don't save map
             boolean saveMap = false;
+            //IMPORTANT: SET TO FALSE WHENEVER READING AN OLD MAP
             int [] finishArray = game.start(saveMap);
             if (finishArray[0] == 1) {
                 JOptionPane.showMessageDialog(null, "Agreement reached!\nPlayer 1 score: " + finishArray[1] + "\nPlayer 2 score: " + finishArray[2]);

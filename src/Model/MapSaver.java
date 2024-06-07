@@ -10,9 +10,9 @@ import java.util.List;
 
 
 public class MapSaver {
-    private ArrayList<Patch> mapPatches;
-    public MapSaver(ArrayList<Patch> patches) {
-        this.mapPatches = patches;
+    private Grid gridToSave;
+    public MapSaver(Grid grid) {
+        this.gridToSave = grid;
     }
     /**
      * Gets the next file number for the maps
@@ -21,7 +21,7 @@ public class MapSaver {
     private int getNextFileNumber() {
         // Get a list of existing files with the format "patches_map_<number>.ser"
         File directory = new File(".");
-        File[] files = directory.listFiles((dir, name) -> name.matches("patches_map_\\d+\\.ser"));
+        File[] files = directory.listFiles((dir, name) -> name.matches("grid_\\d+\\.ser"));
         // Extract the file numbers
         List<Integer> fileNumbers = new ArrayList<>();
         for (File file : files) {
@@ -39,12 +39,12 @@ public class MapSaver {
      */
     public void saveMap() {
         int nextFileNumber = getNextFileNumber();
-        String fileName = "patches_map_" + nextFileNumber + ".ser";
+        String fileName = "grid_" + nextFileNumber + ".ser";
         // Save the map to the file
         try {
             FileOutputStream fileOut = new FileOutputStream(fileName);
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(mapPatches);
+            out.writeObject(this.gridToSave);
             out.close();
             fileOut.close();
             System.out.println("Serialized data is saved in " + fileName);

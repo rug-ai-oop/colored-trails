@@ -12,11 +12,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class ViewController implements ActionListener {
+public class ViewController implements ActionListener, Serializable {
     private GridPane gridPane;
     private OfferPane offerPane;
     private HashMap<ColoredTrailsPlayer, OfferHistoryPane> offerHistoryPanes = new HashMap<>();
