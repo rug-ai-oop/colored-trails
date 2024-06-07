@@ -441,29 +441,36 @@ public class Grid {
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
     public int[] start(boolean saveMap) throws IllegalAccessException {
-//        System.out.println("Started the game");
+        System.out.println("Started the game");
         int agreementReached = 0;
         setGameState(STATE.ACTIVE);
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
+            System.out.println("In while, numberOfTurns = " + numberOfTurns);
             ColoredTrailsPlayer currentPlayer = getPlayer(numberOfTurns);
             ColoredTrailsPlayer partner = getPlayer(numberOfTurns + 1);
             if(gameState != STATE.INACTIVE)
             {
                 setGameState(STATE.WAITING_FOR_GOAL);
             }
+            System.out.println("PropertyChange \"newTurn\"");
             notifyListeners(new PropertyChangeEvent(this, "newTurn", null,
                     currentPlayer));
             setGameState(STATE.WAITING_FOR_GOAL);
+            System.out.println("PropertyChange \"initiatingAnnounceGoal\"");
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingAnnounceGoal", null,
                     null));
+            System.out.println(currentPlayer.getName() + " should now reveal goal");
             Patch goalToReveal = currentPlayer.revealGoal();        // Ask the player to reveal its goal
             goalsToAnnounce.put(currentPlayer, goalToReveal);       // update the goalsToAnnounce
+            System.out.println(currentPlayer.getName() + " revealed goal");
             if(goalToReveal != null) {
                 partner.listenToGoal(goalToReveal);
+                System.out.println("PropertyChange \"announceGoalFinished\"");
                 notifyListeners(new PropertyChangeEvent(currentPlayer, "announceGoalFinished", null,
                         goalToReveal));
             }
             if(isOfferLegal(offers.get(partner))) {     // if the partner made a legal offer, announce it
+                System.out.println("PropertyChange \"receiveOfferFromPartner\"");
                 notifyListeners(new PropertyChangeEvent(partner, "receiveOfferFromPartner", currentPlayer,
                         offers.get(partner).clone()));// Use the oldValue to pass the current player
                 currentPlayer.receiveOffer(offers.get(partner));
@@ -471,18 +478,22 @@ public class Grid {
             if(gameState != STATE.INACTIVE){
                 setGameState(STATE.WAITING_FOR_OFFER);
             }
+            System.out.println("PropertyChange \"initiatingOffer\"");
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
             ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
             setOffer(currentPlayer, offer);
+            System.out.println("PropertyChange \"offerFinished\"");
             notifyListeners(new PropertyChangeEvent(currentPlayer, "offerFinished", null, null));
             if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
                 offers.put(currentPlayer, null);
             } else {
                 if(offers.get(partner) != null) {
+                    System.out.println("PropertyChange \"offer\"");
                     notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
                             offers.get(currentPlayer).clone()));
                     if (acceptedOffer(offers.get(currentPlayer), offers.get(partner))) {
                         setGameState(STATE.INACTIVE);
+                        System.out.println("PropertyChange \"gameOver\"");
                         notifyListeners(new PropertyChangeEvent(this, "gameOver", null,
                                 numberOfTurns < maximumNumberOfTurns));
                         tokens.put(currentPlayer, offers.get(currentPlayer).get(0));

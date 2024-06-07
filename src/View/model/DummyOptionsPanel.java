@@ -5,41 +5,39 @@ import View.controller.SetUpGameOptionsController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class DummyOptionsPanel extends JPanel {
-    private SetUpGameOptionsController controller;
+    private ActionListener controller;
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
     private JButton agentVsAgentButton;
     private JButton backButton;
     private JLabel subGameOptionsLabel;
-    private MainPanel mainPanel; // Reference to the main panel
-
-    public DummyOptionsPanel(MainPanel mainPanel, SetUpGameOptionsController controller) {
+    public DummyOptionsPanel(ActionListener controller) {
         this.controller = controller;
-        this.mainPanel = mainPanel;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(250, 300));
 
-        JLabel subGameOptionsLabel = new JLabel("Game Options");
+        subGameOptionsLabel = new JLabel("Game Options");
         subGameOptionsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton humanVsHumanButton = new JButton("Human vs. Human");
+        humanVsHumanButton = new JButton("Human vs. Human");
         humanVsHumanButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         humanVsHumanButton.setActionCommand("dummy1");
         humanVsHumanButton.addActionListener(controller);
 
-        JButton humanVsAgentButton = new JButton("Human vs. Agent");
+        humanVsAgentButton = new JButton("Human vs. Agent");
         humanVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         humanVsAgentButton.setActionCommand("dummy2");
         humanVsAgentButton.addActionListener(controller);
 
-        JButton agentVsAgentButton = new JButton("Agent vs. Agent");
+        agentVsAgentButton = new JButton("Agent vs. Agent");
         agentVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         agentVsAgentButton.setActionCommand("dummy3");
         agentVsAgentButton.addActionListener(controller);
 
-        JButton backButton = new JButton("Back");
+        backButton = new JButton("Back");
         backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.setActionCommand("BackFromDummy");
         backButton.addActionListener(controller);

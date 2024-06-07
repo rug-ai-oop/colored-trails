@@ -12,18 +12,20 @@ import java.awt.*;
 
 public class MainPanel extends JPanel {
     private CardLayout cardLayout;
+    private JFrame frame;
     private SetUpGameOptionsController controller = new SetUpGameOptionsController(this);
 
-    public MainPanel() {
+    public MainPanel(JFrame frame) {
+        this.frame = frame;
 
         cardLayout = new CardLayout();
         setLayout(cardLayout);
         setPreferredSize(new Dimension(250, 250));
 
         // Create instances of panels (cards)
-        GameOptionsPanel gameOptionsPanel = new GameOptionsPanel(this, controller);
-        DummyOptionsPanel dummyOptionsPanel = new DummyOptionsPanel(this, controller);
-        TomSelectionPanel tomSelectionPanel = new TomSelectionPanel(this, controller);
+        GameOptionsPanel gameOptionsPanel = new GameOptionsPanel( controller);
+        DummyOptionsPanel dummyOptionsPanel = new DummyOptionsPanel(controller);
+        TomSelectionPanel tomSelectionPanel = new TomSelectionPanel(controller);
 
         // Add panels to this main panel
         add(gameOptionsPanel, "GameOptions");
@@ -37,5 +39,7 @@ public class MainPanel extends JPanel {
         cardLayout.show(this, cardName);
     }
 
-
+    public JFrame getFrame() {
+        return frame;
+    }
 }

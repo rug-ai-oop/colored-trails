@@ -63,8 +63,8 @@ public class HumanPlayer extends ColoredTrailsPlayer{
     @Override
     public void receiveOffer(ArrayList<ArrayList<Token>> offer) {
         offerPartner = offer;
-        while (state != State.OFFER_ACCEPTED && state != State.OFFER_REJECTED) {
-        }
+//        while (state != State.OFFER_ACCEPTED && state != State.OFFER_REJECTED) {
+//        }
     }
     @Override
     public void listenToGoal(Patch goal) {

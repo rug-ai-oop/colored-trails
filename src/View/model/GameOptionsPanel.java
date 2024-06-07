@@ -5,10 +5,10 @@ import View.controller.SetUpGameOptionsController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class GameOptionsPanel extends JPanel {
-    private SetUpGameOptionsController controller;
-    private String selectedOption; // Store the selected game option
+    private ActionListener controller;
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
     private JButton agentVsAgentButton;
@@ -16,8 +16,7 @@ public class GameOptionsPanel extends JPanel {
     private JLabel gameOptionsLabel;
     private MainPanel mainPanel; // Reference to the main panel
 
-    public GameOptionsPanel(MainPanel mainPanel, SetUpGameOptionsController controller) {
-        this.mainPanel = mainPanel;
+    public GameOptionsPanel(ActionListener controller) {
         this.controller = controller;
         // Setting layout
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
