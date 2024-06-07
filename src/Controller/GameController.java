@@ -9,8 +9,9 @@ import javax.swing.JFrame;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 
-public class GameController implements ActionListener {
+public class GameController implements ActionListener, Serializable {
     private Grid grid;
     private Token selectedToken;
 

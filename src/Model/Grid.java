@@ -3,13 +3,15 @@ package Model;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.*;
 import java.lang.Math;
 
-public class Grid {
+import static java.lang.Math.abs;
+
+public class Grid implements Serializable {
     /**
      * The order of using the grid is:
      *      1) Create the grid
@@ -18,18 +20,21 @@ public class Grid {
      *      4) Set up the grid
      *      5) Start the grid
      */
-    private int maximumNumberOfTurns ;
+    private int maximumNumberOfTurns;
     private int numberOfTurns;
     private int startPatchIndex;
     private ArrayList<Patch> patches = new ArrayList();
     private ArrayList<ColoredTrailsPlayer> players = new ArrayList(2);
     private ArrayList<PropertyChangeListener> listeners = new ArrayList();
+    private ArrayList<PropertyChangeListener> temoporaryListeners = new ArrayList();
     private ArrayList<Token> allTokensInPlay = new ArrayList();
     private HashMap<ColoredTrailsPlayer, ArrayList<Token>> tokens = new HashMap();
     private HashMap<ColoredTrailsPlayer, ArrayList<ArrayList<Token>>> offers = new HashMap();
     private HashMap<ColoredTrailsPlayer, Patch> goals = new HashMap();
     private HashMap<ColoredTrailsPlayer, Patch> goalsToAnnounce = new HashMap();
+    private ArrayList<Patch> goalsToSave = new ArrayList();
     private String wayOfAssigningGoals;
+    private boolean isNotifyingListeners = false;
 
     public enum STATE {
         INACTIVE, ACTIVE, WAITING_FOR_OFFER, WAITING_FOR_GOAL
@@ -92,23 +97,50 @@ public class Grid {
     }
 
     /**
-     * if the players and patches have been created, assigns 4 tokens randomly to each player
+     * if the players and patches have been created, assigns 4 tokens randomly to each player, OR
+     * if the mapNumber is not 0, loads the tokens from the file grid_mapNumber.ser
      */
-    private void distributeTokensToPlayers() throws IllegalAccessException {
+    private void distributeTokensToPlayers(Grid savedGrid) throws IllegalAccessException {
         if(players != null && patches != null) {
-            ArrayList<Patch> patchesCopy = (ArrayList<Patch>) patches.clone();
-            Collections.shuffle(patchesCopy);
-            for(Patch patchToBeReceived : patchesCopy) {
-                int numberOfDistributedTokens = patchesCopy.indexOf(patchToBeReceived);
-                if(numberOfDistributedTokens < 4 * players.size()) {
-                    ColoredTrailsPlayer playerToReceiveToken = players.get(numberOfDistributedTokens % players.size());
-                    Token tokenToBeReceived = new Token(patchToBeReceived.getColor());
-                    if(tokens.get(playerToReceiveToken) == null) {
-                        // Initialize the ArrayList of tokens for the player
-                        tokens.put(playerToReceiveToken, new ArrayList());
+            if (savedGrid != null) {
+                int playerToSkip = 1;
+                int playerIndex;
+                for(Token tokenToBeReceived : savedGrid.allTokensInPlay) {
+                    //add 1 token to a player (back-and-forth)
+                    playerIndex = 0;
+                    for (ColoredTrailsPlayer playerToReceiveToken: this.players) {
+                        if (playerToSkip == playerIndex){
+                        } else {
+                            // Initialize the ArrayList of tokens for the player
+                            if (tokens.get(playerToReceiveToken) == null) {
+                                tokens.put(playerToReceiveToken, new ArrayList());
+                            }
+
+                            //add tokens
+                            System.out.println("adding token " + tokenToBeReceived.getColor() +  " to player: " + playerToReceiveToken.name);
+                            tokens.get(playerToReceiveToken).add(tokenToBeReceived);
+                            allTokensInPlay.add(tokenToBeReceived);
+                        }
+                        playerIndex++;
                     }
-                    tokens.get(playerToReceiveToken).add(tokenToBeReceived);
-                    allTokensInPlay.add(tokenToBeReceived);
+                    playerToSkip = 1 - playerToSkip;
+                }
+            }
+            else {
+                ArrayList<Patch> patchesCopy = (ArrayList<Patch>) patches.clone();
+                Collections.shuffle(patchesCopy);
+                for(Patch patchToBeReceived : patchesCopy) {
+                    int numberOfDistributedTokens = patchesCopy.indexOf(patchToBeReceived);
+                    if(numberOfDistributedTokens < 4 * players.size()) {
+                        ColoredTrailsPlayer playerToReceiveToken = players.get(numberOfDistributedTokens % players.size());
+                        Token tokenToBeReceived = new Token(patchToBeReceived.getColor());
+                        if(tokens.get(playerToReceiveToken) == null) {
+                            // Initialize the ArrayList of tokens for the player
+                            tokens.put(playerToReceiveToken, new ArrayList());
+                        }
+                        tokens.get(playerToReceiveToken).add(tokenToBeReceived);
+                        allTokensInPlay.add(tokenToBeReceived);
+                    }
                 }
             }
             notifyListeners(new PropertyChangeEvent(this, "tokensDistributed",
@@ -121,20 +153,10 @@ public class Grid {
     /**
      * creates 25 patches with the colors from generateRandomColorFiveByFive() or map generated before
      */
-    private void generatePatchesFiveByFive(int mapNumber) {
+    private void generatePatchesFiveByFive(Grid savedGrid) {
         patches = new ArrayList<>();
-        if (mapNumber != 0) {
-            String fileName = "patches_map_" + mapNumber + ".ser";
-            try {
-                FileInputStream fileIn = new FileInputStream(fileName);
-                ObjectInputStream in = new ObjectInputStream(fileIn);
-                patches = (ArrayList) in.readObject();
-                in.close();
-                fileIn.close();
-                System.out.println("Serialized data is loaded from " + fileName);
-            } catch (ClassNotFoundException | IOException e) {
-                throw new RuntimeException(e);
-            }
+        if (savedGrid != null) {
+            patches = savedGrid.patches;
         }
         else {
             ArrayList<Color> colors = generateRandomColorFiveByFive();
@@ -177,11 +199,32 @@ public class Grid {
         }
     }
 
+    /**
+     * The method lets the playerToBeAnnounced that the goal of its partner is goalOfPartner
+     * @param playerToBeAnnounced: The player which is announced
+     * @param goalOfPartner: The goal of the partner
+     */
+    private void announceGoal(ColoredTrailsPlayer playerToBeAnnounced, Patch goalOfPartner) {
+        playerToBeAnnounced.listenToGoal(goalOfPartner);
+    }
+
+    /**
+     * The method sends the offer of the playerToOffer to playerToReceive
+     * @param playerToOffer: The player which made the offer
+     * @param playerToReceive: The player receiving the offer
+     */
+    private void makeOffer(ColoredTrailsPlayer playerToOffer, ColoredTrailsPlayer playerToReceive) {
+        // Clone the offer of the playerToOffer
+        ArrayList<ArrayList<Token>> offer = (ArrayList<ArrayList<Token>>) offers.get(playerToOffer).clone();
+        // Reverse the offer, so that the playerToReceive receives it with its offered hand at index 0
+        Collections.reverse(offer);
+        playerToReceive.receiveOffer(offer);
+    }
 
     /**
      * Prints the colours of the tokens in the offers
      */
-    private void printOffer(ArrayList<ArrayList<Token>> offer) {
+    public static void printOffer(ArrayList<ArrayList<Token>> offer) {
         for(ArrayList<Token> hand : offer) {
             String offerAsString = "";
             for(Token token : hand) {
@@ -308,16 +351,10 @@ public class Grid {
      * @param player: The player which the tokens belong to
      * @return A clone of tokens of the player
      */
-    public ArrayList<Token> getTokensOfPlayer(ColoredTrailsPlayer player) {
+    public ArrayList<Token> getTokens(ColoredTrailsPlayer player) {
         return (ArrayList) tokens.get(player).clone();
     }
 
-    /**
-     * @return player tokens
-     */
-    public ArrayList<Token> getTokens(ColoredTrailsPlayer player){
-        return tokens.get(player);
-    }
 
     /**
      * @return A clone of allTokensInPlay
@@ -350,7 +387,11 @@ public class Grid {
      * @param listener PropertyChangeListener which is added to the listeners of the grid
      */
     public void addListener(PropertyChangeListener listener) {
-        listeners.add(listener);
+        if (isNotifyingListeners) {
+            temoporaryListeners.add(listener);
+        } else {
+            listeners.add(listener);
+        }
     }
 
     /**
@@ -358,13 +399,16 @@ public class Grid {
      * @param evt PropertyChangeEvent passed in the propertyChange()
      */
     public void notifyListeners(PropertyChangeEvent evt) {
+        isNotifyingListeners = true;
         for(PropertyChangeListener listener : listeners) {
             listener.propertyChange(evt);
         }
+        isNotifyingListeners = false;
+        listeners.addAll(temoporaryListeners);
+        temoporaryListeners.removeAll(temoporaryListeners);
     }
-
     /**
-     * assigns the goals according to the wayOfAssigningGoals
+     * assigns the goals according to the wayOfAssigningGoals (only for generating new goals)
      */
     public void assignGoalsToPlayers() {
         switch (wayOfAssigningGoals) {
@@ -378,17 +422,58 @@ public class Grid {
     }
 
     /**
+     * Assigns the players just as in the saved grid and notifies listeners about it
+     * @param savedGoals, goals saved from the previous games
+     */
+    private void reassignSavedGoals(ArrayList<Patch> savedGoals){
+        int goalToTake = 0;
+        for(ColoredTrailsPlayer player : players) {
+            setGoal(player, savedGoals.get(goalToTake));
+            notifyListeners(new PropertyChangeEvent(player, "assignedGoalsIndex",
+                    player, patches.indexOf(savedGoals.get(goalToTake))));
+            goalToTake++;
+        }
+    }
+
+    /**
      * sets up the game by distributing the tokens to players and assigning goals to players
      */
-    public void setUp(int loadMap) {
-        generatePatchesFiveByFive(loadMap);
+    public void setUp(int mapNumber) {
+        Grid savedGrid =  null;
+        ArrayList<Patch> savedGoals = null;
+        //read grid from file
+        if (mapNumber != 0) {
+            String fileName = "grid_" + mapNumber + ".ser";
+            try {
+                FileInputStream fileIn = new FileInputStream(fileName);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                savedGrid = (Grid) in.readObject();
+                savedGoals = savedGrid.goalsToSave;
+                in.close();
+                fileIn.close();
+                System.out.println("Serialized data is loaded from " + fileName);
+            } catch (ClassNotFoundException | IOException e) {
+                System.out.println("FILE NOT FOUND FATAL ERROR");
+                throw new RuntimeException(e);
+            }
+        }
+
+        generatePatchesFiveByFive(savedGrid);
         try {
-            distributeTokensToPlayers();
+            distributeTokensToPlayers(savedGrid);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        assignGoalsToPlayers();
+
+        //way of going around the hashing + file errors
+        if (savedGoals != null) {
+            reassignSavedGoals(savedGoals);
+        }  else  {
+            //DO NOT ADD ARGUMENTS TO THIS FUNCTION
+            assignGoalsToPlayers();
+        }
     }
+
 
     /**
      * The method updates the offer associated to the player, according to the parameter offer.
@@ -399,14 +484,25 @@ public class Grid {
         offers.put(player, offer);
     }
 
-
+    /**
+     * The method assumes that the player can only reveal its goal once. This needs to be discussed.
+     * Associates the goalToAnnounce to the player as the goal the player wants to communicate to its partner
+     * @param player The player communicating the supposed goal
+     * @param goalToAnnounce The goal the player wants the partner
+     */
+    public void setGoalToAnnounce(ColoredTrailsPlayer player, Patch goalToAnnounce) {
+        if (goalsToAnnounce.get(player) == null) {
+            this.goalsToAnnounce.put(player, goalToAnnounce);
+        }
+    }
 
     /**
      * Starts the negotiations. Ends when both players sent the same offer or the number of turns has reached the
      * maximumNumberOfTurns, initially set to 40
+     *
      * @return true if the negotiations ended because of agreement, false if it reached the maximumNumberOfTurns
      */
-    public int [] start(boolean saveMap) throws IllegalAccessException {
+    public int[] start(boolean saveMap) throws IllegalAccessException {
         int agreementReached = 0;
         setGameState(STATE.ACTIVE);
         while (gameState != STATE.INACTIVE && numberOfTurns < maximumNumberOfTurns) {
@@ -416,6 +512,9 @@ public class Grid {
             {
                 setGameState(STATE.WAITING_FOR_GOAL);
             }
+            notifyListeners(new PropertyChangeEvent(this, "newTurn", null,
+                    currentPlayer));
+            setGameState(STATE.WAITING_FOR_GOAL);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingAnnounceGoal", null,
                     null));
             Patch goalToReveal = currentPlayer.revealGoal();        // Ask the player to reveal its goal
@@ -426,8 +525,8 @@ public class Grid {
                         goalToReveal));
             }
             if(isOfferLegal(offers.get(partner))) {     // if the partner made a legal offer, announce it
-                notifyListeners(new PropertyChangeEvent(partner, "receiveOfferFromPartner", null,
-                        offers.get(partner)));
+                notifyListeners(new PropertyChangeEvent(partner, "receiveOfferFromPartner", currentPlayer,
+                        offers.get(partner).clone()));// Use the oldValue to pass the current player
                 currentPlayer.receiveOffer(offers.get(partner));
             }
             if(gameState != STATE.INACTIVE){
@@ -436,10 +535,9 @@ public class Grid {
             notifyListeners(new PropertyChangeEvent(currentPlayer, "initiatingOffer", null, null));
             ArrayList<ArrayList<Token>> offer = currentPlayer.makeOffer();      // Ask the player to make an offer
             setOffer(currentPlayer, offer);
-            printOffer(offer);
             notifyListeners(new PropertyChangeEvent(currentPlayer, "offerFinished", null, null));
             if(!isOfferLegal(offers.get(currentPlayer))) {     // Ignore any illegal offer
-                offers.put(currentPlayer, null);
+                setOffer(currentPlayer, null);
             } else {
                 if(offers.get(partner) != null) {
                     notifyListeners(new PropertyChangeEvent(currentPlayer, "offer", null,
@@ -457,11 +555,6 @@ public class Grid {
             numberOfTurns++;
         }
 
-        //save maps
-        if(saveMap) {
-            MapSaver mapSaver = new MapSaver(patches);
-            mapSaver.saveMap();
-        }
 
         //return values
         int[] toReturn = new int[3];
@@ -475,9 +568,31 @@ public class Grid {
             System.out.println("position reached: " + score[1]);
             toReturn[iterator] = score[0];
         }
+
+        //POTENTIALLY ADD MORE CONDITIONS TO SAVE MAPS
+        if(abs(toReturn[1]-toReturn[2]) > 80){
+            System.out.println("Saving map: point difference larger than 80");
+            saveMap = true;
+        }
+
+        //save maps
+        if(saveMap) {
+            this.saveGoalPositions();
+            MapSaver mapSaver = new MapSaver(this);
+            mapSaver.saveMap();
+        }
+
         return toReturn;
     }
 
+
+    /**
+     * @param player to be checked
+     * @return true if it is player's turn
+     */
+    public boolean isPlayerActive(ColoredTrailsPlayer player) {
+        return getCurrentPlayer() == player;
+    }
 
     /**
      * Calculating the bonus score from unspent tokens
@@ -508,7 +623,7 @@ public class Grid {
             int x = i / 5;
             int goalY = goalPosition % 5;
             int goalX = goalPosition / 5;
-            int distance = Math.abs(x-goalX) + Math.abs(y-goalY);
+            int distance = abs(x-goalX) + abs(y-goalY);
             heuristicArray.add(Math.max(0,50 - 5*distance));
 
         }
@@ -680,7 +795,7 @@ public class Grid {
             //calculate the actual utility of the current position
             int playerY = currentPosition % 5;
             int playerX = currentPosition / 5;
-            int positionScore = 50 - 10*((Math.abs(playerX-goalX) + Math.abs(playerY-goalY)));
+            int positionScore = 50 - 10*((abs(playerX-goalX) + abs(playerY-goalY)));
             int tokenScore = tokenScore(currentTokens);
             if (toReturn[0] < positionScore + tokenScore) {
                 toReturn[0] = positionScore + tokenScore;
@@ -729,6 +844,40 @@ public class Grid {
      * sets the wayOfAssigningGoals to the given string
      * @param wayOfAssigningGoals a string between "randDif" or "randSame"
      */
+    public void setWayOfAssigningGoals(String wayOfAssigningGoals) {
+        this.wayOfAssigningGoals = wayOfAssigningGoals;
+    }
 
+    /**
+     * Sets maximumNumberOfTurns to the given value
+     * @param maximumNumberOfTurns
+     */
+    public void setMaximumNumberOfTurns(int maximumNumberOfTurns) {
+        this.maximumNumberOfTurns = maximumNumberOfTurns;
+    }
+
+    /**
+     * @param player
+     * @return The index on the grid of the player
+     */
+    public int getGoalIndex(ColoredTrailsPlayer player) {
+        return patches.indexOf(goals.get(player));
+    }
+
+    /**
+     * Saves the goal positions of the players after the game is done
+     */
+    public void saveGoalPositions()
+    {
+        if (gameState == STATE.INACTIVE){
+            for (ColoredTrailsPlayer player : players) {
+                goalsToSave.add(goals.get(player));
+            }
+        }
+        else {
+            System.out.println("Cannot save goal positions while game is active");
+        }
+
+    }
 
 }

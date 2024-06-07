@@ -28,16 +28,15 @@ public class ViewTester {
         ViewController viewController = new ViewController();
 
         GridPane gridPane = new GridPane(game, controller, viewController);
-        OfferHistoryPane offerHistoryPane = new OfferHistoryPane(viewController, game, firstPlayer);
-        viewController.setOfferHistoryPane(offerHistoryPane);
-        OfferPane offerPane = new OfferPane(game, controller, viewController, offerHistoryPane);
+        OfferPane offerPane = new OfferPane(game, controller, viewController);
 
-        //0 - no map loaded, x - patches_map_x will be loaded
-        int loadMap = 3;
+        //0 - new map generated, x - grid_x will be loaded from savefile
+        int loadMap = 0;
+        // IMPORTANT !!!!!!!! ALWAYS SET AT 0 WHEN SAVING NEW MAPS
         game.setUp(loadMap);
 
-        PlayerPanel playerPanel1 = new PlayerPanel(game, controller, "Csenge", firstPlayer, new ViewController());
-        PlayerPanel playerPanel2 = new PlayerPanel(game, controller, "Lukasz", secondPlayer, new ViewController());
+        PlayerPanel playerPanel1 = new PlayerPanel(game, controller, firstPlayer, viewController);
+        PlayerPanel playerPanel2 = new PlayerPanel(game, controller, secondPlayer, viewController);
 
         frame.setLayout(new BorderLayout());
         frame.add(offerPane, BorderLayout.SOUTH);
@@ -45,20 +44,13 @@ public class ViewTester {
         frame.add(playerPanel1, BorderLayout.WEST);
         frame.add(playerPanel2, BorderLayout.EAST);
 
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
-        JFrame frameForOffers = new JFrame("Offers");
-        frameForOffers.setLayout(new BorderLayout());
-        frameForOffers.setSize(1400, 400);
-        frameForOffers.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        frameForOffers.add(offerHistoryPane);
-        frameForOffers.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         try {
-            boolean saveMap = true;
+            //true - save map, false - don't save map
+            boolean saveMap = false;
+            //IMPORTANT: SET TO FALSE WHENEVER READING AN OLD MAP
             int [] finishArray = game.start(saveMap);
             if (finishArray[0] == 1) {
                 JOptionPane.showMessageDialog(null, "Agreement reached!\nPlayer 1 score: " + finishArray[1] + "\nPlayer 2 score: " + finishArray[2]);

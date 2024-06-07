@@ -1,5 +1,6 @@
 package View.controller;
 
+import Model.ColoredTrailsPlayer;
 import Model.Grid;
 import Model.HumanPlayer;
 import View.model.GridPane;
@@ -11,12 +12,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
-public class ViewController implements ActionListener {
+public class ViewController implements ActionListener, Serializable {
     private GridPane gridPane;
     private OfferPane offerPane;
-    private OfferHistoryPane offerHistoryPane;
+    private HashMap<ColoredTrailsPlayer, OfferHistoryPane> offerHistoryPanes = new HashMap<>();
+
     //Hold the last panel on the grid to display the next card
     private JPanel lastSelectedPatchPanel;
 
@@ -26,8 +31,9 @@ public class ViewController implements ActionListener {
     public void setOfferPane(OfferPane offerPane) {
         this.offerPane = offerPane;
     }
-    public void setOfferHistoryPane(OfferHistoryPane offerHistoryPane) {
-        this.offerHistoryPane = offerHistoryPane;
+
+    public ViewController() {
+
     }
 
     @Override
@@ -120,10 +126,6 @@ public class ViewController implements ActionListener {
                 gridPane.setAllowToPickPatch(true);
             }
             gridPane.getDialog().dispose();
-        } else if (Objects.equals(e.getActionCommand(), "openOfferHistory")) {
-            if (offerHistoryPane != null) {
-                offerHistoryPane.setVisible(!offerHistoryPane.isVisible());
-            }
         }
     }
 }

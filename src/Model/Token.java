@@ -1,8 +1,9 @@
 package Model;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Token {
+public class Token implements Serializable {
     private Color color;
     public Token(Color color) {
         this.color = color;
