@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class ViewTester {
     public static void main(String[] args) {
@@ -31,7 +32,9 @@ public class ViewTester {
         OfferPane offerPane = new OfferPane(game, controller, viewController);
 
         //0 - new map generated, x - grid_x will be loaded from savefile
+        // ------------------------------------------------------------------------------
         int loadMap = 0;
+        // ------------------------------------------------------------------------------
         // IMPORTANT !!!!!!!! ALWAYS SET AT 0 WHEN SAVING NEW MAPS
         game.setUp(loadMap);
 
@@ -49,13 +52,21 @@ public class ViewTester {
 
         try {
             //true - save map, false - don't save map
+            // -----------------------------------------------------------------------------
             boolean saveMap = false;
+            // -----------------------------------------------------------------------------
             //IMPORTANT: SET TO FALSE WHENEVER READING AN OLD MAP
+
             int [] finishArray = game.start(saveMap);
+            //get player names to print out score
+            ArrayList <String> playerNames = game.getPlayerNames();
+            String player1name = playerNames.get(0);
+            String player2name = playerNames.get(1);
+            //print out score
             if (finishArray[0] == 1) {
-                JOptionPane.showMessageDialog(null, "Agreement reached!\nPlayer 1 score: " + finishArray[1] + "\nPlayer 2 score: " + finishArray[2]);
+                JOptionPane.showMessageDialog(null, "Agreement reached! :)\n" + player1name + " score: " + finishArray[1] + "\n" + player2name + " score: " + finishArray[2]);
             } else {
-                JOptionPane.showMessageDialog(null, "Agreement not reached!\nPlayer 1 score: " + finishArray[1] + "\nPlayer 2 score: " + finishArray[2]);
+                JOptionPane.showMessageDialog(null, "Agreement not reached! :(\n" + player1name + " score: " + finishArray[1] + "\n" + player2name + " score: " + finishArray[2]);
             }
             System.exit(0);
 

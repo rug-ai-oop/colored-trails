@@ -877,7 +877,17 @@ public class Grid implements Serializable {
         else {
             System.out.println("Cannot save goal positions while game is active");
         }
+    }
 
+    /**
+     * @return array of player names for view purposes
+     */
+    public ArrayList<String> getPlayerNames() {
+        ArrayList<String> toReturn = new ArrayList<>(2);
+        for(ColoredTrailsPlayer player: this.players){
+            toReturn.add(player.name);
+        }
+        return toReturn;
     }
 
 }
