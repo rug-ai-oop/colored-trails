@@ -5,15 +5,16 @@ import View.controller.SetUpGameOptionsController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class DummyOptionsPanel extends JPanel {
-    private SetUpGameOptionsController controller;
+    private ActionListener controller;
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
     private JButton agentVsAgentButton;
     private JButton backButton;
     private JLabel subGameOptionsLabel;
-    public DummyOptionsPanel(SetUpGameOptionsController controller) {
+    public DummyOptionsPanel(ActionListener controller) {
         this.controller = controller;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(250, 300));
