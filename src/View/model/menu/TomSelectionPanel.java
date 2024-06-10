@@ -1,4 +1,4 @@
-package View.model;
+package View.model.menu;
 
 import Controller.GameController;
 import View.controller.SetUpGameOptionsController;

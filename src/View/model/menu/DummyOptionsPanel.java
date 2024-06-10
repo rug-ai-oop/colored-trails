@@ -1,4 +1,4 @@
-package View.model;
+package View.model.menu;
 
 import Controller.GameController;
 import View.controller.SetUpGameOptionsController;
@@ -7,48 +7,43 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class GameOptionsPanel extends JPanel {
+public class DummyOptionsPanel extends JPanel {
     private ActionListener controller;
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
     private JButton agentVsAgentButton;
-    private JButton humanVsHumanLikeAgent;
-    private JLabel gameOptionsLabel;
-    private MainPanel mainPanel; // Reference to the main panel
-
-    public GameOptionsPanel(ActionListener controller) {
+    private JButton backButton;
+    private JLabel subGameOptionsLabel;
+    public DummyOptionsPanel(ActionListener controller) {
         this.controller = controller;
-        // Setting layout
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(250, 300));
 
-        // Initializing components
-        gameOptionsLabel = new JLabel("Game Options");
-        gameOptionsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subGameOptionsLabel = new JLabel("Game Options");
+        subGameOptionsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         humanVsHumanButton = new JButton("Human vs. Human");
         humanVsHumanButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        humanVsHumanButton.setActionCommand("Human vs. Human");
+        humanVsHumanButton.setActionCommand("dummy1");
         humanVsHumanButton.addActionListener(controller);
 
         humanVsAgentButton = new JButton("Human vs. Agent");
         humanVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        humanVsAgentButton.setActionCommand("Human vs. Agent");
+        humanVsAgentButton.setActionCommand("dummy2");
         humanVsAgentButton.addActionListener(controller);
 
         agentVsAgentButton = new JButton("Agent vs. Agent");
         agentVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        agentVsAgentButton.setActionCommand("Agent vs. Agent");
+        agentVsAgentButton.setActionCommand("dummy3");
         agentVsAgentButton.addActionListener(controller);
 
-        humanVsHumanLikeAgent = new JButton("Human vs. HumanAgent");
-        humanVsHumanLikeAgent.setAlignmentX(Component.CENTER_ALIGNMENT);
-        humanVsHumanLikeAgent.setActionCommand("Human vs. Human like agent");
-        humanVsHumanLikeAgent.addActionListener(controller);
+        backButton = new JButton("Back");
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backButton.setActionCommand("BackFromDummy");
+        backButton.addActionListener(controller);
 
-        // Adding components to panel
         add(Box.createVerticalGlue());
-        add(gameOptionsLabel);
+        add(subGameOptionsLabel);
         add(Box.createRigidArea(new Dimension(0, 10)));
         add(humanVsHumanButton);
         add(Box.createRigidArea(new Dimension(0, 5)));
@@ -56,12 +51,9 @@ public class GameOptionsPanel extends JPanel {
         add(Box.createRigidArea(new Dimension(0, 5)));
         add(agentVsAgentButton);
         add(Box.createRigidArea(new Dimension(0, 5)));
-        add(humanVsHumanLikeAgent);
+        add(backButton);
         add(Box.createVerticalGlue());
-    }
 
-    private void printGameOption(String option) {
-        System.out.println("Selected game option: " + option);
     }
 
 }

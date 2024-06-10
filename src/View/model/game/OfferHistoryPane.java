@@ -1,10 +1,10 @@
-package View.model;
+package View.model.game;
 
 import Model.ColoredTrailsPlayer;
 import Model.Grid;
-import Model.HumanPlayer;
 import Model.Token;
 import View.controller.ViewController;
+import View.model.visuals.ImageLoader;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,7 +32,6 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
      * @return The panel with the hand
      */
     private static JPanel constructPlayerHandPanel(ArrayList<Token> hand) {
-//        int tokensInHand = hand.size();
         JPanel handPanel = new JPanel();
         handPanel.setPreferredSize(sidePanelDimension);
         handPanel.setLayout(new GridLayout(1, 8));
@@ -138,18 +137,12 @@ public class OfferHistoryPane extends JPanel implements PropertyChangeListener {
             ArrayList<ArrayList<Token>> offer = (ArrayList<ArrayList<Token>>) evt.getNewValue();
             offer = (ArrayList<ArrayList<Token>>) offer.clone();
             ColoredTrailsPlayer playerMakingTheOffer = (ColoredTrailsPlayer) evt.getSource();
-            System.out.println("Original offer: ");
-            Grid.printOffer(offer);
 
             // Reverse the offer if the current player is not the playerToDisplayOnTheLeft
             if (playerMakingTheOffer != playerToDisplayOnTheLeft) {
                 Collections.reverse(offer);
-                System.out.println("Reversed offer: ");
-                Grid.printOffer(offer);
             }
 
-            System.out.println("playerMakingTheOffer = " + playerMakingTheOffer.getName());
-            System.out.println("playerToDisplayOnTheLeft = " + playerToDisplayOnTheLeft.getName());
             addOffer(offer);
         }
     }

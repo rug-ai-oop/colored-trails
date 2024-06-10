@@ -262,14 +262,12 @@ public class Grid {
         ArrayList<ArrayList<Token>> posteriorOfferReversed = (ArrayList<ArrayList<Token>>) posteriorOffer.clone();
         Collections.reverse(posteriorOfferReversed);
         if (priorOffer.size() != posteriorOffer.size()) {
-            System.out.println("Not accepted because priorOffer.size() != posteriorOffer.size()");
             return false;
         }
 
         Comparator<Token> tokenComparator = (Comparator<Token>) (t1, t2) -> Color.getColorPriority(t1.getColor()) - Color.getColorPriority(t2.getColor());
         for(int index = 0; index < priorOffer.size(); index++) {
             if( priorOffer.get(index).size() != posteriorOfferReversed.get(index).size()) {
-                System.out.println("Not accepted because priorOffer.get(index).size() != posteriorOffer.get(index).size()");
                 return false;
             }
             Collections.sort(priorOffer.get(index), tokenComparator);
@@ -278,9 +276,6 @@ public class Grid {
         for(int index = 0; index < priorOffer.size(); index++) {
             for(int indexInHands = 0; indexInHands < priorOffer.get(index).size(); indexInHands++){
                 if(priorOffer.get(index).get(indexInHands).getColor() != posteriorOfferReversed.get(index).get(indexInHands).getColor()) {
-                    System.out.println("Not accepted because " +
-                            "priorOffer.get(index).get(indexInHands).getColor() " +
-                            "!= posteriorOfferReversed.get(index).get(indexInHands).getColor()");
                     return false;
                 }
             };
@@ -509,6 +504,7 @@ public class Grid {
             int[] score = calculateFinalScore(player);
             System.out.println("points obtained: " + score[0]);
             System.out.println("position reached: " + score[1]);
+            notifyListeners(new PropertyChangeEvent(player, "finalPatch", iterator, score[1]));
             toReturn[iterator] = score[0];
         }
         return toReturn;

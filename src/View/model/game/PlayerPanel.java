@@ -1,22 +1,19 @@
-package View.model;
+package View.model.game;
 
 import Controller.GameController;
 import Model.ColoredTrailsPlayer;
 import Model.Grid;
-import Model.HumanPlayer;
 import Model.Token;
 import View.controller.ViewController;
+import View.model.visuals.ImageLoader;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
 
 
-public class PlayerPanel extends JPanel implements PropertyChangeListener{
+public class PlayerPanel extends JPanel implements PropertyChangeListener {
     private static Color defaultButtonColor = new Color(26, 194, 26);
     private Grid grid;
     private GameController controller;
@@ -28,13 +25,15 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
     private ColoredTrailsPlayer player;
     private JFrame historyFrame;
     private OfferHistoryPane offerHistoryPane;
+    private Image playerImage;
 
 
-    public PlayerPanel(Grid grid, GameController controller, ColoredTrailsPlayer player, ViewController viewController) {
+    public PlayerPanel(Grid grid, GameController controller, ColoredTrailsPlayer player, ViewController viewController, Image playerImage) {
         this.grid = grid;
         grid.addListener(this);
         this.controller = controller;
         this.viewController = viewController;
+        this.playerImage = playerImage;
         ImageLoader.loadImages();
         this.player = player;
         offerHistoryPane = new OfferHistoryPane(viewController, grid, player);
@@ -50,6 +49,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         historyFrame.setSize(1000, 300);
         historyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         historyFrame.add(offerHistoryPane);
+        historyFrame.setLocationRelativeTo(null);
     }
 
 
@@ -71,16 +71,17 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         add(playerLabel);
 
         // Player Image
-        Image scaledPlayerImage =  ImageLoader.playerImages.get(playerName).getScaledInstance(80
+        Image scaledPlayerImage =  playerImage.getScaledInstance(80
                 , 120, Image.SCALE_SMOOTH);
         JLabel playerImage = new JLabel(new ImageIcon(scaledPlayerImage));
         playerImage.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(playerImage);
 
+
         add(Box.createRigidArea(new Dimension(0, 10)));
 
         // Token title
-        JLabel tokenLabel = new JLabel("Your tokens:");
+        JLabel tokenLabel = new JLabel(playerName + "'s tokens:");
         tokenLabel.setFont(new Font("Serif", Font.PLAIN, 14));
         tokenLabel.setForeground(Color.GREEN);
         tokenLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -105,7 +106,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         withdrawButton.setActionCommand("withdrawGame");
         withdrawButton.addActionListener(controller);
         withdrawButton.setBackground(Color.lightGray);
-        withdrawButton.setPreferredSize(new Dimension(130, 50));
+        withdrawButton.setPreferredSize(new Dimension(130, 80));
         withdrawButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(withdrawButton);
 
@@ -114,7 +115,7 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         offerHistoryButton.setFont(new Font("Serif", Font.BOLD, 14));
         offerHistoryButton.setActionCommand("openOfferHistory");
         offerHistoryButton.setBackground(Color.lightGray);
-        offerHistoryButton.setPreferredSize(new Dimension(130, 50));
+        offerHistoryButton.setPreferredSize(new Dimension(130, 80));
         offerHistoryButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         offerHistoryButton.addActionListener(e -> {
             historyFrame.setVisible(!historyFrame.isVisible());
@@ -123,10 +124,10 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
 
         panelWithButtons = new JPanel();
         panelWithButtons.setLayout(new GridLayout(2,1));
-        panelWithButtons.setPreferredSize(new Dimension(100, 50));
+//        panelWithButtons.setPreferredSize();
         panelWithButtons.add(withdrawButton);
         panelWithButtons.add(offerHistoryButton);
-
+        panelWithButtons.setMaximumSize(new Dimension(1000, 200));
     }
 
 

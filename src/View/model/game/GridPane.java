@@ -1,4 +1,4 @@
-package View.model;
+package View.model.game;
 
 import Controller.GameController;
 import Model.Color;
@@ -6,6 +6,8 @@ import Model.Grid;
 import Model.HumanPlayer;
 import Model.Patch;
 import View.controller.ViewController;
+import View.model.visuals.DoubleImagePanel;
+import View.model.visuals.ImageLoader;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +16,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 public class GridPane extends JPanel implements PropertyChangeListener {
+    private final Image rightPlayerImage;
+    private final Image leftPlayerImage;
     private Grid grid;
     private ArrayList<HumanPlayer> humanPlayers = new ArrayList();
     private GameController gameController;
@@ -45,23 +49,9 @@ public class GridPane extends JPanel implements PropertyChangeListener {
                 button.addActionListener(viewController);
                 panelHoldingButton.add(button);
             } else {
-//                button.setBackground(java.awt.Color.GRAY);
-//                button.setEnabled(false);
                 if(i == grid.getStartPatchIndex()) {
-//                    button.setForeground(java.awt.Color.BLACK);
-//                    button.setText("START");
-
-                    //add player icons to the center
-                    boolean isPlayerOne = true;
-                    for (HumanPlayer player : humanPlayers) {
-                        Image image = ImageLoader.playerImages.get(player.getName());
-                        if (isPlayerOne) {
-                            panelHoldingButton.add(new JLabel(new ImageIcon(image)), BorderLayout.WEST);
-                            isPlayerOne = false;
-                        } else {
-                            panelHoldingButton.add(new JLabel(new ImageIcon(image)), BorderLayout.EAST);
-                        }
-                    }
+                    DoubleImagePanel doubleImagePanel = new DoubleImagePanel(leftPlayerImage, rightPlayerImage);
+                    panelHoldingButton.add(doubleImagePanel);
                 }}
 
 
@@ -138,6 +128,7 @@ public class GridPane extends JPanel implements PropertyChangeListener {
 
     private void init() {
         mainPanel.setLayout(new GridLayout(5, 5, 5, 5));
+        mainPanel.setBackground(java.awt.Color.DARK_GRAY);
         getNewMenuPanelOnButton();
         optionPaneRevealGoal = constructRevealGoalOptionPane();
         this.setLayout(new BorderLayout());
@@ -146,11 +137,15 @@ public class GridPane extends JPanel implements PropertyChangeListener {
     }
 
 
-    public GridPane(Grid grid, GameController gameController, ViewController viewController) {
+    public GridPane(Grid grid, GameController gameController, ViewController viewController, Image leftPlayerImage
+            , Image rightPlayerImage) {
+        this.setBackground(java.awt.Color.gray);
         this.grid = grid;
         grid.addListener(this);
         this.gameController = gameController;
         this.viewController = viewController;
+        this.rightPlayerImage = rightPlayerImage;
+        this.leftPlayerImage = leftPlayerImage;
         viewController.setGridPane(this);
         init();
     }
@@ -179,6 +174,11 @@ public class GridPane extends JPanel implements PropertyChangeListener {
                     dialog.setVisible(true);
                 }
                 break;
+            case "finalPatch" :
+                Integer playerIndex = (Integer) evt.getOldValue();
+                if (playerIndex == 1) {
+
+                }
         }
     }
 

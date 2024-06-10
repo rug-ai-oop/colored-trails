@@ -3,16 +3,15 @@ package View.controller;
 import Model.ColoredTrailsPlayer;
 import Model.Grid;
 import Model.HumanPlayer;
-import View.model.GridPane;
-import View.model.OfferPane;
-import View.model.OfferHistoryPane;
-import View.model.TokenButton;
+import View.model.game.GridPane;
+import View.model.game.OfferPane;
+import View.model.game.OfferHistoryPane;
+import View.model.game.TokenButton;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
