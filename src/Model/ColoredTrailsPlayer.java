@@ -1,9 +1,10 @@
 package Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public abstract class ColoredTrailsPlayer {
+public abstract class ColoredTrailsPlayer implements Serializable {
     private static ArrayList<Integer> hashes = new ArrayList<>();
     protected Patch goalPartner;
     protected Patch goalToCommunicate;

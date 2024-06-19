@@ -1,9 +1,10 @@
 package Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class HumanPlayer extends ColoredTrailsPlayer{
+public class HumanPlayer extends ColoredTrailsPlayer implements Serializable {
 
     public enum State {
         OFFER_COMPLETE, INCOMPLETE, GOAL_COMPLETE, OFFER_ACCEPTED, OFFER_REJECTED
