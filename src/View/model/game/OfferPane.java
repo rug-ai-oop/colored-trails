@@ -256,8 +256,6 @@ public class OfferPane  extends JPanel implements PropertyChangeListener {
                     receivedOfferPanel.add(acceptRejectPanel);
                     this.add(receivedOfferPanel, BorderLayout.CENTER);
                     revalidate();
-                    System.out.println(this);
-                    System.out.println(this.receivedOfferPanel);
                 }
             }
         }
