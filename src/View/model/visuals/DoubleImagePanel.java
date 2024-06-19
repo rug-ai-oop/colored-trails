@@ -32,16 +32,4 @@ public class DoubleImagePanel extends JPanel {
         return playerImageLabel;
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("DoubleImage");
-        frame.setSize(200, 130);
-        ImageLoader.loadImages();
-
-        frame.setLayout(new BorderLayout());
-        frame.add(new DoubleImagePanel(ImageLoader.playerImages.get("PLAYER_1"), ImageLoader.playerImages.get("PLAYER_1")));
-
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-    }
-
 }

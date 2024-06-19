@@ -29,7 +29,7 @@ public class ViewTester {
     public static volatile boolean readyToStartGame = false;
 
     public static void displayFullScreenFrame(JFrame frame) {
-        frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());  // Set the size to the screen size as a fallback
+        frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
         frame.setVisible(true);
     }
 
