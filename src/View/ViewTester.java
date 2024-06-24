@@ -4,10 +4,9 @@ import Controller.GameController;
 import Model.Grid;
 import Model.HumanPlayer;
 import View.controller.ViewController;
-import View.model.GridPane;
-import View.model.OfferHistoryPane;
-import View.model.OfferPane;
-import View.model.PlayerPanel;
+import View.model.game.GridPane;
+import View.model.game.OfferPane;
+import View.model.game.PlayerPanel;
 import javax.swing.JOptionPane;
 
 import javax.swing.*;

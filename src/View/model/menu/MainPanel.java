@@ -1,4 +1,4 @@
-package View.model;
+package View.model.menu;
 
 import Model.Grid;
 import Model.HumanPlayer;

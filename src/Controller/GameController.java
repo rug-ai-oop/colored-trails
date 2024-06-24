@@ -1,11 +1,8 @@
 package Controller;
 
 import Model.*;
-import View.model.IndexButton;
-import View.model.TokenButton;
-import View.model.OfferHistoryPane;
-
-import javax.swing.JFrame;
+import View.model.game.IndexButton;
+import View.model.game.TokenButton;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

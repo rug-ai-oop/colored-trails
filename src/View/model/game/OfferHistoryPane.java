@@ -1,10 +1,10 @@
-package View.model;
+package View.model.game;
 
 import Model.ColoredTrailsPlayer;
 import Model.Grid;
-import Model.HumanPlayer;
 import Model.Token;
 import View.controller.ViewController;
+import View.model.visuals.ImageLoader;
 
 import javax.swing.*;
 import java.awt.*;

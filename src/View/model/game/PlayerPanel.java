@@ -1,19 +1,16 @@
-package View.model;
+package View.model.game;
 
 import Controller.GameController;
 import Model.ColoredTrailsPlayer;
 import Model.Grid;
-import Model.HumanPlayer;
 import Model.Token;
 import View.controller.ViewController;
+import View.model.visuals.ImageLoader;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
 
 
 public class PlayerPanel extends JPanel implements PropertyChangeListener{

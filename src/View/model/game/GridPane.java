@@ -1,4 +1,4 @@
-package View.model;
+package View.model.game;
 
 import Controller.GameController;
 import Model.Color;
@@ -6,6 +6,7 @@ import Model.Grid;
 import Model.HumanPlayer;
 import Model.Patch;
 import View.controller.ViewController;
+import View.model.visuals.ImageLoader;
 
 import javax.swing.*;
 import java.awt.*;

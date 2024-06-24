@@ -1,4 +1,4 @@
-package View.model;
+package View.model.visuals;
 import Model.Color;
 
 import javax.imageio.ImageIO;
@@ -9,9 +9,9 @@ import java.util.Map;
 
 public class ImageLoader {
 
-    protected static final Map<Color, BufferedImage> tokenImages = new HashMap<>(5);
-    protected static final Map<String, BufferedImage> playerImages = new HashMap<>(2);
-    protected static final Map<String, BufferedImage> auxiliaryImages = new HashMap<>(5);
+    public static final Map<Color, BufferedImage> tokenImages = new HashMap<>(5);
+    public static final Map<String, BufferedImage> playerImages = new HashMap<>(2);
+    public static final Map<String, BufferedImage> auxiliaryImages = new HashMap<>(5);
 
     public static void loadImages() {
         try {
