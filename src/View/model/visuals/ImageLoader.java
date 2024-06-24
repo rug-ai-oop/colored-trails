@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ImageLoader {
+    public static final int numberOfPlayerImages = 14;
 
     public static final Map<Color, BufferedImage> tokenImages = new HashMap<>(5);
     public static final Map<String, BufferedImage> playerImages = new HashMap<>(2);
@@ -19,9 +20,10 @@ public class ImageLoader {
                 tokenImages.put(color,
                         ImageIO.read(ImageLoader.class.getResource("/" + color + ".png")));
             }
-            playerImages.put("Lukasz", ImageIO.read(ImageLoader.class.getResource("/PLAYER_LUKASZ.png")));
-            playerImages.put("Csenge", ImageIO.read(ImageLoader.class.getResource("/PLAYER_CSENGE.png")));
-            playerImages.put("Matei", ImageIO.read(ImageLoader.class.getResource("/PLAYER_Matei.png")));
+
+            for (int i = 0; i < numberOfPlayerImages; i++) {
+                playerImages.put("PLAYER_" + i, ImageIO.read(ImageLoader.class.getResource("/" + "PLAYER_" + i + ".png")));
+            }
 
             auxiliaryImages.put("redFlag", ImageIO.read(ImageLoader.class.getResource("/RED_FLAG.png")));
         } catch (IOException e) {
@@ -30,21 +32,5 @@ public class ImageLoader {
         }
     }
 
-    public static enum ImageIconNames {
-        BLUE,
-        CSENGE,
-        Green_gamer,
-        HARMEN,
-        LUKASZ,
-        Matei,
-        Orange_catgirl,
-        Orange_catgirl2,
-        Orange_coolgirl,
-        Orange_creepy2,
-        Orange_girl,
-        pink_creepy,
-        Pink_elegant,
-        Yellow_elegant2;
-    }
 
 }

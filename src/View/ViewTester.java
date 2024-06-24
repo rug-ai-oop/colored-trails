@@ -31,7 +31,7 @@ public class ViewTester {
         ViewController viewController = new ViewController();
 
         GridPane gridPane = new GridPane(game, controller, viewController
-                , ImageLoader.playerImages.get("Lukasz"), ImageLoader.playerImages.get("Lukasz"));
+                , ImageLoader.playerImages.get("PLAYER_1"), ImageLoader.playerImages.get("PLAYER_1"));
         OfferPane offerPane = new OfferPane(game, controller, viewController);
 
         //0 - no map loaded, x - patches_map_x will be loaded
