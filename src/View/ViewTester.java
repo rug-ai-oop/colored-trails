@@ -17,6 +17,7 @@ import java.awt.*;
 public class ViewTester {
     public static void main(String[] args) {
         ImageLoader.loadImages();
+        Image image = ImageLoader.playerImages.get("PLAYER_1");
 
         JFrame frame = new JFrame("Colored Trails");
         frame.setSize(1200, 800);
@@ -31,15 +32,15 @@ public class ViewTester {
         ViewController viewController = new ViewController();
 
         GridPane gridPane = new GridPane(game, controller, viewController
-                , ImageLoader.playerImages.get("PLAYER_1"), ImageLoader.playerImages.get("PLAYER_1"));
+                , image, image);
         OfferPane offerPane = new OfferPane(game, controller, viewController);
 
         //0 - no map loaded, x - patches_map_x will be loaded
         int loadMap = 0;
         game.setUp(loadMap);
 
-        PlayerPanel playerPanel1 = new PlayerPanel(game, controller, firstPlayer, viewController);
-        PlayerPanel playerPanel2 = new PlayerPanel(game, controller, secondPlayer, viewController);
+        PlayerPanel playerPanel1 = new PlayerPanel(game, controller, firstPlayer, viewController, image);
+        PlayerPanel playerPanel2 = new PlayerPanel(game, controller, secondPlayer, viewController, image);
 
         frame.setLayout(new BorderLayout());
         frame.add(offerPane, BorderLayout.SOUTH);
