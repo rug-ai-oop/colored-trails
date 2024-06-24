@@ -68,11 +68,11 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener{
         add(playerLabel);
 
         // Player Image
-        Image scaledPlayerImage =  ImageLoader.playerImages.get(playerName).getScaledInstance(80
-                , 120, Image.SCALE_SMOOTH);
-        JLabel playerImage = new JLabel(new ImageIcon(scaledPlayerImage));
-        playerImage.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(playerImage);
+//        Image scaledPlayerImage =  ImageLoader.playerImages.get(playerName).getScaledInstance(80
+//                , 120, Image.SCALE_SMOOTH);
+//        JLabel playerImage = new JLabel(new ImageIcon(scaledPlayerImage));
+//        playerImage.setAlignmentX(Component.CENTER_ALIGNMENT);
+//        add(playerImage);
 
         add(Box.createRigidArea(new Dimension(0, 10)));
 
