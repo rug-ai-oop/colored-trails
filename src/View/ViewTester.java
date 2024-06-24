@@ -7,6 +7,8 @@ import View.controller.ViewController;
 import View.model.game.GridPane;
 import View.model.game.OfferPane;
 import View.model.game.PlayerPanel;
+import View.model.visuals.ImageLoader;
+
 import javax.swing.JOptionPane;
 
 import javax.swing.*;
@@ -14,6 +16,8 @@ import java.awt.*;
 
 public class ViewTester {
     public static void main(String[] args) {
+        ImageLoader.loadImages();
+
         JFrame frame = new JFrame("Colored Trails");
         frame.setSize(1200, 800);
         Grid game = new Grid();
@@ -26,7 +30,8 @@ public class ViewTester {
         GameController controller = new GameController(game);
         ViewController viewController = new ViewController();
 
-        GridPane gridPane = new GridPane(game, controller, viewController);
+        GridPane gridPane = new GridPane(game, controller, viewController
+                , ImageLoader.playerImages.get("Lukasz"), ImageLoader.playerImages.get("Lukasz"));
         OfferPane offerPane = new OfferPane(game, controller, viewController);
 
         //0 - no map loaded, x - patches_map_x will be loaded
