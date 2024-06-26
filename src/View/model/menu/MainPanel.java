@@ -18,7 +18,7 @@ public class MainPanel extends JPanel {
         setPreferredSize(new Dimension(250, 250));
 
         // Create instances of panels (cards)
-        GameOptionsPanel gameOptionsPanel = new GameOptionsPanel(this);
+        GameOptionsPanel gameOptionsPanel = new GameOptionsPanel(e -> {});
         DummyOptionsPanel dummyOptionsPanel = new DummyOptionsPanel(this);
         TomSelectionPanel tomSelectionPanel = new TomSelectionPanel();
 
