@@ -1,18 +1,21 @@
 package View.model.menu;
 
+import Controller.GameController;
+import View.controller.SetUpGameOptionsController;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class DummyOptionsPanel extends JPanel {
+    private ActionListener controller;
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
     private JButton agentVsAgentButton;
     private JButton backButton;
     private JLabel subGameOptionsLabel;
-    private MainPanel mainPanel; // Reference to the main panel
-
-    public DummyOptionsPanel(MainPanel mainPanel) {
-        this.mainPanel = mainPanel;
+    public DummyOptionsPanel(ActionListener controller) {
+        this.controller = controller;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(250, 300));
 
@@ -21,43 +24,23 @@ public class DummyOptionsPanel extends JPanel {
 
         humanVsHumanButton = new JButton("Human vs. Human");
         humanVsHumanButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        humanVsHumanButton.setActionCommand("dummy1");
+        humanVsHumanButton.addActionListener(controller);
 
         humanVsAgentButton = new JButton("Human vs. Agent");
         humanVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        humanVsAgentButton.setActionCommand("dummy2");
+        humanVsAgentButton.addActionListener(controller);
 
         agentVsAgentButton = new JButton("Agent vs. Agent");
         agentVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        agentVsAgentButton.setActionCommand("dummy3");
+        agentVsAgentButton.addActionListener(controller);
 
         backButton = new JButton("Back");
-
-        // Add action listeners to the buttons
-        humanVsHumanButton.addActionListener(e -> {
-            printGameOption("Human vs. Human");
-            mainPanel.initializeGame();
-        });
-
-        humanVsAgentButton.addActionListener(e -> {
-            printGameOption("Human vs. Agent");
-            mainPanel.initializeGame();
-        });
-
-        agentVsAgentButton.addActionListener(e -> {
-            printGameOption("Agent vs. Agent");
-            mainPanel.initializeGame();
-        });
-
-        backButton.addActionListener(e -> {
-            String previousPanel;
-            switch (mainPanel.getSelectedOption()) {
-                case "Human vs. Human":
-                    previousPanel = "GameOptions";
-                    break;
-                default:
-                    previousPanel = "TomSelection";
-                    break;
-            }
-            mainPanel.showCard(previousPanel);
-        });
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backButton.setActionCommand("BackFromDummy");
+        backButton.addActionListener(controller);
 
         add(Box.createVerticalGlue());
         add(subGameOptionsLabel);
@@ -73,14 +56,4 @@ public class DummyOptionsPanel extends JPanel {
 
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        // Set the bounds of the backButton after the panel has been displayed
-        backButton.setBounds(10, getHeight() - backButton.getHeight() - 10, 100, 30);
-    }
-
-    private void printGameOption(String option) {
-        System.out.println("Game option selected by participant: " + option);
-    }
 }
