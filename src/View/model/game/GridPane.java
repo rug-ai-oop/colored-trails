@@ -28,12 +28,25 @@ public class GridPane extends JPanel implements PropertyChangeListener {
     private JDialog dialog;
     private boolean allowToPickPatch = false;
 
+    /**
+     * @param playerImage
+     * @return a panel with gray background containing the DoubleImagePanel.getPlayerImageLabel(image)
+     */
+    private JPanel getPlayerImagePanel(Image playerImage) {
+        JPanel panel = new JPanel();
+        panel.setBackground(java.awt.Color.GRAY);
+        panel.add(DoubleImagePanel.getPlayerImageLabel(playerImage));
+        return panel;
+    }
+
 
     /**
      * Constructs the grid, where every Patch is a button
      */
     private void addButtonsToGrid() {
         for(int i = 0; i < grid.getPatches().size(); i++) {
+            JPanel leftPlayerImagePanel = getPlayerImagePanel(leftPlayerImage);
+            JPanel rightPlayerImagePanel = getPlayerImagePanel(rightPlayerImage);
             Patch patch = grid.getPatches().get(i);
             JPanel mainPanelInGridSlot = new JPanel();      // The panel which takes care of the cardLayout
             mainPanelInGridSlot.setLayout(new CardLayout());
@@ -60,6 +73,8 @@ public class GridPane extends JPanel implements PropertyChangeListener {
 
             mainPanelInGridSlot.add(panelHoldingButton, "button");
             mainPanelInGridSlot.add(menuPanel, "menu");
+            mainPanelInGridSlot.add(leftPlayerImagePanel, "leftPlayerImage");
+            mainPanelInGridSlot.add(rightPlayerImagePanel, "rightPlayerImage");
             mainPanel.add(mainPanelInGridSlot);
         }
         repaint();
@@ -174,11 +189,23 @@ public class GridPane extends JPanel implements PropertyChangeListener {
                     dialog.setVisible(true);
                 }
                 break;
-            case "finalPatch" :
+            case "finalPatch":
                 Integer playerIndex = (Integer) evt.getOldValue();
+                Integer patchIndex = (Integer) evt.getNewValue();
+                JPanel patch = (JPanel) mainPanel.getComponent(patchIndex);
+                CardLayout cardLayout = (CardLayout) patch.getLayout();
+                String imageId;
                 if (playerIndex == 1) {
-
+                    imageId =  "leftPlayerImage";
+                } else {
+                    imageId =  "rightPlayerImage";
                 }
+                cardLayout.show(patch, imageId);
+                JPanel startPatch = ((JPanel) mainPanel.getComponent(grid.getStartPatchIndex()));
+                startPatch.removeAll();
+                JLabel startLabel = new JLabel("Start", JLabel.HORIZONTAL);
+                startPatch.add(startLabel);
+                revalidate();
         }
     }
 

@@ -93,7 +93,6 @@ public class ViewTester {
             } else {
                 JOptionPane.showMessageDialog(null, "Agreement not reached!\nPlayer 1 score: " + finishArray[1] + "\nPlayer 2 score: " + finishArray[2]);
             }
-            System.exit(0);
 
         } catch (IllegalAccessException e) {
             e.printStackTrace();
