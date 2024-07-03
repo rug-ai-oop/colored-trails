@@ -23,8 +23,8 @@ public class DoubleImagePanel extends JPanel {
     }
 
     public static JLabel getPlayerImageLabel(Image image) {
-        Image scaledPlayerImage =  image.getScaledInstance(120
-                , 200, Image.SCALE_SMOOTH);
+        Image scaledPlayerImage =  image.getScaledInstance(80
+                , 140, Image.SCALE_SMOOTH);
         JLabel playerImageLabel = new JLabel(new ImageIcon(scaledPlayerImage));
         playerImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         return playerImageLabel;

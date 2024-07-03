@@ -3,6 +3,7 @@ package View;
 
 import Controller.GameController;
 import Model.ColoredTrailsPlayer;
+import Model.ColoredTrailsToMPlayer;
 import Model.Grid;
 import Model.HumanPlayer;
 import View.controller.ViewController;
@@ -44,20 +45,9 @@ public class ViewTester {
         if (gameOption.equals("Human vs. Human")) {
             firstPlayer = new HumanPlayer("Csenge");
             secondPlayer = new HumanPlayer("Lukasz");
-        } else if (gameOption.equals("Human vs. Agent")) {
-            firstPlayer = new HumanPlayer("Matei");
-            switch (tomLevel) {
-                default -> secondPlayer = new HumanPlayer(defaultTomAgentName);
-            }
         } else {
-            firstPlayer = new HumanPlayer("agent1 with always tom 2");
-            if (tomLevel == 0) {
-                secondPlayer = new HumanPlayer("an agent with tom 0");
-            } else if (tomLevel == 1) {
-                secondPlayer = new HumanPlayer("an agent with tom 1");
-            } else {
-                secondPlayer = new HumanPlayer("an agent with tom 2");
-            }
+            firstPlayer = new HumanPlayer("Matei");
+            secondPlayer = new ColoredTrailsToMPlayer(defaultTomAgentName, tomLevel);
         }
 
         game.addPlayer(firstPlayer);

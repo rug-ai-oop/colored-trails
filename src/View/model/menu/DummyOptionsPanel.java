@@ -11,7 +11,6 @@ public class DummyOptionsPanel extends JPanel {
     private ActionListener controller;
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
-    private JButton agentVsAgentButton;
     private JButton backButton;
     private JLabel subGameOptionsLabel;
     public DummyOptionsPanel(ActionListener controller) {
@@ -32,11 +31,6 @@ public class DummyOptionsPanel extends JPanel {
         humanVsAgentButton.setActionCommand("dummy2");
         humanVsAgentButton.addActionListener(controller);
 
-        agentVsAgentButton = new JButton("Agent vs. Agent");
-        agentVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        agentVsAgentButton.setActionCommand("dummy3");
-        agentVsAgentButton.addActionListener(controller);
-
         backButton = new JButton("Back");
         backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.setActionCommand("BackFromDummy");
@@ -48,8 +42,6 @@ public class DummyOptionsPanel extends JPanel {
         add(humanVsHumanButton);
         add(Box.createRigidArea(new Dimension(0, 5)));
         add(humanVsAgentButton);
-        add(Box.createRigidArea(new Dimension(0, 5)));
-        add(agentVsAgentButton);
         add(Box.createRigidArea(new Dimension(0, 5)));
         add(backButton);
         add(Box.createVerticalGlue());

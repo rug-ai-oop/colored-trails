@@ -8,10 +8,9 @@ public class GameOptionsPanel extends JPanel {
     private ActionListener controller;
     private JButton humanVsHumanButton;
     private JButton humanVsAgentButton;
-    private JButton agentVsAgentButton;
+
     private JButton humanVsHumanLikeAgent;
     private JLabel gameOptionsLabel;
-    private MainPanel mainPanel; // Reference to the main panel
 
     public GameOptionsPanel(ActionListener controller) {
         this.controller = controller;
@@ -33,11 +32,6 @@ public class GameOptionsPanel extends JPanel {
         humanVsAgentButton.setActionCommand("Human vs. Agent");
         humanVsAgentButton.addActionListener(controller);
 
-        agentVsAgentButton = new JButton("Agent vs. Agent");
-        agentVsAgentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        agentVsAgentButton.setActionCommand("Agent vs. Agent");
-        agentVsAgentButton.addActionListener(controller);
-
         humanVsHumanLikeAgent = new JButton("Human vs. HumanAgent");
         humanVsHumanLikeAgent.setAlignmentX(Component.CENTER_ALIGNMENT);
         humanVsHumanLikeAgent.setActionCommand("Human vs. Human like agent");
@@ -50,8 +44,6 @@ public class GameOptionsPanel extends JPanel {
         add(humanVsHumanButton);
         add(Box.createRigidArea(new Dimension(0, 5)));
         add(humanVsAgentButton);
-        add(Box.createRigidArea(new Dimension(0, 5)));
-        add(agentVsAgentButton);
         add(Box.createRigidArea(new Dimension(0, 5)));
         add(humanVsHumanLikeAgent);
         add(Box.createVerticalGlue());

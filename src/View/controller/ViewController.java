@@ -107,9 +107,12 @@ public class ViewController implements ActionListener {
                 if (gridPane.isAllowToPickPatch()) {
                     // Change the appearances of the panel of the last pressed button
                     CardLayout lastCardLayout = (CardLayout) lastSelectedPatchPanel.getLayout();
-                    lastCardLayout.next(lastSelectedPatchPanel);
+                    lastCardLayout.show(lastSelectedPatchPanel, "button");
                     if (Objects.equals(e.getActionCommand(), "yes")) {
-                        pressedButton.setText(("Revealed as goal at round " + gridPane.getGrid().getNumberOfTurns()));
+                        pressedButton.setText(("Revealed as goal at round " +
+                                (gridPane.getGrid().getNumberOfTurns() + 1) +
+                                " by " +
+                                gridPane.getGrid().getCurrentPlayer().getName()));
                         gridPane.setAllowToPickPatch(false);
                         pressedButton.setEnabled(false);
                     }

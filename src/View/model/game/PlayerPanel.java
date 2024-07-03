@@ -3,6 +3,7 @@ package View.model.game;
 import Controller.GameController;
 import Model.ColoredTrailsPlayer;
 import Model.Grid;
+import Model.HumanPlayer;
 import Model.Token;
 import View.controller.ViewController;
 import View.model.visuals.ImageLoader;
@@ -134,7 +135,9 @@ public class PlayerPanel extends JPanel implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName() == "newTurn") {
             if (evt.getNewValue() == player) {
-                add(panelWithButtons);
+                if (player instanceof HumanPlayer) {
+                    add(panelWithButtons);
+                }
                 if (historyFrame.isVisible()) {
                     historyFrame.setVisible(false);
                 }
