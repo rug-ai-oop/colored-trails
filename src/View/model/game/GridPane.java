@@ -16,10 +16,12 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 public class GridPane extends JPanel implements PropertyChangeListener {
+    private static boolean playerRemainsOnStart = false;
     private final Image rightPlayerImage;
     private final Image leftPlayerImage;
     private Grid grid;
     private ArrayList<HumanPlayer> humanPlayers = new ArrayList();
+    private DoubleImagePanel doubleImagePanel;
     private GameController gameController;
     private JPanel mainPanel = new JPanel();
     private final ArrayList<JButton> buttons = new ArrayList();
@@ -63,7 +65,6 @@ public class GridPane extends JPanel implements PropertyChangeListener {
                 panelHoldingButton.add(button);
             } else {
                 if(i == grid.getStartPatchIndex()) {
-                    DoubleImagePanel doubleImagePanel = new DoubleImagePanel(leftPlayerImage, rightPlayerImage);
                     panelHoldingButton.add(doubleImagePanel);
                 }}
 
@@ -161,6 +162,7 @@ public class GridPane extends JPanel implements PropertyChangeListener {
         this.viewController = viewController;
         this.rightPlayerImage = rightPlayerImage;
         this.leftPlayerImage = leftPlayerImage;
+        doubleImagePanel = new DoubleImagePanel(leftPlayerImage, rightPlayerImage);
         viewController.setGridPane(this);
         init();
     }
@@ -190,21 +192,27 @@ public class GridPane extends JPanel implements PropertyChangeListener {
                 }
                 break;
             case "finalPatch":
-                Integer playerIndex = (Integer) evt.getOldValue();
-                Integer patchIndex = (Integer) evt.getNewValue();
-                JPanel patch = (JPanel) mainPanel.getComponent(patchIndex);
-                CardLayout cardLayout = (CardLayout) patch.getLayout();
-                String imageId;
-                if (playerIndex == 1) {
-                    imageId =  "leftPlayerImage";
+                int [][] scores = (int[][]) evt.getNewValue();
+                int firstPlayerIndex = scores[0][1];
+                int secondPlayerIndex = scores[1][1];
+                JPanel firstPatch = (JPanel) mainPanel.getComponent(firstPlayerIndex);
+                JPanel secondPatch = (JPanel) mainPanel.getComponent(secondPlayerIndex);
+                CardLayout firstCardLayout = (CardLayout) firstPatch.getLayout();
+                CardLayout secondCardLayout = (CardLayout) secondPatch.getLayout();
+                if (firstPlayerIndex != secondPlayerIndex) {
+                    firstCardLayout.show(firstPatch, "leftPlayerImage");
+                    secondCardLayout.show(secondPatch, "rightPlayerImage");
                 } else {
-                    imageId =  "rightPlayerImage";
+                    firstPatch.add(doubleImagePanel, "doubleImage");
+                    firstCardLayout.show(firstPatch, "doubleImage");
                 }
-                cardLayout.show(patch, imageId);
-                JPanel startPatch = ((JPanel) mainPanel.getComponent(grid.getStartPatchIndex()));
-                startPatch.removeAll();
-                JLabel startLabel = new JLabel("Start", JLabel.HORIZONTAL);
-                startPatch.add(startLabel);
+                if (scores[0][1] != grid.getStartPatchIndex() && scores[1][1] != grid.getStartPatchIndex()) {
+                    // Only display the "start" on the starting point if there is no player on it
+                    JPanel startPatch = ((JPanel) mainPanel.getComponent(grid.getStartPatchIndex()));
+                    startPatch.removeAll();
+                    JLabel startLabel = new JLabel("Start", JLabel.HORIZONTAL);
+                    startPatch.add(startLabel);
+                }
                 revalidate();
         }
     }

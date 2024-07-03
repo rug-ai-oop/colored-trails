@@ -5,9 +5,10 @@ import Model.ToMPlayer.Player;
 import Model.ToMPlayer.PlayerToM;
 import Model.ToMPlayer.Setting;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ColoredTrailsToMPlayer extends ColoredTrailsPlayer {
+public class ColoredTrailsToMPlayer extends ColoredTrailsPlayer implements Serializable {
 	Player proxyPlayer;
 	Setting proxySetting = new Setting();
 	int receivedOffer;

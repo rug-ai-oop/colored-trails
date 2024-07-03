@@ -1,6 +1,7 @@
 package Model;
+import java.io.Serializable;
 import java.util.*;
-public class SearchNode {
+public class SearchNode implements Serializable {
     int position;   //index in the array of patches indicating position
     ArrayList<Token> tokens; //tokens available when reached that position
     int utility; // Utility of this node

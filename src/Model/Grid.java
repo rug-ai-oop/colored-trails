@@ -553,17 +553,18 @@ public class Grid implements Serializable {
 
         //return values
         int[] toReturn = new int[3];
+        int[][] scores = new int[2][2];
         toReturn[0] = agreementReached;
         int iterator = 0;
         for (ColoredTrailsPlayer player: players) {
             iterator += 1;
             System.out.println("player: " + player.getName());
-            int[] score = calculateFinalScore(player);
-            System.out.println("points obtained: " + score[0]);
-            System.out.println("position reached: " + score[1]);
-            notifyListeners(new PropertyChangeEvent(player, "finalPatch", iterator, score[1]));
-            toReturn[iterator] = score[0];
+            scores[iterator - 1] = calculateFinalScore(player);
+            System.out.println("points obtained: " + scores[iterator - 1][0]);
+            System.out.println("position reached: " + scores[iterator - 1][1]);
+            toReturn[iterator] = scores[iterator - 1][0];
         }
+        notifyListeners(new PropertyChangeEvent(this, "finalPatch", null, scores));
 
         //POTENTIALLY ADD MORE CONDITIONS TO SAVE MAPS
         if(abs(toReturn[1]-toReturn[2]) > 80){

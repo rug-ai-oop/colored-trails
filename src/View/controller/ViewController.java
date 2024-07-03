@@ -109,6 +109,7 @@ public class ViewController implements ActionListener {
                     CardLayout lastCardLayout = (CardLayout) lastSelectedPatchPanel.getLayout();
                     lastCardLayout.show(lastSelectedPatchPanel, "button");
                     if (Objects.equals(e.getActionCommand(), "yes")) {
+                        pressedButton.setForeground(Color.BLACK);
                         pressedButton.setText(("Revealed as goal at round " +
                                 (gridPane.getGrid().getNumberOfTurns() + 1) +
                                 " by " +
