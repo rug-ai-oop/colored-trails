@@ -20,7 +20,7 @@ responder accepts, the chips are divided as suggested by the responder and the n
 the responder withdraws, each player keeps his own chips and the negotiation ends as well. If the responder decides
 to make a new offer, the players switch roles and the negotiation continues. The negotiation is limited to 40 offers,
 i.e. after both players have made 20 offers, the negotiation ends.
-![image](https://github.com/rug-ai-oop/colored-trails/assets/130935064/33e34890-30f7-46c4-90a9-fc95f28c7c7b)
+![ss_ct](https://github.com/user-attachments/assets/531d9a99-52b8-4d7b-8bb5-cf4d247dd2ac)
 
 ## Score Calculation
 Each player is scored based on how closely he ends up to his goal location, indicated by a flag on the board.
